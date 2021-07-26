@@ -1,0 +1,185 @@
+.navigation-clean-button {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  margin-bottom: 0;
+}
+
+@media (min-width:768px) {
+  .navigation-clean-button {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+.navigation-clean-button .navbar-brand {
+  font-weight: bold;
+  color: inherit;
+}
+
+.navigation-clean-button .navbar-toggler {
+  border-color: #ddd;
+}
+
+.navigation-clean-button .navbar-toggler:hover, .navigation-clean-button .navbar-toggler:focus {
+  background: none;
+}
+
+.navigation-clean-button .navbar-toggler {
+  color: #888;
+}
+
+.navigation-clean-button .navbar-nav a.active, .navigation-clean-button .navbar-nav > .show > a {
+  background: none;
+  box-shadow: none;
+}
+
+.navigation-clean-button.navbar-light .navbar-nav a.active, .navigation-clean-button.navbar-light .navbar-nav a.active:focus, .navigation-clean-button.navbar-light .navbar-nav a.active:hover {
+  box-shadow: none;
+  background: none;
+  pointer-events: none;
+}
+
+.navigation-clean-button.navbar .navbar-nav .nav-link {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.navigation-clean-button.navbar-light .navbar-nav .nav-link:focus, .navigation-clean-button.navbar-light .navbar-nav .nav-link:hover {
+  background-color: transparent;
+}
+
+.navigation-clean-button .navbar-nav > li > .dropdown-menu {
+  margin-top: -5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,.1);
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.navigation-clean-button .dropdown-menu .dropdown-item:focus, .navigation-clean-button .dropdown-menu .dropdown-item {
+  line-height: 2;
+  font-size: 14px;
+  color: #37434d;
+}
+
+.navigation-clean-button .dropdown-menu .dropdown-item:focus, .navigation-clean-button .dropdown-menu .dropdown-item:hover {
+  background: #eee;
+  color: inherit;
+}
+
+.nav-item .dropdown-item-blue {
+  color: #0A486A !important;
+}
+
+.navigation-clean-button .actions .login {
+  margin-right: 1rem;
+  text-decoration: none;
+  color: #D4AF37;
+}
+
+.navigation-clean-button .navbar-text .action-button, .navigation-clean-button .navbar-text .action-button:active, .navigation-clean-button .navbar-text .action-button:hover {
+  background: #56c6c6;
+  border-radius: 20px;
+  font-size: inherit;
+  color: #fff;
+  box-shadow: none;
+  border: none;
+  text-shadow: none;
+  padding: .5rem 1rem;
+  transition: background-color 0.25s;
+  font-size: inherit;
+}
+
+.navigation-clean-button .navbar-text .action-button:hover {
+  background: #66d7d7;
+}
+
+.navbar {
+  font-family: 'Powell Antique';
+  background-color: #0A486A;
+  color: #ffffff;
+}
+
+.navbar-brand {
+  letter-spacing: 5px;
+}
+
+.nav-item a {
+  color: #ffffff !important;
+}
+
+.vintage-font {
+  font-family: 'Powell Antique';
+}
+
+h3 {
+}
+
+.blue-font {
+  color: #0A486A;
+}
+
+.orange-font {
+  color: #D4AF37;
+}
+
+.body-padding {
+  padding-top: 5em;
+  padding-bottom: 5em;
+}
+
+.text-padding {
+  padding-top: 1em;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.vintage-font span {
+  font-variant-caps: petite-caps;
+  letter-spacing: 0em;
+  font-size: 17px;
+}
+
+button {
+  font-variant-caps: petite-caps;
+}
+
+.vintage-button:hover {
+  border-color: #0A486A;
+  background-color: rgb(8,143,171);
+  color: #ffffff;
+  border-radius: 0;
+  border-width: 2px;
+}
+
+.vintage-button {
+  border-color: #D4AF37;
+  color: #0A486A;
+  border-radius: 0;
+  border-width: 2px;
+  background-color: transparent;
+}
+
+.orange-background {
+  background-color: #D4AF37;
+}
+
+.white-font {
+  color: #ffffff;
+}
+
+.card-title {
+  font-size: 20px;
+}
+
+.vintage-card {
+  height: 273px;
+  width: 316px;
+}
+
+.copyright {
+  font-variant-caps: petite-caps;
+}
+

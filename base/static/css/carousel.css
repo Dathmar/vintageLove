@@ -1,0 +1,17 @@
+#productCarousel {
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-bottom: 50px;
+}
+
+.carousel-control-prev {
+  margin-left: -50px;
+}
+
+.carousel-control-next {
+  margin-right: -50px;
+}
+
+.carousel-indicators {
+  bottom: -50px;
+}
