@@ -49,6 +49,9 @@ class UserSeller(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT)
 
+    def __str__(self):
+        return f'User {self.user.first_name} {self.user.last_name} -- Seller {self.seller.name}'
+
 
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -69,6 +72,8 @@ class Product(models.Model):
 
     status = models.ForeignKey(ProductStatus, default=1, on_delete=models.PROTECT)
 
+    attributes = models.JSONField(null=True)
+
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
@@ -83,11 +88,17 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        ordering = ['create_datetime']
+
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='product_images')
+    image = models.ImageField(upload_to='product_images', height_field='image_height', width_field='image_width')
     sequence = models.IntegerField()
+
+    image_height = models.IntegerField(blank=True, null=True)
+    image_width = models.IntegerField(blank=True, null=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)

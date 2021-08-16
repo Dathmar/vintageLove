@@ -138,18 +138,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SQUARE_APP_ID = 'sandbox-sq0idb-EbD-jMBv1gzUSokw3ccJXw' # sq0idp-nMsY5CzLSeJ1u65VaS_dzg
-SQUARE_ACCESS_TOKEN = 'EAAAEHHYc-4hw5cz9CZY4Ii-cRK2ZOKRRh-AB6j17rWkYCQ4CQJO2GW0LGxb9-Cd'
-    # EAAAEcPWae71r5jDMCIVP1RuTrJSJT2mZZGVQfedc86k4WGCZKqWn5mVPuV7Au6M
+SQUARE_APP_ID = 'sandbox-sq0idb-EbD-jMBv1gzUSokw3ccJXw'
+SQUARE_ACCESS_TOKEN = 'EAAAEFcnYxrns7jjqSv2c0z6viyCzqurYR7naVgfrk1BcD81KdSKxjbLrGHkHxo3'
 SQUARE_ENVIRONMENT = 'sandbox'
 SQUARE_JS_URL = 'https://js.squareupsandbox.com/v2/paymentform'
 

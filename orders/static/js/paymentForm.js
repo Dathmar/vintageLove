@@ -4,6 +4,7 @@ let paymentForm;
 const tax_percent_elemt = $('tax_percent')
 const tax_amount_elemt = $('tax_amount')
 const order_cost_elemt = $('order_cost')
+
 function fetchSquareAppId() {
     let sq_id = fetch('/orders/square-app-id/').then(
         response => {

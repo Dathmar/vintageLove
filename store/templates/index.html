@@ -1,12 +1,54 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-    <section class="text-center vintage-font body-padding">
-        <h3 class="blue-font">THE WORLD OF VINTAGE</h3>
-        <h1 class="orange-font">UNLOCKED</h1>
-        <div class="text-options"><span><br><br><strong>Vintage Love is a resource for vintage lovers around the world.</strong><br>We aim to make timeless vintage treasures available online at fair prices,<br>support those businesses that have made this industry what it is today, and<br>reduce our dependency on further damaging this beautiful planet we call home.<br><br></span><button class="btn btn-primary vintage-button" type="button">Our Purpose</button></div>
+    {% include 'category-nav.html' %}
+    <section class="vintage-font" >
+        <div style="height:538px; background-image: url('{% get_static_prefix %}img/Hero Image.png'); background-size: cover; background-position: center;">
+            <div class="vertical-center" style="padding-left: 2em;">
+                <h2 class="blue-font">Modern solutions for timeless treasures</h2>
+                <h3 class="orange-font">Buy, sell and ship vintage from all over the world</h3>
+                <div>
+                    <a style="width: 10rem;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button rounded-3">Shop Now</a>
+                    <a style="width: 10rem;" href="{% url 'store:our-purpose' %}" class="btn btn-primary vintage-button blue-button rounded-3">Our Purpose</a>
+                </div>
+            </div>
+        </div>
     </section>
-{#    <section class="text-center vintage-font body-padding orange-background">#}
-{#        <h3 class="white-font">VINTAGE SERVICES</h3>#}
-{#        <div class="text-options"><button class="btn btn-primary vintage-button" type="button">Our Purpose</button></div>#}
-{#    </section>#}
+    <section class="vintage-font text-center blue-font body-padding">
+        <h1>Shop by Style</h1>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-sm-12 mt-3">
+                    <img src="{% get_static_prefix %}img/room.png"><br/>
+                    <span>Complete Rooms</span>
+                </div>
+                <div class="col-md-4 col-sm-12 mt-3">
+                    <img src="{% get_static_prefix %}img/set.png"><br/>
+                    <span>Matching Sets</span>
+                </div>
+                <div class="col-md-4 col-sm-12 mt-3">
+                    <img src="{% get_static_prefix %}img/accent.png"><br/>
+                    <span>Designer Accents</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="vintage-font text-center blue-background white-font body-padding">
+        <h1>Filter by Price</h1>
+        <div class="row mt-4">
+            <div class="col-lg-3 col-sm-6 col-xs-12 mt-3">
+                <a style="width: 10rem;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">$250 or less</a>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-xs-12 mt-3">
+                <a style="width: 10rem;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">$500 or less</a>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-xs-12 mt-3">
+                <a style="width: 10rem;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">$1,000 or less</a>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-xs-12 mt-3">
+                <a style="width: 10rem;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">$1,000 +</a>
+            </div>
+        </div>
+
+    </section>
 {% endblock %}

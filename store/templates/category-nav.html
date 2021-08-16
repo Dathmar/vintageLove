@@ -1,0 +1,9 @@
+<section class="cat-nav">
+    <ul class="nav justify-content-center vintage-font">
+        {% for category in categories %}
+        <li class="nav-item ps-md-3 pe-md-3">
+            <a class="nav-link" style="color: #0A486A !important;" href="{% url 'products:all-products' category.slug %}">{{ category }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</section>

@@ -1,5 +1,3 @@
-/media/product_images/
-/media/qr_img/
-/products/media/
+/*/media/*
 /vintageLove/settings.py
-/*/migrations/
+/*/migrations/*
