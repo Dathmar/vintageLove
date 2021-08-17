@@ -84,7 +84,7 @@ def product_list(request, category_slug=None):
         'merged_attributes': merged_attributes,
     }
 
-    return render(request, 'product-list-cards.html', context)
+    return render(request, 'product-list.html', context)
 
 
 def make_pages(request, obj_to_page, page_size):
