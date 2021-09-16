@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 import uuid
 
 
-
 class ProductStatus(models.Model):
     name = models.CharField(max_length=50)
 
@@ -13,6 +12,9 @@ class ProductStatus(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = 'product statuses'
 
 
 class Category(models.Model):
@@ -56,6 +58,7 @@ class UserSeller(models.Model):
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=4000)
+    #slug = models.SlugField()
     description = models.CharField(max_length=8000)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, default=1)

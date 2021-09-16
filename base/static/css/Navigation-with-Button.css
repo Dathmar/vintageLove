@@ -19,6 +19,10 @@
   color: inherit;
 }
 
+.navbar-brand:hover {
+  color: #ffffff !important;
+}
+
 .navigation-clean-button .navbar-toggler {
   border-color: #ddd;
 }
@@ -213,8 +217,8 @@ button {
   height: auto;
 }
 
-.card {
-  border: none;
+.product-card {
+  border: none !important;
 }
 
 .vertical-center {
@@ -224,4 +228,10 @@ button {
   top: 50%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
+}
+
+a.custom-card,
+a.custom-card:hover {
+  color: inherit;
+  text-decoration: inherit;
 }

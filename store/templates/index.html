@@ -5,8 +5,8 @@
     <section class="vintage-font" >
         <div style="height:538px; background-image: url('{% get_static_prefix %}img/Hero Image.png'); background-size: cover; background-position: center;">
             <div class="vertical-center" style="padding-left: 2em;">
-                <h2 class="blue-font">Modern solutions for timeless treasures</h2>
-                <h3 class="orange-font">Buy, sell and ship vintage from all over the world</h3>
+                <h1 class="blue-font">Global Vintage Love</h1>
+                <h2 class="orange-font mb-4">Unlocking the world of vintage, one treasure at a time</h2>
                 <div>
                     <a style="width: 10rem;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button rounded-3">Shop Now</a>
                     <a style="width: 10rem;" href="{% url 'store:our-purpose' %}" class="btn btn-primary vintage-button blue-button rounded-3">Our Purpose</a>
@@ -15,26 +15,34 @@
         </div>
     </section>
     <section class="vintage-font text-center blue-font body-padding">
-        <h1>Shop by Style</h1>
+        <h1>Shop by Stage</h1>
         <div class="container">
             <div class="row">
                 <div class="col-md-4 col-sm-12 mt-3">
                     <img src="{% get_static_prefix %}img/room.png"><br/>
-                    <span>Complete Rooms</span>
+                    <span>Wholesale (as-is)</span><br/>
+                    <span>Fresh finds you can purchase as-is and make your own</span>
                 </div>
                 <div class="col-md-4 col-sm-12 mt-3">
                     <img src="{% get_static_prefix %}img/set.png"><br/>
-                    <span>Matching Sets</span>
+                    <span>To Be Restored</span><br/>
+                    <span>Items slated to be restored with a clock until that begins</span>
                 </div>
                 <div class="col-md-4 col-sm-12 mt-3">
                     <img src="{% get_static_prefix %}img/accent.png"><br/>
-                    <span>Designer Accents</span>
+                    <span>Restoration Complete</span><br/>
+                    <span>Treasures we have brought back to their original glory</span>
                 </div>
             </div>
         </div>
     </section>
     <section class="vintage-font text-center blue-background white-font body-padding">
         <h1>Filter by Price</h1>
+        <span class="mt-3">In a world of globalization and fast-paced movement,<br/>
+            Global Vintage Love reminds us of a simpler time. We offer a large<br/>
+            variety of vintage assets, all from the ease of one platform. Whether<br/>
+            updating one room, or revamping rooms in your entire home, Global<br/>
+            Vintage Love is here for you.</span>
         <div class="row mt-4">
             <div class="col-lg-3 col-sm-6 col-xs-12 mt-3">
                 <a style="width: 10rem;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">$250 or less</a>
@@ -49,6 +57,11 @@
                 <a style="width: 10rem;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">$1,000 +</a>
             </div>
         </div>
-
     </section>
+    {% include 'product-list-cards.html' %}
+    <div class="text-center pb-5">
+        <a href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button blue-button rounded-3">See All Products</a>
+    </div>
+
+
 {% endblock %}

@@ -12,10 +12,12 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ['title', 'seller', 'category', 'retail_price', 'status']
     list_filter = ['seller', 'category']
     list_editable = ['seller', 'category', 'retail_price', 'status']
+    search_fields = ['title']
 
     inlines = [
         ProductImageInline,
     ]
+
 
 
 @admin.register(UserSeller)

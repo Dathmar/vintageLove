@@ -5,13 +5,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>{% block page_title %}vintageLove{% endblock %}</title>
+    <title>{% block page_title %}Global Vintage Love | Unlocking the World of Vintage{% endblock %}</title>
+    <link rel="shortcut icon" type="image/jpg" href="{% get_static_prefix %}img/favicon.png"/>
     <link rel="stylesheet" href="{% get_static_prefix %}bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% get_static_prefix %}css/PowellAntique.css">
     <link rel="stylesheet" href="{% get_static_prefix %}fonts/font-awesome.min.css">
     <link rel="stylesheet" href="{% get_static_prefix %}fonts/ionicons.min.css">
     <link rel="stylesheet" href="{% get_static_prefix %}css/Navigation-with-Button.css">
     <link rel="stylesheet" href="{% get_static_prefix %}css/Social-Icons.css">
+    {% include 'gtm.html' %}
     {% block extra_header %}{% endblock %}
 </head>
 
@@ -19,14 +21,19 @@
     <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
         <div class="container">
             <a class="navbar-brand" href="{% url 'store:index' %}">
-                <img src="{% get_static_prefix %}img/logo.png" style="width: 102px;">VINTAGE LOVE</a>
+                <img src="{% get_static_prefix %}img/logo.png" style="width: 102px;">GLOBAL VINTAGE LOVE</a>
             <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1">
                 <span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navcol-1">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto" >
                     <li class="nav-item"><a class="nav-link" href="{% url 'products:all-products' %}">Shop Now</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'store:our-purpose' %}">Our Purpose</a></li>
+                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">Our Purpose</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item dropdown-item-blue" href="{% url 'store:our-purpose' %}">Customer</a>
+                            <a class="dropdown-item dropdown-item-blue" href="{% url 'store:our-purpose-retail' %}">Retail</a>
+                        </div>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'store:join_movement' %}">Join The Movement</a></li>
                     {%  if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'logout' %}">Logout</a></li>
@@ -43,17 +50,16 @@
     {% endblock %}
     <section class="text-center vintage-font orange-background">
         <div class="social-icons">
-            <a href="https://www.facebook.com/Global-Vintage-Love-109096961408500"><i class="icon ion-social-facebook"></i></a>
-            <a href="https://www.instagram.com/globalvintagelove/"><i class="icon ion-social-instagram"></i></a>
-            <a href="https://www.youtube.com/channel/UC1ewCtR5qDollKTIeUQg8TA"><i class="icon ion-social-youtube"></i></a>
-            <a href="https://www.pinterest.com/globalvintagelove/"><i class="icon ion-social-pinterest"></i></a>
-
+            <a href="https://www.facebook.com/Global-Vintage-Love-109096961408500" target="_blank"><i class="icon ion-social-facebook"></i></a>
+            <a href="https://www.instagram.com/globalvintagelove/" target="_blank"><i class="icon ion-social-instagram"></i></a>
+            <a href="https://www.youtube.com/channel/UC1ewCtR5qDollKTIeUQg8TA" target="_blank"><i class="icon ion-social-youtube"></i></a>
+            <a href="https://www.pinterest.com/globalvintagelove/" target="_blank"><i class="icon ion-social-pinterest"></i></a>
         </div>
     </section>
     <section>
-        <div style="text-align: center;"><span class="copyright"><br>©2021 Vintage Love<br><br></span></div>
+        <div style="text-align: center;"><span class="copyright"><br>©2021 Global Vintage Love<br><br></span></div>
     </section>
-    <script src="{% get_static_prefix %}bootstrap/js/bootstrap.min.js"></script>
+    <script src="{% get_static_prefix %}bootstrap/js/bootstrap.bundle.js"></script>
     {% block end_body %}{% endblock %}
 </body>
 

@@ -25,7 +25,7 @@
                         <div class="carousel-indicators">
                             {% for product_image in product_images %}
                             <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" aria-current="true" {% endif %}aria-label="Slide {{ forloop.counter }}">
-                                <img
+                                <img class="d-block w-100" src="{{ product_image.image.url }}">
                             </button>
                             {% endfor %}
                         </div>

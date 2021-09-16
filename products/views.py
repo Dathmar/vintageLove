@@ -1,24 +1,38 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Product, ProductImage, UserSeller, ProductStatus, Category
 from datetime import datetime
+from .merged_attributes import get_attribute_list
+from django.db.models import Max, Min
 
 
 # Create your views here.
 def product(request, product_id):
-    product = get_object_or_404(Product, pk=product_id)
-    product_images = ProductImage.objects.filter(product_id=product_id).order_by('sequence')
+    item = Product.objects.get(pk=product_id)
+    return redirect('products:product-slug', item.slug)
+
+
+def product_slug(request, product_slug):
+    pass
+
+
+def get_product_context(request, product_identifier, identifier_type='slug'):
+    if identifier_type == 'slug':
+        product = get_object_or_404(Product, slug=product_identifier)
+    else:
+        product = get_object_or_404(Product, pk=product_identifier)
+
+    product_images = ProductImage.objects.filter(product_id=product.pk).order_by('sequence')
 
     is_seller = False
     if request.user.is_authenticated:
         is_seller = UserSeller.objects.filter(user=request.user, seller=product.seller_id).exists()
 
-    context = {
+    return {
         'product': product,
         'product_images': product_images,
         'is_seller': is_seller,
     }
-    return render(request, 'product-page.html', context)
 
 
 def product_sold(request, product_id):
@@ -50,11 +64,21 @@ def product_qr(request, product_id):
     return render(request, 'product-qr.html', context)
 
 
+def product_qr_list(request):
+    products = Product.objects.get()
+    context = {
+        'products': products,
+    }
+
+    return render(request, 'product-qr-list.html', context)
+
+
 def product_list(request, category_slug=None):
-    category = None
-    categories = Category.objects.all()
     product_lst = Product.objects.filter(status__name='Available',
-                                         productimage__sequence=1)
+                                         productimage__sequence=1).extra(
+        select={
+            'retail_price_int': "retail_price::INTEGER"
+        })
 
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
@@ -62,26 +86,17 @@ def product_list(request, category_slug=None):
 
     attributes = product_lst.values('attributes')
 
-    merged_attributes = {}
-    for attribute in attributes:
-        for i, (key, value_list) in enumerate(attribute['attributes'].items()):
-            if key not in merged_attributes:
-                merged_attributes[key] = value_list.copy()
-            else:
-                for value in value_list:
-                    if value not in merged_attributes[key]:
-                        merged_attributes[key].append(value)
-
-
-    product_lst_values = product_lst.values('id', 'title', 'description', 'retail_price', 'productimage__image',
+    product_lst_values = product_lst.values('id', 'title', 'description', 'retail_price_int', 'productimage__image',
                                             'productimage__image_height', 'productimage__image_width')
 
-    products = make_pages(request, product_lst_values, 10)
+    prices = product_lst.aggregate(Min('retail_price')).update(product_lst.aggregate(Max('retail_price')))
+
+    products = make_pages(request, product_lst_values, 12)
 
     context = {
+        'prices': prices,
         'products': products,
-        'attributes': attributes,
-        'merged_attributes': merged_attributes,
+        'attributes': get_attribute_list(attributes),
     }
 
     return render(request, 'product-list.html', context)
