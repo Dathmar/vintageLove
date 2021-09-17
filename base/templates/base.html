@@ -17,16 +17,17 @@
     {% block extra_header %}{% endblock %}
 </head>
 
-<body>
-    <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
-        <div class="container">
+<body style="overflow-x: hidden;">
+    <nav class="navbar navbar-light navbar-expand-lg navigation-clean-button">
+        <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'store:index' %}">
-                <img src="{% get_static_prefix %}img/logo.png" style="width: 102px;">GLOBAL VINTAGE LOVE</a>
+                <img src="{% get_static_prefix %}img/logo.png" style="width: 102px;"></a>
+            <a class="navbar-brand text-wrap" href="{% url 'store:index' %}">GLOBAL VINTAGE LOVE</a>
             <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1">
                 <span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navcol-1">
-                <ul class="navbar-nav ms-auto" >
+            <div class="collapse navbar-collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{% url 'products:all-products' %}">Shop Now</a></li>
                     <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">Our Purpose</a>
                         <div class="dropdown-menu">

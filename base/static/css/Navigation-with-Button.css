@@ -223,7 +223,7 @@ button {
 
 .vertical-center {
   margin: 0;
-  position: absolute;
+  position: relative;
   width: 100%;
   top: 50%;
   -ms-transform: translateY(-50%);
