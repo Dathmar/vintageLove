@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="text-center body-padding blue-background">
+        <h3 class="orange-font vintage-font">Return Policy</h3>
+        <div class="text-options white-font vintage-font mb-5">
+            <span>
+                You can return products.
+            </span>
+        </div>
+        <a href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">Shop Now</a>
+    </section>
+{% endblock %}

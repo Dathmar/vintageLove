@@ -49,6 +49,25 @@
     {% block content %}
 
     {% endblock %}
+    <section id="nav-footer" class="blue-background">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="white-font">Our Company</span><br/>
+                    <span class="orange-font"><a href="{% url 'store:our-purpose' %}">Our Purpose</a></span><br/>
+                    <span class="orange-font"><a href="{% url 'store:return-policy' %}">Return Policy</a></span><br/>
+                    <span class="orange-font"><a href="{% url 'store:privacy-policy' %}">Privacy Policy</a></span>
+                </div>
+                <div class="col-md-6">
+                    <span class="white-font">Our Community</span><br/>
+                    <span class="orange-font">See new inventory first!</span><br/>
+                    <input type="email" class="orange-boarder blue-font rounded-3" placeholder="Yes, here's my email"><br/>
+                    <input type="submit" class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" value="Subscribe" onclick="subscribe()">
+                    <span id="result" class="visually-hidden white-font ps-3">result</span>
+                </div>
+            </div>
+        </div>
+    </section>
     <section class="text-center vintage-font orange-background">
         <div class="social-icons">
             <a href="https://www.facebook.com/Global-Vintage-Love-109096961408500" target="_blank"><i class="icon ion-social-facebook"></i></a>

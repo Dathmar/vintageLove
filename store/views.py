@@ -9,7 +9,7 @@ def index(request):
                                          productimage__sequence=1).extra(
         select={
             'retail_price_int': "retail_price::INTEGER"
-        })
+        }).order_by("-create_datetime")
     product_lst = product_lst[:12]
 
     products = product_lst.values('id', 'title', 'description', 'retail_price_int', 'productimage__image',
@@ -32,3 +32,11 @@ def our_purpose_retail(request):
 
 def join_movement(request):
     return render(request, 'join-movement.html')
+
+
+def privacy_policy(request):
+    return render(request, 'privacy-policy.html')
+
+
+def return_policy(request):
+    return  render(request, 'return-policy.html')

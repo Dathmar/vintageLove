@@ -1,3 +1,20 @@
+body {
+  font-family: 'Sackers' !important;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #0A486A;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #0A486A;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: #0A486A;
+}
+
 .navigation-clean-button {
   padding-top: .75rem;
   padding-bottom: .75rem;
@@ -91,7 +108,7 @@
 }
 
 .navbar {
-  font-family: 'Powell Antique';
+  font-family: 'Sackers';
   background-color: #0A486A;
   color: #ffffff;
 }
@@ -105,11 +122,11 @@
 }
 
 .vintage-font {
-  font-family: 'Powell Antique';
+  font-family: 'Sackers';
 }
 
 cinzel-font {
-  font-family: 'Cinzel-Regular';
+  font-family: 'Sackers';
 }
 
 h3 {
@@ -160,6 +177,14 @@ button {
   background-color: transparent;
 }
 
+.blue-button {
+  border-color: #0A486A;
+  background-color: #0A486A;
+  color: #ffffff;
+  border-radius: 0;
+  border-width: 2px;
+}
+
 .blue-button:hover {
   border-color: rgb(8,143,171);
   background-color: rgb(8,143,171);
@@ -176,13 +201,45 @@ button {
   border-width: 2px;
 }
 
-.blue-button {
-  border-color: #0A486A;
+.blue-w-orange-button {
+  border-color: #D4AF37;
   background-color: #0A486A;
   color: #ffffff;
   border-radius: 0;
   border-width: 2px;
 }
+
+.orange-boarder {
+  border-color: #D4AF37 !important;
+  border-width: 2px !important;
+}
+
+.orange-boarder:focus-visible {
+  border-color: #D4AF37 !important;
+  border-width: 2px !important;
+}
+
+.orange-boarder:focus {
+  border-color: #D4AF37 !important;
+  border-width: 2px !important;
+}
+
+.blue-w-orange-button:hover {
+  border-color: #D4AF37;
+  background-color: rgb(8,143,171);
+  color: #ffffff;
+  border-radius: 0;
+  border-width: 2px;
+}
+
+.blue-w-orange-button:focus {
+  border-color: #D4AF37;
+  background-color: rgb(8,143,171);
+  color: #ffffff;
+  border-radius: 0;
+  border-width: 2px;
+}
+
 
 .orange-background {
   background-color: #D4AF37;
@@ -219,6 +276,10 @@ button {
 
 .product-card {
   border: none !important;
+}
+
+.product-card:hover {
+  border: 1px solid rgba(0,0,0,.125) !important;
 }
 
 .vertical-center {
