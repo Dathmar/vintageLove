@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block extra_header %}
     <link rel="stylesheet" type="text/css" href="{% get_static_prefix %}css/carousel.css"/>
@@ -49,7 +50,7 @@
                 </div>
                 <div class="col-sm-12 col-md-6">
                     <h2>{{ product.title }}</h2>
-                    <h5>${{ product.retail_price }}</h5>
+                    <h5>${{ product.retail_price|intcomma }}</h5>
                     <p>{{ product.description }}</p>
                     <p>Height - {{ product.dimension_height }}</p>
                     <p>Length - {{ product.dimension_length }}</p>

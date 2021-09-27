@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from products.models import Category, Product
 
+
 # Create your views here.
 def index(request):
     categories = Category.objects.all().order_by('id')

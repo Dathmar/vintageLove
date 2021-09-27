@@ -1,4 +1,5 @@
-{% load string_manipulation %}
+
+{% load humanize %}
     <section class="product-section body-padding">
         <div class="container">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4">
@@ -11,7 +12,7 @@
                                 </div>
                                 <div class="card-body">
                                     <p class="card-title" style="height: 3em; font-weight: bold;">{{ product.title }}</p>
-                                    <p style="margin-bottom: 1rem" class="card-text">${{ product.retail_price_int }}</p>
+                                    <p style="margin-bottom: 1rem" class="card-text">${{ product.retail_price_int|intcomma }}</p>
                                 </div>
                             </div>
                         </div>

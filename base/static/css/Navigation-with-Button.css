@@ -4,7 +4,7 @@ body {
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #0A486A;
-  opacity: 2; /* Firefox */
+  opacity: .5; /* Firefox */
 }
 
 :-ms-input-placeholder { /* Internet Explorer 10-11 */
