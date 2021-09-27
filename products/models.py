@@ -1,6 +1,7 @@
 from django.db import models
 from .qr_generation import generate_qr_code
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 import uuid
 
 
@@ -58,7 +59,7 @@ class UserSeller(models.Model):
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=30)
-    #slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     description = models.CharField(max_length=8000)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, default=1)
@@ -82,6 +83,12 @@ class Product(models.Model):
 
     def save(self):
         if not Product.objects.filter(id=self.id).exists():
+            self.slug = slugify(self.title)
+            slug_count = Product.objects.filter(slug=self.slug).count() + 1
+
+            if slug_count != 1:
+                self.slug = f'{self.slug}-{slug_count}'
+
             super(Product, self).save()
             generate_qr_code('https://www.localvintagestore.com/products/' + str(self.id),
                              'media/qr_img/' + str(self.id) + '_qr.png')

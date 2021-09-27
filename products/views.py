@@ -13,14 +13,13 @@ def product(request, product_id):
 
 
 def product_slug(request, product_slug):
-    pass
+    item = Product.objects.get(slug=product_slug)
+    context = get_product_context(request, product_slug)
+    return render(request, 'product-page.html', context)
 
 
 def get_product_context(request, product_identifier, identifier_type='slug'):
-    if identifier_type == 'slug':
-        product = get_object_or_404(Product, slug=product_identifier)
-    else:
-        product = get_object_or_404(Product, pk=product_identifier)
+    product = get_object_or_404(Product, slug=product_identifier)
 
     product_images = ProductImage.objects.filter(product_id=product.pk).order_by('sequence')
 
@@ -75,10 +74,7 @@ def product_qr_list(request):
 
 def product_list(request, category_slug=None):
     product_lst = Product.objects.filter(status__name='Available',
-                                         productimage__sequence=1).extra(
-        select={
-            'retail_price_int': "retail_price::INTEGER"
-        })
+                                         productimage__sequence=1)
 
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
@@ -86,7 +82,7 @@ def product_list(request, category_slug=None):
 
     attributes = product_lst.values('attributes')
 
-    product_lst_values = product_lst.values('id', 'title', 'description', 'retail_price_int', 'productimage__image',
+    product_lst_values = product_lst.values('id', 'title', 'description', 'retail_price', 'productimage__image',
                                             'productimage__image_height', 'productimage__image_width')
 
     prices = product_lst.aggregate(Min('retail_price')).update(product_lst.aggregate(Max('retail_price')))

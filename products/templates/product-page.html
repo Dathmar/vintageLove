@@ -18,7 +18,7 @@
     <section class="product-section body-padding">
         <div class="container">
             <div class="row">
-                <div class="col-sm-12 col-md-6">
+                <div class="col-sm-12 col-md-6" style="padding-bottom: 6em">
                     {% if product_images.count == 1 %}
                     <img src="{{ product_images.0.image.url }}" class="w-100"/>
                     {% else %}
@@ -50,12 +50,8 @@
                 </div>
                 <div class="col-sm-12 col-md-6">
                     <h2>{{ product.title }}</h2>
-                    <h5>${{ product.retail_price|intcomma }}</h5>
+                    <h5>${{ product.retail_price|intword|intcomma }}</h5>
                     <p>{{ product.description }}</p>
-                    <p>Height - {{ product.dimension_height }}</p>
-                    <p>Length - {{ product.dimension_length }}</p>
-                    <p>Width - {{ product.dimension_width }}</p>
-                    <p>Weight - {{ product.dimension_weight }}</p>
                     {% if product.status.name != 'Sold' %}
                     {% if is_seller %}
                     <div class="d-xxl-flex justify-content-xxl-center"><a href="{% url 'products:product-sold' product.id %}" class="btn btn-primary d-xxl-flex vintage-button" type="button">Mark as Sold</a></div>
@@ -67,6 +63,15 @@
                     {% endif %}
                 </div>
             </div>
+        </div>
+        <div id="product details" class="row">
+            <div class="offset-2 col">
+                <p>Height - {{ product.dimension_height|intword }}</p>
+                <p>Length - {{ product.dimension_length|intword }}</p>
+                <p>Width - {{ product.dimension_width|intword }}</p>
+                <p>Weight - {{ product.dimension_weight|intword }}</p>
+            </div>
+
         </div>
     </section>
 {% endblock %}

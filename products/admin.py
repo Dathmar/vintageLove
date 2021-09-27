@@ -13,6 +13,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ['seller', 'category']
     list_editable = ['seller', 'category', 'retail_price', 'status']
     search_fields = ['title']
+    exclude = ['slug']
 
     inlines = [
         ProductImageInline,

@@ -7,13 +7,10 @@ def index(request):
     categories = Category.objects.all().order_by('id')
 
     product_lst = Product.objects.filter(status__name='Available',
-                                         productimage__sequence=1).extra(
-        select={
-            'retail_price_int': "retail_price::INTEGER"
-        }).order_by("-create_datetime")
+                                         productimage__sequence=1).order_by("-create_datetime")
     product_lst = product_lst[:12]
 
-    products = product_lst.values('id', 'title', 'description', 'retail_price_int', 'productimage__image',
+    products = product_lst.values('id', 'title', 'description', 'retail_price', 'productimage__image',
                                   'productimage__image_height', 'productimage__image_width')
 
     context = {
