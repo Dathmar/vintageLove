@@ -2,9 +2,9 @@
 {% load static %}
 {% block content %}
     {% include 'category-nav.html' %}
-    <section id="hero-section" class="vintage-font" >
+    <section id="hero-section">
         <div class="row align-items-end">
-            <div class="col-md-4 ps-4 pe-xs-4 pe-md-2" style="padding-left: 2em;">
+            <div class="col-md-6 align-content-center" style="padding-left: 4em; padding-right: 3em;">
                 <h3 class="orange-font">/&nbspGlobal Vintage Love&nbsp/</h3>
                 <h2>Unlock the world of vintage one treasure at a time</h2>
                 <span>
@@ -15,12 +15,12 @@
                 <a href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button blue-font rounded-3">Shop Now</a>
                 <a href="{% url 'store:our-purpose' %}" class="btn btn-primary blue-button rounded-3">Our Purpose</a>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <img src="{% get_static_prefix %}img/Hero Image.jpg" width="100%">
             </div>
         </div>
     </section>
-    <section class="vintage-font text-center blue-font body-padding">
+    <section class="text-center blue-font body-padding">
         <h1>Shop by Stage</h1>
         <div class="container">
             <div class="row">
@@ -36,14 +36,14 @@
                 </div>
                 <div class="col-md-4 col-sm-12 mt-3">
                     <img src="{% get_static_prefix %}img/repurposed.jpg" width="233"><br/>
-                    <span>Repurposed</span><br/>
+                    <span>Reimagined</span><br/>
                     <span style="font-size: smaller;">Bringing new life to timeless pieces from our past</span>
                 </div>
 
             </div>
         </div>
     </section>
-    <section class="vintage-font text-center blue-background white-font body-padding">
+    <section class="text-center blue-background white-font body-padding">
         <h1>Filter by Price</h1>
         <span class="mt-3">In a world of globalization and fast-paced movement,<br/>
             Global Vintage Love reminds us of a simpler time. We offer a large<br/>

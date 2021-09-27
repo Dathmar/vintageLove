@@ -4,7 +4,7 @@ body {
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #0A486A;
-  opacity: 1; /* Firefox */
+  opacity: 2; /* Firefox */
 }
 
 :-ms-input-placeholder { /* Internet Explorer 10-11 */
@@ -122,7 +122,7 @@ body {
 }
 
 .vintage-font {
-  font-family: 'Sackers';
+  font-family: 'Powell Antique';
 }
 
 cinzel-font {

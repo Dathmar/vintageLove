@@ -57,7 +57,7 @@ class UserSeller(models.Model):
 
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=4000)
+    title = models.CharField(max_length=30)
     #slug = models.SlugField()
     description = models.CharField(max_length=8000)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT)
