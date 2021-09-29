@@ -15,6 +15,11 @@ def product(request, product_id):
 def product_slug(request, product_slug):
     item = Product.objects.get(slug=product_slug)
     context = get_product_context(request, product_slug)
+
+    similar_products = Product.objects.filter(category=item.category).exclude(id=item.id)[:5]
+
+    context.update({'similar_products': similar_products})
+
     return render(request, 'product-page.html', context)
 
 
@@ -72,6 +77,17 @@ def product_qr_list(request):
     return render(request, 'product-qr-list.html', context)
 
 
+def product_qr_grid(request):
+    products = Product.objects.filter().order_by('-create_datetime')
+    context = {
+        'products': products,
+    }
+
+    return render(request, 'product-qr-grid.html', context)
+
+
+
+
 def product_list(request, category_slug=None):
     product_lst = Product.objects.filter(status__name='Available',
                                          productimage__sequence=1)
@@ -91,6 +107,32 @@ def product_list(request, category_slug=None):
 
     context = {
         'prices': prices,
+        'products': products,
+        'attributes': get_attribute_list(attributes),
+    }
+
+    return render(request, 'product-list.html', context)
+
+
+def product_list_update(request, category_slug=None):
+    product_lst = Product.objects.filter(status__name='Available').order_by('-create_datetime')
+
+    if category_slug:
+        category = get_object_or_404(Category, slug=category_slug)
+        product_lst = product_lst.filter(category=category)
+
+    attributes = product_lst.values('attributes')
+    prices = product_lst.aggregate(Min('retail_price')).update(product_lst.aggregate(Max('retail_price')))
+
+    product_pages = make_pages(request, product_lst.values('id'), 12)
+    product_images = ProductImage.objects.filter(product_id__in=list(x['id'] for x in product_pages.object_list))
+
+    products = product_images.values('product__id', 'product__title', 'product__description',
+                                     'product__retail_price', 'image')
+
+    context = {
+        'prices': prices,
+        'product_pages': product_pages,
         'products': products,
         'attributes': get_attribute_list(attributes),
     }

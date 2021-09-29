@@ -6,7 +6,9 @@
     <link rel="stylesheet" type="text/css" href="{% get_static_prefix %}css/carousel.css"/>
 {% endblock %}
 
+
 {% block content %}
+    {% include 'similar-products.html' %}
     <section class="product-nav">
         <div class="container">
             <div class="row">
@@ -17,41 +19,38 @@
     </section>
     <section class="product-section body-padding">
         <div class="container">
-            <div class="row">
-                <div class="col-sm-12 col-md-6" style="padding-bottom: 6em">
-                    {% if product_images.count == 1 %}
-                    <img src="{{ product_images.0.image.url }}" class="w-100"/>
-                    {% else %}
-                    <div id="productCarousel" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel">
-                        <div class="carousel-indicators">
-                            {% for product_image in product_images %}
-                            <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" aria-current="true" {% endif %}aria-label="Slide {{ forloop.counter }}">
-                                <img class="d-block w-100" src="{{ product_image.image.url }}">
-                            </button>
-                            {% endfor %}
-                        </div>
-                        <div class="carousel-inner">
-                            {% for product_image in product_images %}
-                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                <img src="{{ product_image.image.url }}" class="d-block w-100"/>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
+            <div class="d-flex flex-wrap flex-lg-nowrap">
+                {% if product_images.count == 1 %}
+                <img src="{{ product_images.0.image.url }}" class="w-100"/>
+                {% else %}
+                <div id="productCarousel" class="carousel carousel-dark slide" style="margin-left: 120px" data-bs-interval="false" data-bs-ride="carousel">
+                    <div class="carousel-indicators" style="display: block; margin: 0; padding: 0; margin-left: -100px; width: 100px; z-index: 0;">
+                        {% for product_image in product_images %}
+                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" aria-current="true" {% endif %}aria-label="Slide {{ forloop.counter }}">
+                            <img class="d-block w-100" src="{{ product_image.image.url }}">
+                        </button><br/>
+                        {% endfor %}
                     </div>
-                    {% endif %}
+                    <div class="carousel-inner">
+                        {% for product_image in product_images %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ product_image.image.url }}" class="d-block w-100"/>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" style="z-index: 1;" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" style="z-index: 1;" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
                 </div>
-                <div class="col-sm-12 col-md-6">
+                {% endif %}
+                <div>
                     <h2>{{ product.title }}</h2>
-                    <h5>${{ product.retail_price|intword|intcomma }}</h5>
-                    <p>{{ product.description }}</p>
+                    <h5 class="pb-3">${{ product.retail_price|intword|intcomma }}</h5>
                     {% if product.status.name != 'Sold' %}
                     {% if is_seller %}
                     <div class="d-xxl-flex justify-content-xxl-center"><a href="{% url 'products:product-sold' product.id %}" class="btn btn-primary d-xxl-flex vintage-button" type="button">Mark as Sold</a></div>
@@ -61,17 +60,29 @@
                     {% else %}
                         <div><h2>Sold</h2></div>
                     {% endif %}
+                    <div class="pt-3" style="font-size: smaller;">
+                        <p><img src="{% get_static_prefix %}img/clock.svg"><span style="font-weight: bold;"> Estimated Time:</span> 3-4 Weeks</p>
+                        <p><img src="{% get_static_prefix %}img/box-seam.svg"><span style="font-weight: bold;"> Free Shipping:</span> Express front door shipping to the continental US, arrives 21 to 30 days from time of purchase.</p>
+                        <p><img src="{% get_static_prefix %}img/truck.svg"><span style="font-weight: bold;"> Ships From:</span> Boerne, TX</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="product details" class="row">
-            <div class="offset-2 col">
-                <p>Height - {{ product.dimension_height|intword }}</p>
-                <p>Length - {{ product.dimension_length|intword }}</p>
-                <p>Width - {{ product.dimension_width|intword }}</p>
-                <p>Weight - {{ product.dimension_weight|intword }}</p>
-            </div>
+        <div id="product details" class="row grey-background" style="font-size: smaller;">
+            <div class="offset-md-1 col-md-5">
+                <h4>About</h4>
 
+            </div>
+            <div class="col-md-5">
+                <div class="col">
+                    <h4>Details</h4>
+                    <h5>Dimensions</h5>
+                    <p>Height - {{ product.dimension_height|intword }}</p>
+                    <p>Length - {{ product.dimension_length|intword }}</p>
+                    <p>Width - {{ product.dimension_width|intword }}</p>
+                    <p>Weight - {{ product.dimension_weight|intword }}</p>
+                </div>
+            </div>
         </div>
     </section>
 {% endblock %}

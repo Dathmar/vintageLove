@@ -3,8 +3,8 @@
 {% block content %}
     {% include 'category-nav.html' %}
     <section id="hero-section">
-        <div class="row align-items-end">
-            <div class="col-md-6 align-content-center" style="padding-left: 4em; padding-right: 3em;">
+        <div class="d-flex flex-row flex-lg-nowrap flex-wrap">
+            <div class="flex-column order-lg-first order-last align-self-center" style="padding-left: 4em; padding-right: 3em; padding-bottom: 2em; width: 60%;">
                 <h3 class="orange-font">/&nbspGlobal Vintage Love&nbsp/</h3>
                 <h2>Unlock the world of vintage one treasure at a time</h2>
                 <span>
@@ -15,36 +15,43 @@
                 <a href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button blue-font rounded-3">Shop Now</a>
                 <a href="{% url 'store:our-purpose' %}" class="btn btn-primary blue-button rounded-3">Our Purpose</a>
             </div>
-            <div class="col-md-6">
+            <div class="flex-column order-lg-last order-first">
                 <img src="{% get_static_prefix %}img/Hero Image.jpg" width="100%">
             </div>
         </div>
     </section>
+    <section class="text-center blue-background body-padding white-font quote-background" style="font-size: larger; background-image: url('{% get_static_prefix %}img/quote.svg');">
+        <div>I've always loved vintage, now I can find it at a fair <br/>
+             price and have it shipped directly to my house!</div>
+    </section>
     <section class="text-center blue-font body-padding">
-        <h1>Shop by Stage</h1>
+        <h1 class="vintage-font">Shop by Stage</h1>
         <div class="container">
             <div class="row">
                 <div class="col-md-4 col-sm-12 mt-3">
-                    <img src="{% get_static_prefix %}img/as-is.jpg" width="233"><br/>
-                    <span>Wholesale (as-is)</span><br/>
-                    <span style="font-size: smaller;">Fresh finds you can purchase as-is and make your own</span>
+                    <img src="{% get_static_prefix %}img/as-is.jpg" width="233px"><br/>
+                    <span class="vintage-font" style="font-weight: bold; font-size: larger;">Wholesale (as-is)</span><br/>
+                    <span style="font-size: smaller; width: 233px;">Fresh finds you can purchase as-is and make your own</span>
                 </div>
                 <div class="col-md-4 col-sm-12 mt-3">
-                    <img src="{% get_static_prefix %}img/restore.jpg" width="233"><br/>
-                    <span>Restored</span><br/>
-                    <span style="font-size: smaller;">Treasures we have brought back to sustainable glory</span>
+                    <img src="{% get_static_prefix %}img/restore.jpg" width="233px"><br/>
+                    <span class="vintage-font" style="font-weight: bold; font-size: larger;">Restored</span><br/>
+                    <span style="font-size: smaller; width: 233px;">Treasures we have brought back to sustainable glory</span>
                 </div>
                 <div class="col-md-4 col-sm-12 mt-3">
-                    <img src="{% get_static_prefix %}img/repurposed.jpg" width="233"><br/>
-                    <span>Reimagined</span><br/>
-                    <span style="font-size: smaller;">Bringing new life to timeless pieces from our past</span>
+                    <img src="{% get_static_prefix %}img/repurposed.jpg" width="233px"><br/>
+                    <span class="vintage-font" style="font-weight: bold; font-size: larger;">Reimagined</span><br/>
+                    <div style="width: 233px;">
+                        <span style="font-size: smaller;">Bringing new life to timeless pieces from our past</span>
+                    </div>
+
                 </div>
 
             </div>
         </div>
     </section>
     <section class="text-center blue-background white-font body-padding">
-        <h1>Filter by Price</h1>
+        <h1 class="vintage-font">Filter by Price</h1>
         <span class="mt-3">In a world of globalization and fast-paced movement,<br/>
             Global Vintage Love reminds us of a simpler time. We offer a large<br/>
             variety of vintage assets, all from the ease of one platform. Whether<br/>
@@ -66,7 +73,7 @@
         </div>
     </section>
     <div class="text-center">
-        <h1 class="pt-4">Recent Finds</h1>
+        <h1 class="pt-4 vintage-font">Recent Finds</h1>
     </div>
 
     {% include 'product-list-cards.html' %}

@@ -249,6 +249,15 @@ button {
   background-color: #0A486A;
 }
 
+.grey-background {
+  background-color: #f3f3f3;
+}
+
+.quote-background {
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .white-font {
   color: #ffffff;
 }

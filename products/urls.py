@@ -13,4 +13,5 @@ urlpatterns = [
     path('qr/<uuid:product_id>/', views.product_qr, name='product-qr'),
     path('<slug:category_slug>/', views.product_list, name='all-products'),
     path('', views.product_list, name='all-products'),
+    path('qr-grid', views.product_qr_grid, name='qr-grid')
 ]

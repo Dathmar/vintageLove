@@ -20,12 +20,13 @@
 <body style="overflow-x: hidden;">
     <nav class="navbar navbar-light navbar-expand-lg navigation-clean-button">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'store:index' %}">
-                <img src="{% get_static_prefix %}img/logo.png" style="width: 102px;"></a>
-            <a class="navbar-brand text-wrap" href="{% url 'store:index' %}">GLOBAL VINTAGE LOVE</a>
             <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1">
-                <span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span>
+                <span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon" style="color: #ffffff"></span>
             </button>
+            <a class="navbar-brand d-none d-sm-block" href="{% url 'store:index' %}">
+                <img src="{% get_static_prefix %}img/logo.png" style="width: 102px;"></a>
+            <a class="navbar-brand text-wrap vintage-font" href="{% url 'store:index' %}">GLOBAL VINTAGE LOVE</a>
+
             <div class="collapse navbar-collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{% url 'products:all-products' %}">Shop Now</a></li>

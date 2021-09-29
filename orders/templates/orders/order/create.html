@@ -12,81 +12,81 @@
 {% block content %}
     <div class="container">
         <h1>Checkout</h1>
-        <form method="post" class="order-form">
-            {% csrf_token %}
-            <div class="row">
-                <div class="col-6">
-                    <div class="order-area">
+        <div class="row">
+            <div class="col-6">
+                <div class="order-area">
+                    <form method="post" class="order-form">
+                        {% csrf_token %}
                         <table>
                             {{ form.as_table }}
                         </table>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="order-details">
-                        <h3>Your order</h3>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Product</th>
-                                    <th scope="col">Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>{{ product }}</td>
-                                    {% if product.status.name != 'Sold' %}
-                                    <td>${{ product.retail_price }}</td>
-                                    {% else %}
-                                    <td>No longer available</td>
-                                    {% endif %}
-                                </tr>
-                                <tr>
-                                    <th scope="row"></th>
-                                    <td><strong>Shipping</strong></td>
-                                    <td id="shipping_amount">${{ shipping_amount }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"></th>
-                                    <td><strong id="tax_percent">Tax @ 0%</strong></td>
-                                    <td id="tax_amount">$0.00</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row"></th>
-                                    <td><strong>Total</strong></td>
-                                    {% if product.status.name != 'Sold' %}
-                                    <td id="order_cost">${{ product.retail_price }}</td>
-                                    {% else %}
-                                    <td id="order_cost">Not Available</td>
-                                    {% endif %}
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            {% if product.status.name != 'Sold' %}
-            {% if payment_errors %}
-            <div>
-                {% for error in payment_errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-            <div class="row" id="card-container">
-                <div class="col">
-                    <div class="row">
-                        <div id="form-container">
-                            <div id="sq-card"></div>
+                        {% if product.status.name != 'Sold' %}
+                        {% if payment_errors %}
+                        <div>
+                            {% for error in payment_errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
                         </div>
-                    </div>
+                        {% endif %}
+                        <div class="row" id="card-container">
+                            <div class="col">
+                                <div class="row">
+                                    <div id="form-container">
+                                        <div id="sq-card"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input style="margin-top: 1em" type="submit" value="Place Order" onclick="onGetCardNonce(event)">
+                        {% endif %}
+                    </form>
                 </div>
             </div>
-            <input style="margin-top: 1em" type="submit" value="Place Order" onclick="onGetCardNonce(event)">
-            {% endif %}
-        </form>
+            <div class="col-6">
+                <div class="order-details">
+                    <h3>Your order</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>{{ product }}</td>
+                                {% if product.status.name != 'Sold' %}
+                                <td>${{ product.retail_price }}</td>
+                                {% else %}
+                                <td>No longer available</td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <th scope="row"></th>
+                                <td><strong>Shipping</strong></td>
+                                <td id="shipping_amount">${{ shipping_amount }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"></th>
+                                <td><strong id="tax_percent">Tax @ 0%</strong></td>
+                                <td id="tax_amount">$0.00</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"></th>
+                                <td><strong>Total</strong></td>
+                                {% if product.status.name != 'Sold' %}
+                                <td id="order_cost">${{ product.retail_price }}</td>
+                                {% else %}
+                                <td id="order_cost">Not Available</td>
+                                {% endif %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="{% get_static_prefix %}js/paymentForm.js"></script>
 
