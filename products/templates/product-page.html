@@ -53,9 +53,9 @@
                     <h5 class="pb-3">${{ product.retail_price|intword|intcomma }}</h5>
                     {% if product.status.name != 'Sold' %}
                     {% if is_seller %}
-                    <div class="d-xxl-flex justify-content-xxl-center"><a href="{% url 'products:product-sold' product.id %}" class="btn btn-primary d-xxl-flex vintage-button" type="button">Mark as Sold</a></div>
+                    <div><a href="{% url 'products:product-sold' product.id %}" class="btn btn-primary vintage-button rounded-3" type="button">Mark as Sold</a></div>
                     {% else %}
-                    <div class="d-xxl-flex justify-content-xxl-center"><a href="{% url 'orders:order_create' product.id %}" class="btn btn-primary d-xxl-flex vintage-button" type="button">Order Now</a></div>
+                    <div><a href="{% url 'orders:order_create' product.id %}" class="btn btn-primary vintage-button rounded-3" type="button">Order Now</a></div>
                     {% endif %}
                     {% else %}
                         <div><h2>Sold</h2></div>
@@ -70,17 +70,25 @@
         </div>
         <div id="product details" class="row grey-background" style="font-size: smaller;">
             <div class="offset-md-1 col-md-5">
-                <h4>About</h4>
-
+                <div class="row">
+                    <h4>About</h4>
+                </div>
+                <div class="row">
+                    {{ product.description }}
+                </div>
             </div>
             <div class="col-md-5">
                 <div class="col">
-                    <h4>Details</h4>
-                    <h5>Dimensions</h5>
-                    <p>Height - {{ product.dimension_height|intword }}</p>
-                    <p>Length - {{ product.dimension_length|intword }}</p>
-                    <p>Width - {{ product.dimension_width|intword }}</p>
-                    <p>Weight - {{ product.dimension_weight|intword }}</p>
+                    <div class="row">
+                        <h4>Details</h4>
+                    </div>
+                    <div class="row">
+                        <h5>Dimensions</h5>
+                        <p>Height: {{ product.dimension_height|intword }}in.</p>
+                        <p>Length: {{ product.dimension_length|intword }}in.</p>
+                        <p>Width: {{ product.dimension_width|intword }}in.</p>
+                        <p>Weight: {{ product.dimension_weight|intword }}in.</p>
+                    </div>
                 </div>
             </div>
         </div>

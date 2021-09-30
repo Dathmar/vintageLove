@@ -7,9 +7,12 @@ from .forms import OrderCreateForm
 from products.models import Product, ProductStatus
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse, HttpResponseNotAllowed
-from square.client import Client
+
 from datetime import datetime
 from decimal import Decimal
+
+from square.client import Client
+import mailchimp_marketing
 
 
 # Create your views here.
@@ -41,6 +44,7 @@ def order_create(request, product_id):
                     order_item.update_datetime = datetime.now()
                     order_item.save()
 
+                    # send notification e-mails
                     return render(request, 'orders/order/created.html', {'order': order})
             else:
                 form = OrderCreateForm()
@@ -54,7 +58,7 @@ def order_create(request, product_id):
         'form': form,
         'product_id': product_id,
         'product': order_item,
-        'shipping_amount': round(Decimal(order_item.retail_price * Decimal(.1)), 2),
+        'shipping_amount': '0.00',
         'square_js_url': settings.SQUARE_JS_URL,
         'payment_errors': payment_result,
         'key': request.session['idempotency_key'],
@@ -64,7 +68,7 @@ def order_create(request, product_id):
 
 def get_order_cost_info(state, cost):
     tax_value = get_tax(state)
-    shipping_amount = Decimal(cost * Decimal(.1))
+    shipping_amount = 0
 
     total_tax = round(Decimal((cost + shipping_amount) * Decimal(tax_value / Decimal(100))), 2)
     price_with_tax = round(Decimal(cost + shipping_amount + total_tax), 2)
