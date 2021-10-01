@@ -87,8 +87,7 @@ def product_qr_grid(request):
 
 
 def product_list(request, category_slug=None):
-    product_lst = Product.objects.filter(status__name='Available',
-                                         productimage__sequence=1)
+    product_lst = Product.objects.filter(status__name='Available').order_by('-create_datetime')
 
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
@@ -110,40 +109,20 @@ def product_list(request, category_slug=None):
         product_lst = product_lst.filter(retail_price__lte=price_max)
 
     attributes = product_lst.values('attributes')
-
-    product_lst_values = product_lst.values('id', 'title', 'description', 'retail_price', 'productimage__image',
-                                            'productimage__image_height', 'productimage__image_width')
-
-    prices = product_lst.aggregate(Min('retail_price')).update(product_lst.aggregate(Max('retail_price')))
-
-    products = make_pages(request, product_lst_values, 12)
-
-    context = {
-        'priceMin': price_min,
-        'priceMax': price_max,
-        'prices': prices,
-        'products': products,
-        'attributes': get_attribute_list(attributes),
-    }
-
-    return render(request, 'product-list.html', context)
-
-
-def product_list_update(request, category_slug=None):
-    product_lst = Product.objects.filter(status__name='Available').order_by('-create_datetime')
-
-    if category_slug:
-        category = get_object_or_404(Category, slug=category_slug)
-        product_lst = product_lst.filter(category=category)
-
-    attributes = product_lst.values('attributes')
     prices = product_lst.aggregate(Min('retail_price')).update(product_lst.aggregate(Max('retail_price')))
 
     product_pages = make_pages(request, product_lst.values('id'), 12)
-    product_images = ProductImage.objects.filter(product_id__in=list(x['id'] for x in product_pages.object_list))
 
-    products = product_images.values('product__id', 'product__title', 'product__description',
-                                     'product__retail_price', 'image')
+
+    products = product_pages.object_list.values('id', 'title', 'retail_price')
+
+    for product in products:
+        images = []
+        product_images = ProductImage.objects.filter(product__id=product['id'])
+        for product_image in product_images:
+            images.append(product_image)
+
+        product.update({'images': images,})
 
     context = {
         'prices': prices,

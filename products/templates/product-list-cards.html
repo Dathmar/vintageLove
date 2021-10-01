@@ -1,19 +1,33 @@
-
+{% load static %}
 {% load humanize %}
     <section class="product-section body-padding">
         <div class="container">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4">
                 {% for product in products %}
                     <a class="custom-card" href="{% url 'products:product' product.id %}">
-                        <div class="col">
-                            <div class="card product-card h-100" style="width: 18rem;">
-                                <div class="text-center card-img-top" style="height: 17rem; width: auto; margin-top: 0.5rem;">
-                                    <img style="height: 17rem; width: {% if product.productimage__image_width < product.productimage__image_height %}{% widthratio product.productimage__image_width product.productimage__image_height 17 %}{% else %}{% widthratio product.productimage__image_height product.productimage__image_width 17 %}{% endif %}rem;" src="/media/{{ product.productimage__image }}" alt="Card image cap">
+                        <div class="card product-card h-100" style="width: 18rem;">
+                            <div class="text-center card-img-top" style="height: 10rem; width: auto; margin-top: 0.5rem;">
+                                <div id="productCarousel-{{ product.id }}" class="carousel carousel-dark slide" data-bs-interval="false" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        {% for image in product.images %}
+                                        <div class="carousel-item {% if forloop.first %}active{% endif %} w-100">
+                                            <img style="margin: auto; height: 10rem; width: {% if image.image.image_width < image.image.image_height %}{% widthratio image.image.image_width image.image.image_height 17 %}{% else %}{% widthratio image.image.image_height image.image.image_width 17 %}{% endif %}rem;" src="{{ image.image.url }}" class="d-block"/>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel-{{ product.id }}" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#productCarousel-{{ product.id }}" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
                                 </div>
-                                <div class="card-body">
-                                    <p class="card-title" style="height: 4em; font-weight: bold;">{{ product.title }}</p>
-                                    <p style="margin-bottom: 1rem" class="card-text">${{ product.retail_price|intword|intcomma }}</p>
-                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-title" style="height: 3em; font-weight: bold;">{{ product.title }}</p>
+                                <p style="margin-bottom: 1rem" class="card-text">${{ product.retail_price|intword|intcomma }}</p>
                             </div>
                         </div>
                     </a>
@@ -21,12 +35,13 @@
             </div>
         </div>
     </section>
+
     <nav aria-label="Pagination Navigation">
-    {% if products.has_other_pages %}
+    {% if product_pages.has_other_pages %}
         <ul class="pagination justify-content-center">
-            {% if products.has_previous %}
+            {% if product_pages.has_previous %}
               <li class="page-item">
-                  <a class="page-link" href="?page={{ products.previous_page_number }}">Previous</a>
+                  <a class="page-link" href="?page={{ product_pages.previous_page_number }}">Previous</a>
               </li>
             {% else %}
               <li class="page-item disabled">
@@ -34,16 +49,16 @@
               </li>
             {% endif %}
 
-            {% for i in products.paginator.page_range %}
-                  {% if products.number == i %}
+            {% for i in product_pages.paginator.page_range %}
+                  {% if product_pages.number == i %}
                         <li class="page-item active"><span class="page-link">{{ i }}</span></li>
                   {% else %}
                         <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                   {% endif %}
             {% endfor %}
 
-            {% if products.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}">Next</a></li>
+            {% if product_pages.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ product_pages.next_page_number }}">Next</a></li>
             {% else %}
                 <li class="page-item disabled"><span class="page-link">Next</span></li>
             {% endif %}
