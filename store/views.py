@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from products.models import Category, Product
+from products.models import Category, Product, ProductImage
 
 
 # Create your views here.
@@ -10,8 +10,15 @@ def index(request):
                                          productimage__sequence=1).order_by("-create_datetime")
     product_lst = product_lst[:12]
 
-    products = product_lst.values('id', 'title', 'description', 'retail_price', 'productimage__image',
-                                  'productimage__image_height', 'productimage__image_width')
+    products = product_lst.values('id', 'title', 'retail_price')
+
+    for product in products:
+        images = []
+        product_images = ProductImage.objects.filter(product__id=product['id'])
+        for product_image in product_images:
+            images.append(product_image)
+
+        product.update({'images': images, })
 
     context = {
         'categories':  categories,

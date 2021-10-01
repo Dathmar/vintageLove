@@ -113,7 +113,6 @@ def product_list(request, category_slug=None):
 
     product_pages = make_pages(request, product_lst.values('id'), 12)
 
-
     products = product_pages.object_list.values('id', 'title', 'retail_price')
 
     for product in products:
