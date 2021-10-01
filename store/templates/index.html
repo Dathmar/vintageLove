@@ -31,19 +31,25 @@
                 <div class="col-md-4 col-sm-12 mt-3">
                     <img src="{% get_static_prefix %}img/as-is.jpg" width="233px"><br/>
                     <span class="vintage-font" style="font-weight: bold; font-size: larger;">Wholesale (as-is)</span><br/>
-                    <span style="font-size: smaller; width: 233px;">Fresh finds you can purchase as-is and make your own</span>
+                    <div style="width: 233px; margin: auto;">
+                        <span style="font-size: smaller;">Fresh finds you can purchase as-is and make your own</span>
+                    </div>
                 </div>
                 <div class="col-md-4 col-sm-12 mt-3">
                     <img src="{% get_static_prefix %}img/restore.jpg" width="233px"><br/>
                     <span class="vintage-font" style="font-weight: bold; font-size: larger;">Restored</span><br/>
-                    <span style="font-size: smaller; width: 233px;">Treasures we have brought back to sustainable glory</span>
+                    <div style="width: 233px; margin: auto;">
+                        <span style="font-size: smaller;">Treasures we have brought back to sustainable glory</span>
+                    </div>
                 </div>
                 <div class="col-md-4 col-sm-12 mt-3">
                     <img src="{% get_static_prefix %}img/repurposed.jpg" width="233px"><br/>
                     <span class="vintage-font" style="font-weight: bold; font-size: larger;">Reimagined</span><br/>
-                    <div style="width: 233px;">
+
+                    <div style="width: 233px; margin: auto;">
                         <span style="font-size: smaller;">Bringing new life to timeless pieces from our past</span>
                     </div>
+
 
                 </div>
 
@@ -59,16 +65,16 @@
             Vintage Love is here for you.</span>
         <div class="row mt-4">
             <div class="col-lg-3 col-sm-6 col-xs-12 mt-3">
-                <a style="width: 11rem; font-size: smaller;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">$500 or less</a>
+                <a style="width: 11rem; font-size: smaller;" href="{% url 'products:all-products' %}?priceMin=0&priceMax=500" class="btn btn-primary vintage-button white-font rounded-3">$500 or less</a>
             </div>
             <div class="col-lg-3 col-sm-6 col-xs-12 mt-3">
-                <a style="width: 11rem; font-size: smaller;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">$1,000 or less</a>
+                <a style="width: 11rem; font-size: smaller;" href="{% url 'products:all-products' %}?priceMin=0&priceMax=1000" class="btn btn-primary vintage-button white-font rounded-3">$1,000 or less</a>
             </div>
             <div class="col-lg-3 col-sm-6 col-xs-12 mt-3">
-                <a style="width: 11rem; font-size: smaller;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">$2,000 or less</a>
+                <a style="width: 11rem; font-size: smaller;" href="{% url 'products:all-products' %}?priceMin=0&priceMax=2000" class="btn btn-primary vintage-button white-font rounded-3">$2,000 or less</a>
             </div>
             <div class="col-lg-3 col-sm-6 col-xs-12 mt-3">
-                <a style="width: 11rem; font-size: smaller;" href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button white-font rounded-3">$2,000 or more</a>
+                <a style="width: 11rem; font-size: smaller;" href="{% url 'products:all-products' %}?priceMin=2000" class="btn btn-primary vintage-button white-font rounded-3">$2,000 or more</a>
             </div>
         </div>
     </section>

@@ -11,7 +11,7 @@
                                     <img style="height: 17rem; width: {% if product.productimage__image_width < product.productimage__image_height %}{% widthratio product.productimage__image_width product.productimage__image_height 17 %}{% else %}{% widthratio product.productimage__image_height product.productimage__image_width 17 %}{% endif %}rem;" src="/media/{{ product.productimage__image }}" alt="Card image cap">
                                 </div>
                                 <div class="card-body">
-                                    <p class="card-title" style="height: 3em; font-weight: bold;">{{ product.title }}</p>
+                                    <p class="card-title" style="height: 4em; font-weight: bold;">{{ product.title }}</p>
                                     <p style="margin-bottom: 1rem" class="card-text">${{ product.retail_price|intword|intcomma }}</p>
                                 </div>
                             </div>

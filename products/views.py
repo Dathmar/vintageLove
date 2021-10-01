@@ -86,8 +86,6 @@ def product_qr_grid(request):
     return render(request, 'product-qr-grid.html', context)
 
 
-
-
 def product_list(request, category_slug=None):
     product_lst = Product.objects.filter(status__name='Available',
                                          productimage__sequence=1)
@@ -95,6 +93,21 @@ def product_list(request, category_slug=None):
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         product_lst = product_lst.filter(category=category)
+
+    price_min = request.GET.get('priceMin')
+    price_max = request.GET.get('priceMax')
+
+    if price_min and price_max:
+        if price_min > price_max:
+            tmp = price_max
+            price_max = price_min
+            price_min = tmp
+
+        product_lst = product_lst.filter(retail_price__range=(price_min, price_max))
+    elif price_min:
+        product_lst = product_lst.filter(retail_price__gte=price_min)
+    elif price_max:
+        product_lst = product_lst.filter(retail_price__lte=price_max)
 
     attributes = product_lst.values('attributes')
 
@@ -106,6 +119,8 @@ def product_list(request, category_slug=None):
     products = make_pages(request, product_lst_values, 12)
 
     context = {
+        'priceMin': price_min,
+        'priceMax': price_max,
         'prices': prices,
         'products': products,
         'attributes': get_attribute_list(attributes),
