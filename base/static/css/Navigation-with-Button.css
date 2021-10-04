@@ -314,3 +314,9 @@ a.custom-card:hover {
   text-decoration: none !important;
   color: inherit !important;
 }
+
+@media (min-width: 992px) {
+  .w-lg-60 {
+    width: 60%;
+  }
+}

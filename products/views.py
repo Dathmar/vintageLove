@@ -17,7 +17,6 @@ def product_slug(request, product_slug):
     context = get_product_context(request, product_slug)
 
     similar_products = Product.objects.filter(category=item.category).exclude(id=item.id)[:5]
-
     context.update({'similar_products': similar_products})
 
     return render(request, 'product-page.html', context)
