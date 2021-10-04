@@ -117,11 +117,11 @@ def product_list(request, category_slug=None):
 
     for product in products:
         images = []
-        product_images = ProductImage.objects.filter(product__id=product['id'])
+        product_images = ProductImage.objects.filter(product__id=product['id']).order_by('sequence')
         for product_image in product_images:
             images.append(product_image)
 
-        product.update({'images': images,})
+        product.update({'images': images, })
 
     context = {
         'prices': prices,
