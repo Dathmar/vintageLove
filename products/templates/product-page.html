@@ -21,9 +21,11 @@
         <div class="container">
             <div class="d-flex flex-wrap flex-lg-nowrap">
                 {% if product_images.count == 1 %}
-                <img src="{{ product_images.0.image.url }}" class="w-100"/>
+                <div style="width: 100%">
+                <img src="{{ product_images.0.image.url }}" style="margin: auto; height: 50rem; width: {% if image.image.image_width < image.image.image_height %}{% widthratio image.image.image_width image.image.image_height 50 %}{% else %}{% widthratio image.image.image_height image.image.image_width 50 %}{% endif %}rem;"/>
+                </div>
                 {% else %}
-                <div id="productCarousel" class="carousel carousel-dark slide" style="margin-left: 120px" data-bs-interval="false" data-bs-ride="carousel">
+                <div id="productCarousel" class="carousel carousel-dark slide lazy" style="margin-left: 120px" data-bs-interval="false" data-bs-ride="carousel">
                     <div class="carousel-indicators" style="display: block; margin: 0; padding: 0; margin-left: -100px; width: 100px; z-index: 0;">
                         {% for product_image in product_images %}
                         <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" aria-current="true" {% endif %}aria-label="Slide {{ forloop.counter }}">
@@ -34,7 +36,7 @@
                     <div class="carousel-inner">
                         {% for product_image in product_images %}
                         <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <img src="{{ product_image.image.url }}" class="d-block w-100"/>
+                            <img src="{{ product_image.image.url }}" class="d-block" style="margin: auto; height: 25rem; width: {% if image.image.image_width < image.image.image_height %}{% widthratio image.image.image_width image.image.image_height 25 %}{% else %}{% widthratio image.image.image_height image.image.image_width 25 %}{% endif %}rem;"/>
                         </div>
                         {% endfor %}
                     </div>
