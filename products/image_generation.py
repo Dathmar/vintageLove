@@ -1,6 +1,10 @@
 from pathlib import Path
 import os
+import sys
+
+sys.path.append(Path(__file__).resolve().parent.parent)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vintageLove.settings")
+
 
 import django
 django.setup()
