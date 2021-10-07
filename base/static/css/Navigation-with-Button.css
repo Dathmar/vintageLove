@@ -325,4 +325,8 @@ a.custom-card:hover {
   .w-md-50 {
     width: 50%;
   }
+  .ms-md-120 {
+    margin-left: 120px;
+  }
 }
+

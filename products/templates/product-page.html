@@ -25,8 +25,8 @@
                 <img src="{{ product_images.0.image.url }}" style="margin: auto; height: 50rem; width: {% if image.image.image_width < image.image.image_height %}{% widthratio image.image.image_width image.image.image_height 50 %}{% else %}{% widthratio image.image.image_height image.image.image_width 50 %}{% endif %}rem;"/>
                 </div>
                 {% else %}
-                <div id="productCarousel" class="carousel carousel-dark slide lazy" style="margin-left: 120px" data-bs-interval="false" data-bs-ride="carousel">
-                    <div class="carousel-indicators" style="display: block; margin: 0; padding: 0; margin-left: -100px; width: 100px; z-index: 0;">
+                <div id="productCarousel" class="carousel carousel-dark slide lazy ms-md-120" data-bs-interval="false" data-bs-ride="carousel">
+                    <div class="carousel-indicators d-none d-md-inline" style="display: block; margin: 0; padding: 0; margin-left: -100px; width: 100px; z-index: 0;">
                         {% for product_image in product_images %}
                             {% if forloop.counter0 < 5 %}
                         <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" aria-current="true" {% endif %}aria-label="Slide {{ forloop.counter }}">
@@ -74,10 +74,10 @@
                 </div>
             </div>
         </div>
-        <div id="product details" class="row grey-background" style="font-size: smaller;">
+        <div id="product details" class="row grey-background" style="font-size: smaller; padding-top: 3em; padding-bottom: 3em;">
             <div class="offset-md-1 col-md-5">
                 <div class="row">
-                    <h4>About</h4>
+                    <h4 style="font-weight: bold;">About</h4>
                 </div>
                 <div class="row">
                     {{ product.description }}
@@ -86,14 +86,24 @@
             <div class="col-md-5">
                 <div class="col">
                     <div class="row">
-                        <h4>Details</h4>
+                        <h4 style="font-weight: bold;">Details</h4>
                     </div>
                     <div class="row">
-                        <h5>Dimensions</h5>
-                        <p>Height: {{ product.dimension_height|intword }}in.</p>
-                        <p>Length: {{ product.dimension_length|intword }}in.</p>
-                        <p>Width: {{ product.dimension_width|intword }}in.</p>
-                        <p>Weight: {{ product.dimension_weight|intword }}in.</p>
+                        <div class="col-4">
+                            <h5>Dimensions</h5>
+                            <p>Height: {{ product.dimension_height|intword }} in.</p>
+                            <p>Length: {{ product.dimension_length|intword }} in.</p>
+                            <p>Width: {{ product.dimension_width|intword }} in.</p>
+                            <p>Weight: {{ product.dimension_weight|intword }} in.</p>
+                        </div>
+                        <div class="col-4">
+                            {% for attribute, attr_values in product.attributes.items %}
+                                <h5>{{ attribute|title }}</h5>
+                                {% for value in attr_values %}
+                                    <p>{{ value|title }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
