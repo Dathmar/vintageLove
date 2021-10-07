@@ -1,6 +1,12 @@
-from PIL import Image
-import sys
+from pathlib import Path
 import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vintageLove.settings")
+
+import django
+django.setup()
+
+from products.models import ProductImage
+from PIL import Image
 
 
 def gen_resize(infile, max_size):
@@ -23,12 +29,16 @@ def get_new_image_size(max_size, image_size):
 
 
 if __name__ == "__main__":
-    check_dir = r'C:\Users\ADANNER\PycharmProjects\vintageLove\media\product_images'
 
-    for infile in os.listdir(check_dir):
-        if infile.endswith(".png"):
-            new_img = gen_resize(os.path.join(check_dir, infile), (128, 128))
-            filename = os.path.splitext(infile)[0]
-            print(os.path.join(check_dir, filename + '.png'))
+    for pImage in ProductImage.objects.all():
+        media_dir = Path(__file__).resolve().parent.parent
+        image_location = str(media_dir).replace('\\', '/') + repr(pImage)
+        print(image_location)
+        img = Image.open(image_location)
+        new_img = gen_resize(image_location, (500, 400))
 
-            new_img.save(os.path.join(check_dir, 'test', filename + '.png'), 'PNG')
+        new_img.save(image_location, img.format)
+
+        pImage.image_height = new_img.height
+        pImage.image_width = new_img.width
+        pImage.save()

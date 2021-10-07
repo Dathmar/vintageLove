@@ -6,6 +6,10 @@ from .models import Product, ProductImage, Seller, Category, ProductStatus, User
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
 
+@admin.register(ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    list_display = ['image', 'image_width', 'image_height']
+
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -29,7 +33,6 @@ class UserSellerAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
-
 
 admin.site.register(ProductStatus)
 admin.site.register(Seller)

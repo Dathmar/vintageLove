@@ -58,8 +58,8 @@ class UserSeller(models.Model):
 
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=30)
-    slug = models.SlugField(unique=True, default=slugify(title))
+    title = models.CharField(max_length=4000)
+    slug = models.SlugField(max_length=4000, unique=True, null=False)
     description = models.CharField(max_length=8000)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, default=1)
@@ -82,11 +82,12 @@ class Product(models.Model):
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
     def save(self):
-        self.slug = slugify(self.title)
-        slug_count = Product.objects.filter(slug=self.slug).count() + 1
+        if not self.slug:
+            self.slug = slugify(self.title)
+            slug_count = Product.objects.filter(slug=self.slug).count() + 1
 
-        if slug_count != 1:
-            self.slug = f'{self.slug}-{slug_count}'
+            if slug_count != 1:
+                self.slug = f'{self.slug}-{slug_count}'
 
         if not Product.objects.filter(id=self.id).exists():
             super(Product, self).save()
@@ -115,4 +116,7 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return 'product ' + self.product.title + ' - image ' + str(self.sequence)
+
+    def __repr__(self):
+        return self.image.url
 
