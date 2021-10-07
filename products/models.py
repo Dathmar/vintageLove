@@ -1,8 +1,9 @@
 from django.db import models
-from .qr_generation import generate_qr_code
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 import uuid
+
+from .qr_generation import generate_qr_code
 
 
 class ProductStatus(models.Model):
@@ -56,10 +57,21 @@ class UserSeller(models.Model):
         return f'User {self.user.first_name} {self.user.last_name} -- Seller {self.seller.name}'
 
 
+def unique_product_slug(instance, title):
+    model = instance.__class__
+    slug = slugify(title)
+    slug_count = model.objects.filter(slug=slug).count() + 1
+
+    if slug_count != 1:
+        slug = f'{slug}-{slug_count}'
+
+    return slug
+
+
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=30)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, default=slugify(title))
     description = models.CharField(max_length=8000)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, default=1)
@@ -83,11 +95,7 @@ class Product(models.Model):
 
     def save(self):
         if not Product.objects.filter(id=self.id).exists():
-            self.slug = slugify(self.title)
-            slug_count = Product.objects.filter(slug=self.slug).count() + 1
-
-            if slug_count != 1:
-                self.slug = f'{self.slug}-{slug_count}'
+            self.slug = unique_product_slug(self, self.title)
 
             super(Product, self).save()
             generate_qr_code('https://www.localvintagestore.com/products/' + str(self.id),
@@ -98,17 +106,29 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    def __repr__(self):
+        return str(self.id)
+
     class Meta:
         ordering = ['create_datetime']
 
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='product_images', height_field='image_height', width_field='image_width')
+    image = models.ImageField(upload_to='product_images\\' + repr(product), height_field='image_height',
+                              width_field='image_width')
     sequence = models.IntegerField()
 
     image_height = models.IntegerField(blank=True, null=True)
     image_width = models.IntegerField(blank=True, null=True)
+
+    rendering_size = [
+        (1, 'full'),
+        (2, 'thumb'),
+        (3, 'mid')
+    ]
+
+    rendering = models.CharField(max_length=2, choices=rendering_size, default=1)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
@@ -116,3 +136,10 @@ class ProductImage(models.Model):
     def __str__(self):
         return 'product ' + self.product.title + ' - image ' + str(self.sequence)
 
+    def save(self):
+        if self.rendering == 1:
+
+            thumb = ProductImage(product=self.product,
+                                 )
+
+        super(ProductImage, self).save()

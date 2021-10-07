@@ -12,8 +12,8 @@
 {% block content %}
     <div class="container">
         <h1>Checkout</h1>
-        <div class="row">
-            <div class="col-6">
+        <div class="d-flex flex-row flex-md-nowrap flex-wrap">
+            <div class="flex-column order-md-first order-last align-self-start w-md-50">
                 <div class="order-area">
                     <form method="post" class="order-form">
                         {% csrf_token %}
@@ -42,7 +42,7 @@
                     </form>
                 </div>
             </div>
-            <div class="col-6">
+            <div class="flex-column order-md-last order-first align-self-start w-md-50 ms-3">
                 <div class="order-details">
                     <h3>Your order</h3>
                     <table class="table">
