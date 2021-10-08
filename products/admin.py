@@ -1,10 +1,15 @@
 from django.contrib import admin
-from .models import Product, ProductImage, Seller, Category, ProductStatus, UserSeller
+from .models import Product, ProductImage, Seller, Category, ProductStatus, UserSeller, ProductCategory
 
 
 # Register your models here.
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
+
+
+class ProductCategoryInline(admin.TabularInline):
+    model = ProductCategory
+
 
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
@@ -20,10 +25,9 @@ class ProductAdmin(admin.ModelAdmin):
     exclude = ['slug']
 
     inlines = [
+        ProductCategoryInline,
         ProductImageInline,
     ]
-
-
 
 @admin.register(UserSeller)
 class UserSellerAdmin(admin.ModelAdmin):

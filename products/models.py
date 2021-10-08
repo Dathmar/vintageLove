@@ -103,6 +103,20 @@ class Product(models.Model):
         ordering = ['create_datetime']
 
 
+class ProductCategory(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    create_datetime = models.DateTimeField('date created', auto_now_add=True)
+    update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+    def __str__(self):
+        return f'{self.product.title} - {self.category.name}'
+
+    class Meta:
+        ordering = ['id']
+
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='product_images', height_field='image_height', width_field='image_width')
