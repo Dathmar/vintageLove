@@ -38,8 +38,8 @@
                     <div class="carousel-inner">
                         {% for product_image in product_images %}
                             {% if forloop.counter0 < 5 %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <img src="{{ product_image.image.url }}" class="d-block" style="margin: auto; height: 25rem; width: {% if image.image.image_width < image.image.image_height %}{% widthratio image.image.image_width image.image.image_height 25 %}{% else %}{% widthratio image.image.image_height image.image.image_width 25 %}{% endif %}rem;"/>
+                        <div class="carousel-item img-xs img-sm {% if forloop.first %}active{% endif %}">
+                            <img src="{{ product_image.image.url }}" class="d-block img-fit" />
                         </div>
                             {% endif %}
                         {% endfor %}

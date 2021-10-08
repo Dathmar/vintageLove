@@ -2,25 +2,26 @@
 {% load static %}
 {% block content %}
     {% include 'category-nav.html' %}
-    <section id="hero-section">
-        <div class="d-flex flex-row flex-lg-nowrap flex-wrap">
-            <div class="flex-column order-lg-first order-last align-self-center w-lg-60" style="padding-left: 4em; padding-right: 3em; padding-bottom: 3em; padding-top: 3em;">
-                <h3 class="orange-font mb-4" style="font-size: larger">/&nbspGlobal Vintage Love&nbsp/</h3>
-                <h2 class="mb-4">Unlocking the world of vintage one treasure at a time</h2>
-                <span class="mb-4">
-                    <p>In a world of globalization and fast-paced movement, Global Vintage Love reminds us of a simpler time.
-                    We offer a large variety of vintage assets, all from the ease of one platform.</p>
-                    <p>Whether updating one room, or revamping rooms in your entire home, Global Vintage Love is here for you.</p>
-                </span>
-                <div class="mt-4">
-                    <a href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button blue-font rounded-3 mt-3" style="width: 11em;">Shop Now</a>
-                    <a href="{% url 'store:our-purpose' %}" class="btn btn-primary blue-button rounded-3 mt-3" style="width: 11em;">Our Purpose</a>
+    <section id="hero-section-new">
+            <div class="row" style="margin-left: 0; margin-right: 0;">
+                <div class="col-12 d-block d-lg-none" style="height: 538px; background-image: url('{% get_static_prefix %}img/Hero Image.jpg'); background-size: cover; background-position: center;">
+                </div>
+                <div class="offset-1 col-10 col-lg-5 pb-4 ps-3 pe-3 mt-4">
+                    <h3 class="orange-font mb-4" style="font-size: larger">/&nbspGlobal Vintage Love&nbsp/</h3>
+                    <h2 class="mb-4">Unlocking the world of vintage one treasure at a time</h2>
+                    <span class="mb-4">
+                        <p>In a world of globalization and fast-paced movement, Global Vintage Love reminds us of a simpler time.
+                        We offer a large variety of vintage assets, all from the ease of one platform.</p>
+                        <p>Whether updating one room, or revamping rooms in your entire home, Global Vintage Love is here for you.</p>
+                    </span>
+                    <div class="mt-4">
+                        <a href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button blue-font rounded-3 mt-3" style="width: 11em;">Shop Now</a>
+                        <a href="{% url 'store:our-purpose' %}" class="btn btn-primary blue-button rounded-3 mt-3" style="width: 11em;">Our Purpose</a>
+                    </div>
+                </div>
+                <div class="offset-lg-1 col-lg-5 d-none d-lg-block" style="height: 610px; background-image: url('{% get_static_prefix %}img/Hero Image.jpg'); background-size: cover; background-position: center;">
                 </div>
             </div>
-            <div class="flex-column order-lg-last order-first">
-                <img src="{% get_static_prefix %}img/Hero Image.jpg" height="100%">
-            </div>
-        </div>
     </section>
     <section class="text-center blue-background body-padding white-font quote-background" style="font-size: larger; background-image: url('{% get_static_prefix %}img/quote.svg');">
         <div>I've always loved vintage, now I can find it at a fair <br/>

@@ -5,11 +5,11 @@
 }
 
 .carousel-control-prev {
-  margin-left: -12%;
+  margin-left: -11%;
 }
 
 .carousel-control-next {
-  margin-right: -12%;
+  margin-right: -11%;
 }
 
 .carousel-indicators {
@@ -27,4 +27,25 @@
 
 .carousel-indicators [data-bs-target] {
   width: 70px !important;
+}
+
+.img-fit {
+  margin: auto;
+  object-fit: contain;
+  height: 100%;
+  width: 100%;
+}
+
+@media (min-width: 320px) {
+  .img-xs {
+    height: 300px;
+    width: 300px;
+  }
+}
+
+@media (min-width: 720px) {
+  .img-sm {
+    height: 25rem;
+    width: 25rem;
+  }
 }
