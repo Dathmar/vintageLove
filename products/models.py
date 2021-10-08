@@ -62,7 +62,6 @@ class Product(models.Model):
     slug = models.SlugField(max_length=4000, unique=True, null=False)
     description = models.CharField(max_length=8000)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT)
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, default=1)
 
     dimension_width = models.DecimalField(max_digits=7, decimal_places=2)
     dimension_height = models.DecimalField(max_digits=7, decimal_places=2)
@@ -115,6 +114,8 @@ class ProductCategory(models.Model):
 
     class Meta:
         ordering = ['id']
+        unique_together = [['product', 'category']]
+        verbose_name_plural = 'Product Categories'
 
 
 class ProductImage(models.Model):

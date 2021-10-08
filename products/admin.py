@@ -18,9 +18,9 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['title', 'seller', 'category', 'retail_price', 'status']
-    list_filter = ['seller', 'category']
-    list_editable = ['seller', 'category', 'retail_price', 'status']
+    list_display = ['title', 'seller', 'retail_price', 'status']
+    list_filter = ['seller']
+    list_editable = ['seller', 'retail_price', 'status']
     search_fields = ['title']
     exclude = ['slug']
 
@@ -28,6 +28,7 @@ class ProductAdmin(admin.ModelAdmin):
         ProductCategoryInline,
         ProductImageInline,
     ]
+
 
 @admin.register(UserSeller)
 class UserSellerAdmin(admin.ModelAdmin):
@@ -38,6 +39,8 @@ class UserSellerAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
 
+
+admin.site.register(ProductCategory)
 admin.site.register(ProductStatus)
 admin.site.register(Seller)
 

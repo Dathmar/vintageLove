@@ -16,7 +16,10 @@ def product_slug(request, product_slug):
     item = Product.objects.get(slug=product_slug)
     context = get_product_context(request, product_slug)
 
-    similar_products = Product.objects.filter(category=item.category).exclude(id=item.id)[:5]
+    similar_products = Product.objects.filter(
+        productcategory__category__in=list(x.category for x in item.productcategory_set.all())
+    ).exclude(id=item.id)[:5]
+
     context.update({'similar_products': similar_products})
 
     return render(request, 'product-page.html', context)
@@ -90,7 +93,7 @@ def product_list(request, category_slug=None):
 
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
-        product_lst = product_lst.filter(category=category)
+        product_lst = product_lst.filter(productcategory__category=category)
 
     price_min = request.GET.get('priceMin')
     price_max = request.GET.get('priceMax')
