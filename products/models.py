@@ -75,6 +75,7 @@ class Product(models.Model):
 
     status = models.ForeignKey(ProductStatus, default=1, on_delete=models.PROTECT)
 
+
     attributes = models.JSONField(null=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)

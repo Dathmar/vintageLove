@@ -92,9 +92,9 @@
                         <div class="col-12 col-sm-5">
                             <h5>Dimensions</h5>
                             <p>Height: {{ product.dimension_height|intword }} in.</p>
-                            <p>Length: {{ product.dimension_length|intword }} in.</p>
+                            <p>Depth: {{ product.dimension_length|intword }} in.</p>
                             <p>Width: {{ product.dimension_width|intword }} in.</p>
-                            <p>Weight: {{ product.dimension_weight|intword }} in.</p>
+                            <p>Weight: {{ product.dimension_weight|intword }} lbs.</p>
                         </div>
                         <div class="col-12 col-sm-5">
                             {% for attribute, attr_values in product.attributes.items %}
