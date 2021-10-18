@@ -4,7 +4,7 @@
         <div class="container">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-4">
                 {% for product in products %}
-                    <a class="custom-card" href="{% url 'products:product' product.id %}">
+                    <a class="custom-card" href="{{ product.url }}">
                         <div class="card product-card h-100" style="width: 18rem;">
                             <div class="text-center card-img-top" style="height: 10rem; width: auto; margin-top: 0.5rem;">
                                 <div id="productCarousel-{{ product.id }}" class="carousel carousel-dark slide lazy" data-bs-interval="false" data-bs-ride="carousel">

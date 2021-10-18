@@ -2,6 +2,8 @@ from django.db import models
 from .qr_generation import generate_qr_code
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+from django.shortcuts import reverse
+
 import uuid
 
 
@@ -76,7 +78,6 @@ class Product(models.Model):
 
     status = models.ForeignKey(ProductStatus, default=1, on_delete=models.PROTECT)
 
-
     attributes = models.JSONField(null=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
@@ -99,6 +100,9 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('products:product-slug', kwargs={'product_slug': self.slug})
 
     class Meta:
         ordering = ['create_datetime']
