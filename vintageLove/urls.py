@@ -21,9 +21,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('store.urls', namespace='store')),
-    # path('cart/', include('cart.urls'), namespace='cart'),
     path('products/', include('products.urls', namespace='products')),
-    path('.well-know/acme-challenge/', include('acme.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('orders/', include('orders.urls', namespace='orders'))
+    path('orders/', include('orders.urls', namespace='orders')),
+    path('folders/', include('folders.urls', namespace='folders')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

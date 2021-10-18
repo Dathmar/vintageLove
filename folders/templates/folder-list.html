@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1>Folder List</h1>
+    <ul>
+    {% for folder in folders %}
+        <li><a href="{{ folder.get_absolute_url }}">{{ folder.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}
