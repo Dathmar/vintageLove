@@ -136,6 +136,53 @@ def product_list(request, category_slug=None):
     return render(request, 'product-list.html', context)
 
 
+def product_list_stage(request, stage):
+    product_lst = Product.objects.filter(status__available_to_sell=True).order_by('-create_datetime')
+
+    if stage:
+        product_lst = product_lst.filter(status__name__iexact=stage)
+
+    price_min = request.GET.get('priceMin')
+    price_max = request.GET.get('priceMax')
+
+    if price_min and price_max:
+        if price_min > price_max:
+            tmp = price_max
+            price_max = price_min
+            price_min = tmp
+
+        product_lst = product_lst.filter(retail_price__range=(price_min, price_max))
+    elif price_min:
+        product_lst = product_lst.filter(retail_price__gte=price_min)
+    elif price_max:
+        product_lst = product_lst.filter(retail_price__lte=price_max)
+
+    attributes = product_lst.values('attributes')
+    prices = product_lst.aggregate(Min('retail_price')).update(product_lst.aggregate(Max('retail_price')))
+
+    product_pages = make_pages(request, product_lst.values('id'), 12)
+
+    products = product_pages.object_list.values('id', 'title', 'retail_price', 'slug')
+
+    for product in products:
+        images = []
+        url = reverse('products:product-slug', kwargs={'product_slug': product['slug']})
+        product_images = ProductImage.objects.filter(product__id=product['id']).order_by('sequence')
+        for product_image in product_images:
+            images.append(product_image)
+
+        product.update({'images': images, 'url': url})
+
+    context = {
+        'prices': prices,
+        'product_pages': product_pages,
+        'products': products,
+        'attributes': get_attribute_list(attributes),
+    }
+
+    return render(request, 'product-list.html', context)
+
+
 def make_pages(request, obj_to_page, page_size):
     page = request.GET.get('page', 1)
     paginator = Paginator(obj_to_page, page_size)

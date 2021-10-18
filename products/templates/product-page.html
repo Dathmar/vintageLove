@@ -8,7 +8,7 @@
 
 
 {% block content %}
-    {% include 'similar-products.html' %}
+{#    {% include 'similar-products.html' %}#}
     <section class="product-nav">
         <div class="container">
             <div class="row">
@@ -37,7 +37,7 @@
                     </div>
                     <div class="carousel-inner">
                         {% for product_image in product_images %}
-                            {% if forloop.counter0 < 5 %}
+                            {% if forloop.counter0 < 4 %}
                         <div class="carousel-item img-xs img-sm {% if forloop.first %}active{% endif %}">
                             <img src="{{ product_image.image.url }}" class="d-block img-fit" />
                         </div>
@@ -67,8 +67,8 @@
                         <div><h2>Sold</h2></div>
                     {% endif %}
                     <div class="pt-3" style="font-size: smaller;">
-                        <p><img src="{% get_static_prefix %}img/clock.svg"><span style="font-weight: bold;"> Estimated Time:</span> 3-4 Weeks</p>
-                        <p><img src="{% get_static_prefix %}img/box-seam.svg"><span style="font-weight: bold;"> Free Shipping:</span> Express front door shipping to the continental US, arrives 21 to 30 days from time of purchase.</p>
+                        <p><img src="{% get_static_prefix %}img/clock.svg"><span style="font-weight: bold;"> Estimated Time:</span> 2-3 Weeks</p>
+                        <p><img src="{% get_static_prefix %}img/box-seam.svg"><span style="font-weight: bold;"> Free Shipping:</span> Express front door shipping to the continental US, arrives 14 to 21 days from time of purchase.</p>
                         <p><img src="{% get_static_prefix %}img/truck.svg"><span style="font-weight: bold;"> Ships From:</span> Boerne, TX</p>
                     </div>
                 </div>
