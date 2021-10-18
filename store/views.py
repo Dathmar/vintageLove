@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 from products.models import Category, Product, ProductImage
 
 
@@ -10,19 +10,20 @@ def index(request):
                                          productimage__sequence=1).order_by("-create_datetime")
     product_lst = product_lst[:12]
 
-    products = product_lst.values('id', 'title', 'retail_price')
+    products = product_lst.values('id', 'title', 'retail_price', 'slug')
 
     for product in products:
         images = []
-        product_images = ProductImage.objects.filter(product__id=product['id'])
+        url = reverse('products:product-slug', kwargs={'product_slug': product['slug']})
+        product_images = ProductImage.objects.filter(product__id=product['id']).order_by('sequence')
         for product_image in product_images:
             images.append(product_image)
 
-        product.update({'images': images, })
+        product.update({'images': images, 'url': url})
 
     context = {
         'categories':  categories,
-        'products': products
+        'products': products,
     }
     return render(request, 'index.html', context)
 
