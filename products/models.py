@@ -7,6 +7,7 @@ import uuid
 
 class ProductStatus(models.Model):
     name = models.CharField(max_length=50)
+    available_to_sell = models.BooleanField(default=1)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)

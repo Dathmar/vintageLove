@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class AcmeConfig(AppConfig):
+class FoldersConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'acme'
+    name = 'folders'

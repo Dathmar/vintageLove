@@ -6,7 +6,7 @@ from products.models import Category, Product, ProductImage
 def index(request):
     categories = Category.objects.all().order_by('id')
 
-    product_lst = Product.objects.filter(status__name='Available',
+    product_lst = Product.objects.filter(status__available_to_sell=True,
                                          productimage__sequence=1).order_by("-create_datetime")
     product_lst = product_lst[:12]
 

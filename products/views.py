@@ -89,7 +89,7 @@ def product_qr_grid(request):
 
 
 def product_list(request, category_slug=None):
-    product_lst = Product.objects.filter(status__name='Available').order_by('-create_datetime')
+    product_lst = Product.objects.filter(status__available_to_sell=True).order_by('-create_datetime')
 
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
