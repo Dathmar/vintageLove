@@ -1,6 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.db.models import ObjectDoesNotExist
 from .models import UserFolders, FolderContents
 from products.models import Product
+
+
+def folder_not_found(request):
+    return render(request, 'folder-not-found.html')
 
 
 # Create your views here.
@@ -12,12 +17,28 @@ def folder_list(request):
         }
         return render(request, 'folder-list.html', context)
     else:
-        return render(request, 'registration/login.html')
+        return redirect(reverse('login'))
 
 
-def folder_view(request, folder_slug, user_id=''):
+def folder_view(request, folder_slug, user_name=False):
     if request.user.is_authenticated:
-        folder = get_object_or_404(UserFolders, user=request.user, slug=folder_slug)
+        if user_name and request.user.username.casefold() != user_name.casefold():
+            try:
+                folder = UserFolders.objects.get(user__username__iexact=user_name, slug__iexact=folder_slug)
+            except ObjectDoesNotExist:
+                folder = None
+
+            if not folder or not folder.is_public:
+                return redirect('folders:not-found')
+        else:
+            try:
+                folder = UserFolders.objects.get(user=request.user, slug__iexact=folder_slug)
+            except ObjectDoesNotExist:
+                folder = None
+
+        if not folder:
+            return redirect('folders:not-found')
+
         folder_contents = FolderContents.objects.filter(folder=folder)
 
         suggested_items = Product.objects.filter(status__available_to_sell=True)[:3]
@@ -30,4 +51,4 @@ def folder_view(request, folder_slug, user_id=''):
 
         return render(request, 'folder-contents.html', context)
     else:
-        pass
+        return redirect(reverse('login'))
