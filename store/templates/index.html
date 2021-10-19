@@ -31,29 +31,33 @@
         <h1 class="vintage-font">Shop by Stage</h1>
         <div class="container">
             <div class="row">
-                <div class="col-md-4 col-sm-12 mt-3">
-                    <img src="{% get_static_prefix %}img/as-is.jpg" width="233px"><br/>
-                    <span class="vintage-font" style="font-weight: bold; font-size: larger;">Wholesale (as-is)</span><br/>
-                    <div style="width: 233px; margin: auto;">
-                        <span style="font-size: smaller;">Fresh finds you can purchase as-is and make your own</span>
+                    <div class="col-md-4 col-sm-12 mt-3">
+                        <a  style="color: inherit; text-decoration: inherit;" href="{% url 'products:stage-products' 'wholesale' %}">
+                            <img src="{% get_static_prefix %}img/as-is.jpg" width="233px"><br/>
+                            <span class="vintage-font" style="font-weight: bold; font-size: larger;">Wholesale (as-is)</span><br/>
+                            <div style="width: 233px; margin: auto;">
+                                <span style="font-size: smaller;">Fresh finds you can purchase as-is and make your own</span>
+                            </div>
+                        </a>
                     </div>
+                <div class="col-md-4 col-sm-12 mt-3">
+                    <a  style="color: inherit; text-decoration: inherit;" href="{% url 'products:stage-products' 'restored' %}">
+                        <img src="{% get_static_prefix %}img/restore.jpg" width="233px"><br/>
+                        <span class="vintage-font" style="font-weight: bold; font-size: larger;">Restored</span><br/>
+                        <div style="width: 233px; margin: auto;">
+                            <span style="font-size: smaller;">Treasures we have brought back to sustainable glory</span>
+                        </div>
+                    </a>
                 </div>
                 <div class="col-md-4 col-sm-12 mt-3">
-                    <img src="{% get_static_prefix %}img/restore.jpg" width="233px"><br/>
-                    <span class="vintage-font" style="font-weight: bold; font-size: larger;">Restored</span><br/>
-                    <div style="width: 233px; margin: auto;">
-                        <span style="font-size: smaller;">Treasures we have brought back to sustainable glory</span>
-                    </div>
-                </div>
-                <div class="col-md-4 col-sm-12 mt-3">
-                    <img src="{% get_static_prefix %}img/repurposed.jpg" width="233px"><br/>
-                    <span class="vintage-font" style="font-weight: bold; font-size: larger;">Reimagined</span><br/>
+                    <a  style="color: inherit; text-decoration: inherit;" href="{% url 'products:stage-products' 'reimagined' %}">
+                        <img src="{% get_static_prefix %}img/repurposed.jpg" width="233px"><br/>
+                        <span class="vintage-font" style="font-weight: bold; font-size: larger;">Reimagined</span><br/>
 
-                    <div style="width: 233px; margin: auto;">
-                        <span style="font-size: smaller;">Bringing new life to timeless pieces from our past</span>
-                    </div>
-
-
+                        <div style="width: 233px; margin: auto;">
+                            <span style="font-size: smaller;">Bringing new life to timeless pieces from our past</span>
+                        </div>
+                    </a>
                 </div>
 
             </div>

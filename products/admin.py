@@ -18,9 +18,9 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['title', 'seller', 'retail_price', 'status']
+    list_display = ['title', 'seller', 'retail_price', 'wholesale_price', 'status']
     list_filter = ['seller']
-    list_editable = ['seller', 'retail_price', 'status']
+    list_editable = ['seller', 'retail_price', 'wholesale_price', 'status']
     search_fields = ['title']
     exclude = ['slug']
 
