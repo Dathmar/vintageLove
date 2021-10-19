@@ -154,6 +154,7 @@ def product_list(request, category_slug=None):
 
     return render(request, 'product-list.html', context)
 
+
 def product_list_stage(request, stage):
     product_lst = Product.objects.filter(status__available_to_sell=True).order_by('-create_datetime')
 

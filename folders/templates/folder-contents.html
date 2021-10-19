@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1>{{ folder.name }}</h1>
+    {% if folder_contents %}
+        {% for item in folder_contents %}
+            <p>item</p>
+        {% endfor %}
+    {% else %}
+        <p>No items in cart.</p>
+    {% endif %}
+    <p>{{ suggested_items }}</p>
+    <p><a href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button blue-button rounded-3">See All Products</a></p>
+{% endblock %}
