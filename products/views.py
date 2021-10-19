@@ -4,6 +4,7 @@ from .models import Product, ProductImage, UserSeller, ProductStatus, Category
 from datetime import datetime
 from .merged_attributes import get_attribute_list
 from django.db.models import Max, Min
+from django.db.models import Q
 
 
 # Create your views here.
@@ -25,7 +26,7 @@ def product_w_slug(request, product_slug):
     return render(request, 'product-page.html', context)
 
 
-def get_product_context(request, product_identifier, identifier_type='slug'):
+def get_product_context(request, product_identifier):
     product = get_object_or_404(Product, slug=product_identifier)
 
     product_images = ProductImage.objects.filter(product_id=product.pk).order_by('sequence')
@@ -88,6 +89,31 @@ def product_qr_grid(request):
     return render(request, 'product-qr-grid.html', context)
 
 
+def filter_by_price(product_lst, price_min, price_max):
+    if price_min and price_max:
+        if price_min > price_max:
+            tmp = price_max
+            price_max = price_min
+            price_min = tmp
+
+        product_lst = product_lst.filter(
+            Q(status__disply_wholesale=False, retail_price__range=(price_min, price_max))
+            | Q(status__disply_wholesale=True, wholesale_price__range=(price_min, price_max))
+        )
+    elif price_min:
+        product_lst = product_lst.filter(
+            Q(status__disply_wholesale=False, retail_price=price_min)
+            | Q(status__disply_wholesale=True, wholesale_price=price_min)
+        )
+    elif price_max:
+        product_lst = product_lst.filter(
+            Q(status__disply_wholesale=False, retail_price=price_max)
+            | Q(status__disply_wholesale=True, wholesale_price=price_max)
+        )
+
+    return product_lst
+
+
 def product_list(request, category_slug=None):
     product_lst = Product.objects.filter(status__available_to_sell=True).order_by('-create_datetime')
 
@@ -98,24 +124,17 @@ def product_list(request, category_slug=None):
     price_min = request.GET.get('priceMin')
     price_max = request.GET.get('priceMax')
 
-    if price_min and price_max:
-        if price_min > price_max:
-            tmp = price_max
-            price_max = price_min
-            price_min = tmp
+    product_lst = filter_by_price(product_lst, price_min, price_max)
 
-        product_lst = product_lst.filter(retail_price__range=(price_min, price_max))
-    elif price_min:
-        product_lst = product_lst.filter(retail_price__gte=price_min)
-    elif price_max:
-        product_lst = product_lst.filter(retail_price__lte=price_max)
-
+    # this is for filtering later
+    # need to add wholesale price
     attributes = product_lst.values('attributes')
     prices = product_lst.aggregate(Min('retail_price')).update(product_lst.aggregate(Max('retail_price')))
 
     product_pages = make_pages(request, product_lst.values('id'), 12)
 
-    products = product_pages.object_list.values('id', 'title', 'retail_price', 'slug')
+    products = product_pages.object_list.values('id', 'title', 'retail_price',
+                                                'wholesale_price', 'status__disply_wholesale', 'slug')
 
     for product in products:
         images = []
@@ -135,7 +154,6 @@ def product_list(request, category_slug=None):
 
     return render(request, 'product-list.html', context)
 
-
 def product_list_stage(request, stage):
     product_lst = Product.objects.filter(status__available_to_sell=True).order_by('-create_datetime')
 
@@ -145,24 +163,15 @@ def product_list_stage(request, stage):
     price_min = request.GET.get('priceMin')
     price_max = request.GET.get('priceMax')
 
-    if price_min and price_max:
-        if price_min > price_max:
-            tmp = price_max
-            price_max = price_min
-            price_min = tmp
-
-        product_lst = product_lst.filter(retail_price__range=(price_min, price_max))
-    elif price_min:
-        product_lst = product_lst.filter(retail_price__gte=price_min)
-    elif price_max:
-        product_lst = product_lst.filter(retail_price__lte=price_max)
+    product_lst = filter_by_price(product_lst, price_min, price_max)
 
     attributes = product_lst.values('attributes')
     prices = product_lst.aggregate(Min('retail_price')).update(product_lst.aggregate(Max('retail_price')))
 
     product_pages = make_pages(request, product_lst.values('id'), 12)
 
-    products = product_pages.object_list.values('id', 'title', 'retail_price', 'slug')
+    products = product_pages.object_list.values('id', 'title', 'retail_price',
+                                                'wholesale_price', 'status__disply_wholesale', 'slug')
 
     for product in products:
         images = []

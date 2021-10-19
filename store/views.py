@@ -10,7 +10,8 @@ def index(request):
                                          productimage__sequence=1).order_by("-create_datetime")
     product_lst = product_lst[:12]
 
-    products = product_lst.values('id', 'title', 'retail_price', 'slug')
+    products = product_lst.values('id', 'title', 'retail_price',
+                                                'wholesale_price', 'status__disply_wholesale', 'slug')
 
     for product in products:
         images = []

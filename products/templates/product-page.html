@@ -56,7 +56,13 @@
                 {% endif %}
                 <div>
                     <h2>{{ product.title }}</h2>
-                    <h5 class="pb-3">${{ product.retail_price|intword|intcomma }}</h5>
+                    <h5 class="pb-3">
+                        {% if product.status.disply_wholesale %}
+                            <strike>${{ product.retail_price|intword|intcomma }}</strike> <span style="color: #cc4639">${{ product.wholesale_price|intword|intcomma }}</span>
+                        {% else %}
+                            ${{ product.retail_price|intword|intcomma }}
+                        {% endif %}
+                    </h5>
                     {% if product.status.name != 'Sold' %}
                     {% if is_seller %}
                     <div><a href="{% url 'products:product-sold' product.id %}" class="btn btn-primary vintage-button rounded-3" type="button">Mark as Sold</a></div>
