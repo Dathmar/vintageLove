@@ -1,11 +1,8 @@
 from django.urls import path
 from . import views
-from django.contrib.staticfiles.storage import staticfiles_storage
-from django.views.generic.base import RedirectView
 
 app_name = 'products'
 urlpatterns = [
-    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('img/favicon.ico'))),
     path('<uuid:product_id>/', views.product, name='product'),
     path('<uuid:product_id>/product_sold', views.product_sold, name='product-sold'),
     path('<slug:product_slug>/', views.product_w_slug, name='product-slug'),
