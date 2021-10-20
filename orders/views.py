@@ -44,7 +44,7 @@ def order_create(request, product_id):
                     order_item.update_datetime = datetime.now()
                     order_item.save()
 
-                    # send notification e-mails
+                    # send notification e-mails need to add Mailchimp e-mail
                     send_internal_order_notification(order)
 
                     return render(request, 'orders/order/created.html', {'order': order})
