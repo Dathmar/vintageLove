@@ -1,5 +1,6 @@
 import uuid
 import json
+from base.Emailing import EmailThread
 
 from django.shortcuts import render
 from .models import OrderItem, Order
@@ -12,7 +13,6 @@ from datetime import datetime
 from decimal import Decimal
 
 from square.client import Client
-import mailchimp_marketing
 
 
 # Create your views here.
@@ -45,6 +45,8 @@ def order_create(request, product_id):
                     order_item.save()
 
                     # send notification e-mails
+                    send_internal_order_notification(order)
+
                     return render(request, 'orders/order/created.html', {'order': order})
             else:
                 form = OrderCreateForm()
@@ -64,6 +66,61 @@ def order_create(request, product_id):
         'key': request.session['idempotency_key'],
     }
     return render(request, 'orders/order/create.html', data)
+
+
+def send_internal_order_notification(order):
+    subject = f'New Online Order Received for {order.first_name} {order.last_name}'
+
+    if settings.ENVIRONMENT == 'localhost':
+        subject = f'!!TESTING!! - {subject}'
+
+    item = OrderItem.objects.filter(order=order).first()
+    order_item = item.product.title
+
+    body = f'''
+    We have a new order
+    
+    Order info:
+    Name: {order.first_name} {order.last_name}
+    E-mail: {order.email}
+    Address:
+    {order.address1}
+    {order.address2}
+    {order.city}, {order.state} {order.postal_code}
+    
+    Ordered item: {order_item}
+    Paid: {order.get_total_cost}
+    '''
+
+    html_body = f"""
+                <!DOCTYPE html>
+                <html>
+                    <head>
+                    </head>
+                    <body>
+                        <p>We have a new order</p>
+                        <p></p>
+                        <p>Order info:</p>
+                        <p>Name: {order.first_name} {order.last_name}</p>
+                        <p>E-mail: {order.email}</p>
+                        <p>Address:</p>
+                        <p>{order.address1}</p>
+                        <p>{order.address2}</p>
+                        <p>{order.city}, {order.state} {order.postal_code}</p>
+                        <p>Ordered item: {order_item}</p>
+                        <p>Paid: {order.get_total_cost}</p>
+                    </body>
+                </html>
+                """
+
+    EmailThread(
+        subject=subject,
+        message=body,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[settings.EMAIL_HOST_USER, 'asher.danner@gmail.com'],
+        fail_silently=False,
+        html_message=html_body
+    ).start()
 
 
 def get_order_cost_info(state, cost):

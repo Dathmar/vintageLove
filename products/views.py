@@ -5,7 +5,9 @@ from datetime import datetime
 from .merged_attributes import get_attribute_list
 from django.db.models import Max, Min
 from django.db.models import Q
+from django.conf import settings
 
+from base.Emailing import EmailThread
 
 # Create your views here.
 def product(request, product_id):
@@ -52,7 +54,48 @@ def product_sold(request, product_id):
         product_to_update.update_datetime = datetime.now()
         product_to_update.save()
 
+        send_internal_user_sold_email(product_to_update)
+
     return product(request, product_id)
+
+
+def send_internal_user_sold_email(product):
+    subject = f'New In-Store Order Received for {product.title}'
+
+    if settings.ENVIRONMENT == 'localhost':
+        subject = f'!!TESTING!! - {subject}'
+
+    body = f'''
+        We have a new order that was placed in store
+
+        Product Information
+        Title: {product.title}
+        Cost: {product.retail_price}
+        '''
+
+    html_body = f"""
+                    <!DOCTYPE html>
+                    <html>
+                        <head>
+                        </head>
+                        <body>
+                            <p>We have a new order that was placed in store</p>
+                            <p></p>
+                            <p>Product Information</p>
+                            <p>Title: <a href="{product.get_absolute_url}">{product.title}</a></p>
+                            <p>Cost: {product.retail_price}</p>
+                        </body>
+                    </html>
+                    """
+
+    EmailThread(
+        subject=subject,
+        message=body,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[settings.EMAIL_HOST_USER, 'asher.danner@gmail.com'],
+        fail_silently=False,
+        html_message=html_body
+    ).start()
 
 
 def product_image(request, product_id, sequence):
@@ -153,6 +196,7 @@ def product_list(request, category_slug=None):
     }
 
     return render(request, 'product-list.html', context)
+
 
 def product_list_stage(request, stage):
     product_lst = Product.objects.filter(status__available_to_sell=True).order_by('-create_datetime')
