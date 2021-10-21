@@ -5,6 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+    <meta name="google-site-verification" content="0tGKrfRTiF5XowGPr06M8-RJa2Nh84yhJaeQbDBRjYg" />
+    <meta name="p:domain_verify" content="4efd89f3bef2c93b796e69ef8c26b160"/>
+
     <title>{% block page_title %}Global Vintage Love | Unlocking the World of Vintage{% endblock %}</title>
 
     <!-- Start Favicon stuff -->
@@ -74,9 +78,9 @@
                 <div class="offset-1 col-md-3 pt-md-5 pb-md-5">
                     <span class="white-font" style="font-variant: titling-caps;">Our Community</span><br/><br/>
                     <span class="orange-font">See new inventory first!</span><br/>
-                    <input type="email" class="orange-boarder blue-font rounded-3" placeholder="Yes, here's my email"><br/>
-                    <input type="submit" class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" value="Subscribe" onclick="subscribe()">
-                    <span id="result" class="visually-hidden white-font ps-3">result</span>
+                    <input id="email-marketing-signup" type="email" class="orange-boarder blue-font rounded-3" placeholder="Yes, here's my email"><br/>
+                    <input type="submit" class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" value="Subscribe" onclick="marketingSignupAsync()">
+                    <span id="result" class="d-none white-font ps-3"></span>
                 </div>
             </div>
         </div>
@@ -93,6 +97,7 @@
         <div style="text-align: center;"><span class="copyright"><br>©2021 Global Vintage Love<br><br></span></div>
     </section>
     <script src="{% get_static_prefix %}bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="{% get_static_prefix %}js/email-signups.js"></script>
     {% block end_body %}{% endblock %}
 </body>
 

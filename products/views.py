@@ -82,7 +82,7 @@ def send_internal_user_sold_email(product):
                             <p>We have a new order that was placed in store</p>
                             <p></p>
                             <p>Product Information</p>
-                            <p>Title: <a href="{product.get_absolute_url}">{product.title}</a></p>
+                            <p>Title: <a href="https://globalvintagelove.com{product.get_absolute_url()}">{product.title}</a></p>
                             <p>Cost: {product.retail_price}</p>
                         </body>
                     </html>
@@ -92,7 +92,7 @@ def send_internal_user_sold_email(product):
         subject=subject,
         message=body,
         from_email=settings.EMAIL_HOST_USER,
-        recipient_list=[settings.EMAIL_HOST_USER, 'asher.danner@gmail.com'],
+        recipient=settings.EMAIL_HOST_USER,
         fail_silently=False,
         html_message=html_body
     ).start()

@@ -10,4 +10,5 @@ urlpatterns = [
     path('join-the-movement/', views.join_movement, name='join_movement'),
     path('privacy-policy/', views.privacy_policy, name='privacy-policy'),
     path('return-policy/', views.return_policy, name='return-policy'),
+    path('marketing-signup/', views.marketing_signup, name='marketing-signup')
 ]

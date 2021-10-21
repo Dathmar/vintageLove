@@ -38,7 +38,7 @@ def order_create(request, product_id):
                     order.paid = True
                     order.save()
 
-                    OrderItem.objects.create(order=order, product=order_item, price=order_item.retail_price)
+                    OrderItem.objects.create(order=order, product=order_item, price=order_item.retail_price, quantity=1)
 
                     order_item.status = ProductStatus.objects.filter(name='Sold').first()
                     order_item.update_datetime = datetime.now()
@@ -108,7 +108,7 @@ def send_internal_order_notification(order):
                         <p>{order.address2}</p>
                         <p>{order.city}, {order.state} {order.postal_code}</p>
                         <p>Ordered item: {order_item}</p>
-                        <p>Paid: {order.get_total_cost}</p>
+                        <p>Paid: {order.get_total_cost()}</p>
                     </body>
                 </html>
                 """
@@ -117,7 +117,7 @@ def send_internal_order_notification(order):
         subject=subject,
         message=body,
         from_email=settings.EMAIL_HOST_USER,
-        recipient_list=[settings.EMAIL_HOST_USER, 'asher.danner@gmail.com'],
+        recipient=settings.EMAIL_HOST_USER,
         fail_silently=False,
         html_message=html_body
     ).start()

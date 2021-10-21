@@ -1,5 +1,10 @@
 from django.shortcuts import render, reverse
 from products.models import Category, Product, ProductImage
+from django.http.response import JsonResponse
+from django.conf import settings
+import mailchimp_marketing as mailchimpMarketing
+from mailchimp_marketing.api_client import ApiClientError
+import json
 
 
 # Create your views here.
@@ -47,3 +52,33 @@ def privacy_policy(request):
 
 def return_policy(request):
     return  render(request, 'return-policy.html')
+
+
+def marketing_signup(request):
+    if request.method == 'POST':
+        mailchimp = mailchimpMarketing.Client()
+        mailchimp.set_config({
+            "api_key": settings.MAILCHIMP_API_KEY,
+            "server": settings.MAILCHIMP_SERVER
+        })
+
+        list_id = settings.MAILCHIMP_MARKETING_LIST_ID
+
+        member_info = {
+            "email_address": json.loads(request.body)['email'],
+            "status": "pending",
+        }
+
+        try:
+            response = mailchimp.lists.add_list_member(list_id, member_info)
+            data = {
+                "status": "success",
+                "response": response,
+            }
+        except ApiClientError as error:
+            data = {
+                "status": "error",
+                "response": json.loads(error.text),
+            }
+
+        return JsonResponse(data)
