@@ -20,10 +20,19 @@ def product_w_slug(request, product_slug):
     context = get_product_context(request, product_slug)
 
     similar_products = Product.objects.filter(
-        productcategory__category__in=list(x.category for x in item.productcategory_set.all())
-    ).exclude(id=item.id)[:5]
+        productcategory__category__in=list(x.category for x in item.productcategory_set.all()), productimage__sequence=1
+    ).exclude(id=item.id).distinct()[:5]
 
-    context.update({'similar_products': similar_products})
+    similar_products_values = []
+    for similar_product in similar_products:
+        similar_products_values.append(
+            {
+                'url': similar_product.get_absolute_url(),
+                'image_url': similar_product.productimage_set.get(sequence=1).image.url
+            }
+        )
+
+    context.update({'similar_products': similar_products_values})
 
     return render(request, 'product-page.html', context)
 
