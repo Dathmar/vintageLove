@@ -137,11 +137,11 @@ h3 {
 }
 
 .blue-font {
-  color: #0A486A;
+  color: #0A486A!important;
 }
 
 .orange-font {
-  color: #D4AF37;
+  color: #D4AF37!important;
 }
 
 .body-padding {
@@ -246,15 +246,15 @@ button {
 
 
 .orange-background {
-  background-color: #D4AF37;
+  background-color: #D4AF37!important;
 }
 
 .blue-background {
-  background-color: #0A486A;
+  background-color: #0A486A!important;
 }
 
 .grey-background {
-  background-color: #f3f3f3;
+  background-color: #f3f3f3!important;
 }
 
 .quote-background {
@@ -263,7 +263,7 @@ button {
 }
 
 .white-font {
-  color: #ffffff;
+  color: #ffffff!important;
 }
 
 .card-title {
@@ -335,4 +335,18 @@ a.custom-card:hover {
   width: 100%;
   background-size: cover;
   background-position: center;
+}
+
+.vintage-list-item {
+  color: #D4AF37!important;
+  background-color: #0A486A!important;
+  border: none;
+  opacity: 50%;
+}
+
+.vintage-list-item.active {
+  color: #D4AF37!important;
+  background-color: #0A486A!important;
+  border: none;
+  opacity: 100%;
 }

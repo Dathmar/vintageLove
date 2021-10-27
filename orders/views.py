@@ -8,6 +8,7 @@ from .forms import OrderCreateForm
 from products.models import Product, ProductStatus
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse, HttpResponseNotAllowed
+from django.contrib.auth.decorators import login_required
 
 from datetime import datetime
 from decimal import Decimal
@@ -211,3 +212,13 @@ def submit_payment(payment_amount, nonce, idempotency_key):
             payment_errors.append(error['detail'])
 
         return payment_errors
+
+
+@login_required
+def bespoke_shipping(request):
+    return render(request, 'orders/bespoke_shipping.html')
+
+
+@login_required
+def bespoke_shipping_complete(request):
+    return render(request, 'orders/bespoke-shipping-complete.html')

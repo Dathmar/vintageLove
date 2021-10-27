@@ -1,4 +1,5 @@
 {% load static %}
+{% load is_user_seller  %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,11 +53,15 @@
                             <a class="dropdown-item dropdown-item-blue" href="{% url 'store:our-purpose-retail' %}">Retail</a>
                         </div>
                     </li>
+                    {%  if user|is_seller %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'orders:bespoke-shipping' %}">Bespoke Shipping</a></li>
+                    {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'store:join_movement' %}">Join The Movement</a></li>
+                    {% endif %}
                     {%  if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'logout' %}">Logout</a></li>
                     {% else %}
-                    <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'login' %}">Log In</a></li>
+                    <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'login' %}?next={{request.path}}">Log In</a></li>
                     {% endif %}
                 </ul>
 
