@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section id="heading" class="text-center blue-background justify-content-center">
+    <h1 class="white-font">Bespoke Vintage Shipping</h1>
+    <div class="list-group list-group-horizontal-md orange-font vintage-font" id="list-tab" role="tablist">
+        <a class="vintage-list-item list-group-item list-group-item-action active" id="list-size-list" data-toggle="list" href="#list-size" role="tab" aria-controls="size"><span style="font-size: larger;">1 Size of piece</span></a>
+        <a class="vintage-list-item list-group-item list-group-item-action" id="list-to-list" data-toggle="list" href="#list-to" role="tab" aria-controls="to"><span style="font-size: larger;">2 Where its going</span></a>
+        <a class="vintage-list-item list-group-item list-group-item-action" id="list-want-list" data-toggle="list" href="#list-want" role="tab" aria-controls="want"><span style="font-size: larger;">3 How you want it</span></a>
+    </div>
+    <div class="tab-content white-font" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="list-size" role="tabpanel" aria-labelledby="list-size-list">
+          <div class="container">
+              <div class="row">
+                  <div class="col-12 col-md-6 col-lg-3">
+                      <div class="size-form-check">
+                          <label class="form-check-label" for="small-radio">
+                              <img src="{% get_static_prefix %}img/small.png" height="150"><br>
+                              Small
+                          </label>
+                          <input class="form-check-input" type="radio" name="sizeRadio" id="small-radio" onclick="showTab('#list-to-list')">
+                      </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-3">
+                      <div class="size-form-check">
+                          <label class="form-check-label" for="medium-radio">
+                              <img src="{% get_static_prefix %}img/medium.png" height="150"><br>
+                              Medium
+                          </label>
+                          <input class="form-check-input" type="radio" name="sizeRadio" id="medium-radio" onclick="showTab('#list-to-list')">
+                      </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-3">
+                      <div class="size-form-check">
+                          <label class="form-check-label" for="large-radio">
+                                <img src="{% get_static_prefix %}img/large.png" height="150"><br>
+                                Large
+                          </label>
+                          <input class="form-check-input" type="radio" name="sizeRadio" id="large-radio" onclick="showTab('#list-to-list')">
+                      </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-3">
+                      <div class="size-form-check">
+                          <label class="form-check-label" for="x-large-radio">
+                              <img src="{% get_static_prefix %}img/x-large.png" height="150"><br>
+                              X-Large
+                          </label>
+                          <input class="form-check-input" type="radio" name="sizeRadio" id="x-large-radio" onclick="showTab('#list-to-list')">
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="tab-pane fade" id="list-to" role="tabpanel" aria-labelledby="list-to-list">
+          <div class="container">
+              <div class="row">
+
+              </div>
+          </div>
+      </div>
+      <div class="tab-pane fade" id="list-want" role="tabpanel" aria-labelledby="list-want-list">
+          want
+      </div>
+    </div>
+</section>
+{% endblock %}
+{% block end_body %}
+    <script src="{% get_static_prefix %}js/jquery-3.6.0.min.js"></script>
+    <script>
+        $('#list-tab a').on('click', function(e) {
+          e.preventDefault()
+            console.log(this)
+          $(this).tab('show')
+        })
+    </script>
+    <script>
+        function showTab(tabID){
+            let triggerEl = $(tabID)
+            bootstrap.Tab.getOrCreateInstance(triggerEl).show()
+        }
+    </script>
+{% endblock %}

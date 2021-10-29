@@ -137,11 +137,11 @@ h3 {
 }
 
 .blue-font {
-  color: #0A486A!important;
+  color: #0A486A;
 }
 
 .orange-font {
-  color: #D4AF37!important;
+  color: #D4AF37;
 }
 
 .body-padding {
@@ -246,15 +246,15 @@ button {
 
 
 .orange-background {
-  background-color: #D4AF37!important;
+  background-color: #D4AF37;
 }
 
 .blue-background {
-  background-color: #0A486A!important;
+  background-color: #0A486A;
 }
 
 .grey-background {
-  background-color: #f3f3f3!important;
+  background-color: #f3f3f3;
 }
 
 .quote-background {
@@ -263,7 +263,7 @@ button {
 }
 
 .white-font {
-  color: #ffffff!important;
+  color: #ffffff;
 }
 
 .card-title {
@@ -349,4 +349,17 @@ a.custom-card:hover {
   background-color: #0A486A!important;
   border: none;
   opacity: 100%;
+}
+
+.size-form-check {
+  display: inline-block;
+  text-align: center;
+}
+.size-form-check label {
+  display: block;
+}
+
+.fade {
+    -webkit-transition-duration: 0.3s; /* Safari */
+    transition-duration: 0.3s;
 }
