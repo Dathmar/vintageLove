@@ -10,33 +10,35 @@
         <a class="vintage-list-item list-group-item list-group-item-action" id="list-want-list" data-toggle="list" href="#list-want" role="tab" aria-controls="want"><span style="font-size: larger;">3 How you want it</span></a>
     </div>
     <div class="tab-content white-font" id="nav-tabContent">
-      <div class="tab-pane fade show active" id="list-size" role="tabpanel" aria-labelledby="list-size-list">
-          <div class="container">
-              <div class="row">
-                  {% for radio in form.size %}
-                  <div class="col-12 col-md-6 col-lg-3">
+        <div class="tab-pane fade show active" id="list-size" role="tabpanel" aria-labelledby="list-size-list">
+            <div class="container">
+                <div class="row">
+                    {% for radio in size_form.size %}
+                    <div class="col-12 col-md-6 col-lg-3">
                         <div class="size-form-check">
                             <label class="form-check-label" for={{ radio.id_for_label }}>
                                 {{ radio.choice_label }}
                             </label>
                             <input class="form-check-input" type="radio" name="size-radios" id="{{ radio.id_for_label }}" onclick="showTab('#list-to-list')">
                         </div>
-
-                  </div>
-                  {% endfor %}
-              </div>
-          </div>
-      </div>
-      <div class="tab-pane fade" id="list-to" role="tabpanel" aria-labelledby="list-to-list">
-          <div class="container">
-              <div class="row">
-
-              </div>
-          </div>
-      </div>
-      <div class="tab-pane fade" id="list-want" role="tabpanel" aria-labelledby="list-want-list">
-          want
-      </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="list-to" role="tabpanel" aria-labelledby="list-to-list">
+            <div class="container">
+                <div class="row">
+                    {{ ship_to_form.as_p }}
+                </div>
+                <div class="row">
+                    <button class="vintage-list-item list-group-item list-group-item-action" id="list-want-list" data-toggle="list" onclick="showTab('#list-want-list')" role="tab" aria-controls="want"><span style="font-size: larger;">Next</span></button>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="list-want" role="tabpanel" aria-labelledby="list-want-list">
+            want
+        </div>
     </div>
 </section>
 {% endblock %}
