@@ -13,42 +13,17 @@
       <div class="tab-pane fade show active" id="list-size" role="tabpanel" aria-labelledby="list-size-list">
           <div class="container">
               <div class="row">
+                  {% for radio in form.size %}
                   <div class="col-12 col-md-6 col-lg-3">
-                      <div class="size-form-check">
-                          <label class="form-check-label" for="small-radio">
-                              <img src="{% get_static_prefix %}img/small.png" height="150"><br>
-                              Small
-                          </label>
-                          <input class="form-check-input" type="radio" name="sizeRadio" id="small-radio" onclick="showTab('#list-to-list')">
-                      </div>
+                        <div class="size-form-check">
+                            <label class="form-check-label" for={{ radio.id_for_label }}>
+                                {{ radio.choice_label }}
+                            </label>
+                            <input class="form-check-input" type="radio" name="size-radios" id="{{ radio.id_for_label }}" onclick="showTab('#list-to-list')">
+                        </div>
+
                   </div>
-                  <div class="col-12 col-md-6 col-lg-3">
-                      <div class="size-form-check">
-                          <label class="form-check-label" for="medium-radio">
-                              <img src="{% get_static_prefix %}img/medium.png" height="150"><br>
-                              Medium
-                          </label>
-                          <input class="form-check-input" type="radio" name="sizeRadio" id="medium-radio" onclick="showTab('#list-to-list')">
-                      </div>
-                  </div>
-                  <div class="col-12 col-md-6 col-lg-3">
-                      <div class="size-form-check">
-                          <label class="form-check-label" for="large-radio">
-                                <img src="{% get_static_prefix %}img/large.png" height="150"><br>
-                                Large
-                          </label>
-                          <input class="form-check-input" type="radio" name="sizeRadio" id="large-radio" onclick="showTab('#list-to-list')">
-                      </div>
-                  </div>
-                  <div class="col-12 col-md-6 col-lg-3">
-                      <div class="size-form-check">
-                          <label class="form-check-label" for="x-large-radio">
-                              <img src="{% get_static_prefix %}img/x-large.png" height="150"><br>
-                              X-Large
-                          </label>
-                          <input class="form-check-input" type="radio" name="sizeRadio" id="x-large-radio" onclick="showTab('#list-to-list')">
-                      </div>
-                  </div>
+                  {% endfor %}
               </div>
           </div>
       </div>
