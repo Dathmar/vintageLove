@@ -30,6 +30,14 @@ class ProductAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(Seller)
+class SellerAdmin(admin.ModelAdmin):
+    list_display = ['name', 'street', 'city', 'state', 'zip']
+    list_filter = ['city', 'state']
+    list_editable = ['street', 'city', 'state', 'zip']
+    search_fields = ['name', 'city']
+
+
 @admin.register(UserSeller)
 class UserSellerAdmin(admin.ModelAdmin):
     list_display = ['user', 'seller']
@@ -39,8 +47,7 @@ class UserSellerAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
 
-
 admin.site.register(ProductCategory)
 admin.site.register(ProductStatus)
-admin.site.register(Seller)
+
 

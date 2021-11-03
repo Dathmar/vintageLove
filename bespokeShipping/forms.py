@@ -19,15 +19,23 @@ class ShipToForm(forms.Form):
     first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'First Name'}),
                                  max_length=200)
     last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Last Name'}),
-                                 max_length=200)
+                                max_length=200)
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Email'}),
-                                 max_length=200)
+                             max_length=200)
     address1 = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Address 1'}),
-                                 max_length=200)
+                               max_length=200)
     address2 = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Address 2'}),
-                                 max_length=200)
+                               max_length=200)
     postal_code = forms.CharField(widget=forms.NumberInput(attrs={'placeholder': 'Postal Code'}))
     city = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'City'}),
-                                 max_length=200)
+                           max_length=200)
     state = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'State'}),
-                                 max_length=200)
+                            max_length=200)
+
+
+class DeliveryLevel(forms.Form):
+    shipping_level = (('to_door', 'Delivery to your door.'),
+                      ('setup', 'In home delivery and assembly.'))
+
+    level = forms.ChoiceField(widget=forms.RadioSelect(),
+                              choices=shipping_level)

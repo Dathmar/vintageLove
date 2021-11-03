@@ -37,7 +37,20 @@
             </div>
         </div>
         <div class="tab-pane fade" id="list-want" role="tabpanel" aria-labelledby="list-want-list">
-            want
+            <div class="container">
+                {% for radio in delivery_level.level %}
+                <div class="row">
+                    <div class="col-4 offset-4">
+                        <div class="form-check">
+                            <label class="form-check-label" for={{ radio.id_for_label }}>
+                                {{ radio.choice_label }}
+                            </label>
+                            <input class="form-check-input" type="radio" name="level-radios" id="{{ radio.id_for_label }}">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </section>

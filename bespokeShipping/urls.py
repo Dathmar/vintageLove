@@ -5,5 +5,6 @@ from . import views
 
 app_name = 'bespokeShipping'
 urlpatterns = [
-    path('', views.bespoke_shipping_create, name='create'),
+    path('', views.create, name='create'),
+    path('location/<slug:seller_id>', views.create, name='create-by-seller-id')
 ]

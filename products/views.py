@@ -117,14 +117,15 @@ def product_image(request, product_id, sequence):
 
 
 def product_qr(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
     context = {
-        'product_id': product_id,
+        'product': product,
     }
     return render(request, 'product-qr.html', context)
 
 
 def product_qr_list(request):
-    products = Product.objects.get()
+    products = Product.objects.all()
     context = {
         'products': products,
     }

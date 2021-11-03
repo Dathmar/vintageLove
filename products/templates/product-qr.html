@@ -2,6 +2,6 @@
 {% load static %}
 {% block content %}
     <section class="product-section body-padding text-center">
-        <img src="{% get_media_prefix %}qr_img/{{ product_id }}_qr.png"/>
+        <img src="{{ product.get_qr_url }}"/>
     </section>
 {% endblock %}

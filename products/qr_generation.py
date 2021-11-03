@@ -33,5 +33,5 @@ def generate_qr_code(url, save_loc):
 
 
 if __name__ == '__main__':
-    generate_qr_code('https://www.localvintagestore.com/products/62e908fa-83ec-4f20-8a83-1e177af75ae2',
-                     'tmp/qr_img/62e908fa-83ec-4f20-8a83-1e177af75ae2_qr.png')
+    generate_qr_code('https://www.localvintagestore.com/bespoke-shipping/vintage-love',
+                             'static/vintage-love_qr.png')

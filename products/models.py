@@ -39,17 +39,30 @@ class Category(models.Model):
 
 
 class Seller(models.Model):
-    name = models.CharField(max_length=4000)
+    name = models.CharField(max_length=4000, unique=True)
     street = models.CharField(max_length=4000)
     city = models.CharField(max_length=4000)
     state = models.CharField(max_length=4000)
     zip = models.CharField(max_length=4000)
+
+    slug = models.SlugField(max_length=4000, unique=True, blank=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
     def __str__(self):
         return self.name
+
+    def save(self):
+        self.slug = slugify(self.name)
+        super(Seller, self).save()
+
+        if not Seller.objects.filter(id=self.id).exists():
+            generate_qr_code('https://www.localvintagestore.com/bespoke-shipping/' + str(self.slug),
+                             'media/bespoke-shipping/' + str(self.slug) + '_qr.png')
+
+    def get_qr_url(self):
+        return '/media/bespoke-shipping/' + str(self.slug) + '_qr.png'
 
 
 class UserSeller(models.Model):
@@ -104,6 +117,9 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('products:product-slug', kwargs={'product_slug': self.slug})
+
+    def get_qr_url(self):
+        return '/media/qr_img/' + str(self.id) + '_qr.png'
 
     class Meta:
         ordering = ['create_datetime']
