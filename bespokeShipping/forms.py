@@ -8,7 +8,7 @@ class SizeForm(forms.Form):
     size_choices = (('small', mark_safe(f'<img src="{ get_static_prefix }img/small.png" height="150"><br>Small')),
                     ('medium', mark_safe(f'<img src="{ get_static_prefix }img/medium.png" height="150"><br>Medium')),
                     ('large', mark_safe(f'<img src="{ get_static_prefix }img/large.png" height="150"><br>Large')),
-                    ('xlarge', mark_safe(f'<img src="{ get_static_prefix }img/x-large.png" height="150"><br>X-Large')))
+                    ('xlarge', mark_safe(f'<img src="{ get_static_prefix }img/ship_set.png" height="150"><br>Sets')))
 
     size = forms.ChoiceField(widget=forms.RadioSelect(attrs={"onclick": "showTab('#list-to-list')",
                                                              "class": "size-form-check"}),
@@ -34,8 +34,11 @@ class ShipToForm(forms.Form):
 
 
 class DeliveryLevel(forms.Form):
-    shipping_level = (('to_door', 'Delivery to your door.'),
-                      ('setup', 'In home delivery and assembly.'))
+    get_static_prefix = settings.STATIC_URL
+    shipping_level = (('to_door', mark_safe(f'<img src="{ get_static_prefix }img/to_door.png" height="150"><br/>'
+                                            f'Delivery to your door.<br/>(free)')),
+                      ('setup', mark_safe(f'<img src="{ get_static_prefix }img/in_home.png" height="150"><br/>'
+                                          'In home delivery and placement.<br/>(+$50)')))
 
     level = forms.ChoiceField(widget=forms.RadioSelect(),
                               choices=shipping_level)

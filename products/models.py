@@ -45,7 +45,7 @@ class Seller(models.Model):
     state = models.CharField(max_length=4000)
     zip = models.CharField(max_length=4000)
 
-    slug = models.SlugField(max_length=4000, unique=True, blank=True)
+    slug = models.SlugField(max_length=4000, blank=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
@@ -58,7 +58,7 @@ class Seller(models.Model):
         super(Seller, self).save()
 
         if not Seller.objects.filter(id=self.id).exists():
-            generate_qr_code('https://www.localvintagestore.com/bespoke-shipping/' + str(self.slug),
+            generate_qr_code('https://www.localvintagestore.com/ship/' + str(self.slug),
                              'media/bespoke-shipping/' + str(self.slug) + '_qr.png')
 
     def get_qr_url(self):

@@ -2,14 +2,15 @@
 {% load static %}
 
 {% block content %}
-<section id="heading" class="text-center blue-background justify-content-center">
+<section id="heading" class="text-center blue-background">
     <h1 class="white-font">Bespoke Vintage Shipping</h1>
     <div class="list-group list-group-horizontal-md orange-font vintage-font" id="list-tab" role="tablist">
         <a class="vintage-list-item list-group-item list-group-item-action active" id="list-size-list" data-toggle="list" href="#list-size" role="tab" aria-controls="size"><span style="font-size: larger;">1 Size of piece</span></a>
         <a class="vintage-list-item list-group-item list-group-item-action" id="list-to-list" data-toggle="list" href="#list-to" role="tab" aria-controls="to"><span style="font-size: larger;">2 Where its going</span></a>
         <a class="vintage-list-item list-group-item list-group-item-action" id="list-want-list" data-toggle="list" href="#list-want" role="tab" aria-controls="want"><span style="font-size: larger;">3 How you want it</span></a>
+        <a class="vintage-list-item list-group-item list-group-item-action" id="list-submit-list" data-toggle="list" href="#list-submit" role="tab" aria-controls="submit"><span style="font-size: larger;">4 Complete your shipping</span></a>
     </div>
-    <div class="tab-content white-font" id="nav-tabContent">
+    <div class="tab-content white-font" id="nav-tabContent" style="padding-top: 1.5em; padding-bottom: 1.5em;">
         <div class="tab-pane fade show active" id="list-size" role="tabpanel" aria-labelledby="list-size-list">
             <div class="container">
                 <div class="row">
@@ -27,29 +28,45 @@
             </div>
         </div>
         <div class="tab-pane fade" id="list-to" role="tabpanel" aria-labelledby="list-to-list">
-            <div class="container">
-                <div class="row">
-                    {{ ship_to_form.as_p }}
+            <div class="container ">
+                <div class="row text-start">
+                    <div class="col-4 offset-4">
+                        <table>
+                            {{ ship_to_form.as_table }}
+                        </table>
+                    </div>
                 </div>
                 <div class="row">
-                    <button class="vintage-list-item list-group-item list-group-item-action" id="list-want-list" data-toggle="list" onclick="showTab('#list-want-list')" role="tab" aria-controls="want"><span style="font-size: larger;">Next</span></button>
+                    <button class="vintage-list-item list-group-item list-group-item-action active" id="list-want-list" data-toggle="list" onclick="showTab('#list-want-list')" role="tab" aria-controls="want"><span style="font-size: larger;">Next</span></button>
                 </div>
             </div>
         </div>
         <div class="tab-pane fade" id="list-want" role="tabpanel" aria-labelledby="list-want-list">
             <div class="container">
-                {% for radio in delivery_level.level %}
                 <div class="row">
-                    <div class="col-4 offset-4">
-                        <div class="form-check">
+                    {% for radio in delivery_level.level %}
+                    <div class="col-12 col-md-6 ">
+                        <div class="size-form-check">
                             <label class="form-check-label" for={{ radio.id_for_label }}>
                                 {{ radio.choice_label }}
                             </label>
-                            <input class="form-check-input" type="radio" name="level-radios" id="{{ radio.id_for_label }}">
+                            <input class="form-check-input" type="radio" name="size-radios" id="{{ radio.id_for_label }}" onclick="showTab('#list-to-list')">
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+            </div>
+        </div>
+        <div class="tab-pane fade" id="list-submit" role="tabpanel" aria-labelledby="list-submit-list">
+            <div class="container">
+                <div class="row">
+                    <div class="col-4 offset-4">
+                        <h3>From</h3>
+                        <p>{{ seller.name }}</p>
+                        <p>{{ seller.street }}</p>
+                        <p>{{ seller.city }}, {{ seller.state }} {{ seller.zip }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

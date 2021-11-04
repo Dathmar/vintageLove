@@ -32,5 +32,5 @@ urlpatterns = [
     path('products/', include('products.urls', namespace='products')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('orders/', include('orders.urls', namespace='orders')),
-    path('bespoke-shipping/', include('bespokeShipping.urls', namespace='bespoke-shipping')),
+    path('ship/', include('bespokeShipping.urls', namespace='bespoke-shipping')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -44,19 +44,18 @@
             <a class="navbar-brand text-wrap vintage-font text-center" href="{% url 'store:index' %}">GLOBAL VINTAGE LOVE</a>
             <div class="collapse navbar-collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'products:all-products' %}">Shop Now</a></li>
-                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">Our Purpose</a>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'products:all-products' %}">Shop</a></li>
+                    {% comment %}<li class="nav-item dropdown"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">Our Purpose</a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item dropdown-item-blue" href="{% url 'store:our-purpose' %}">Customer</a>
                             <a class="dropdown-item dropdown-item-blue" href="{% url 'store:our-purpose-retail' %}">Retail</a>
                         </div>
-                    </li>
-
+                    </li>{% endcomment %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'bespoke-shipping:create' %}">Ship</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'store:join_movement' %}">Join</a></li>
                     {%  if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'bespoke-shipping:create' %}">Bespoke Shipping</a></li>
                     <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'logout' %}">Logout</a></li>
                     {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'store:join_movement' %}">Join The Movement</a></li>
                     <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'login' %}">Log In</a></li>
                     {% endif %}
                 </ul>
@@ -69,6 +68,7 @@
     {% endblock %}
     <section id="nav-footer" class="blue-background">
         <div class="container">
+            {% if hide_subscribe != True %}
             <div class="row">
                 <div class="offset-3 col-md-3 pt-5 pb-5">
                     <span class="white-font" style="font-variant: titling-caps;">Our Company</span><br/><br/>
@@ -84,6 +84,7 @@
                     <span id="result" class="d-none white-font ps-3"></span>
                 </div>
             </div>
+            {% endif %}
         </div>
     </section>
     <section class="text-center vintage-font orange-background">
