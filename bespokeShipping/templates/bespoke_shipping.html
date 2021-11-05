@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block extra_header %}
+    <script type="text/javascript" src="{{ square_js_url }}"></script>
+{% endblock %}
+
 {% block content %}
 <section id="heading" class="text-center blue-background">
     <h1 class="white-font">Bespoke Vintage Shipping</h1>
@@ -10,81 +14,121 @@
         <a class="vintage-list-item list-group-item list-group-item-action" id="list-want-list" data-toggle="list" href="#list-want" role="tab" aria-controls="want"><span style="font-size: larger;">3 How you want it</span></a>
         <a class="vintage-list-item list-group-item list-group-item-action" id="list-submit-list" data-toggle="list" href="#list-submit" role="tab" aria-controls="submit"><span style="font-size: larger;">4 Complete your shipping</span></a>
     </div>
-    <div class="tab-content white-font" id="nav-tabContent" style="padding-top: 1.5em; padding-bottom: 1.5em;">
-        <div class="tab-pane fade show active" id="list-size" role="tabpanel" aria-labelledby="list-size-list">
-            <div class="container">
-                <div class="row">
-                    {% for radio in size_form.size %}
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <div class="size-form-check">
-                            <label class="form-check-label" for={{ radio.id_for_label }}>
-                                {{ radio.choice_label }}
-                            </label>
-                            <input class="form-check-input" type="radio" name="size-radios" id="{{ radio.id_for_label }}" onclick="showTab('#list-to-list')">
+    <form method="post">
+        <div class="tab-content white-font" id="nav-tabContent" style="padding-top: 1.5em; padding-bottom: 1.5em;">
+            <div class="tab-pane fade show active" id="list-size" role="tabpanel" aria-labelledby="list-size-list">
+                <div class="container">
+                    <div class="row">
+                        {% for radio in size_form.size %}
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="size-form-check">
+                                <label class="form-check-label" for={{ radio.id_for_label }}>
+                                    {{ radio.choice_label }}
+                                </label>
+                                <input class="form-check-input" type="radio" name="size-radios" id="{{ radio.id_for_label }}" onclick="showTab('#list-to-list')">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="list-to" role="tabpanel" aria-labelledby="list-to-list">
+                <div class="container ">
+                    <div class="row text-start">
+                        <div class="col-4 offset-4">
+                            <table>
+                                {{ ship_to_form.as_table }}
+                            </table>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div class="tab-pane fade" id="list-to" role="tabpanel" aria-labelledby="list-to-list">
-            <div class="container ">
-                <div class="row text-start">
-                    <div class="col-4 offset-4">
-                        <table>
-                            {{ ship_to_form.as_table }}
-                        </table>
+                    <div class="row">
+                        <button class="vintage-list-item list-group-item list-group-item-action active" id="list-want-list" type="button" data-toggle="list" onclick="showTab('#list-want-list')" role="tab" aria-controls="want"><span style="font-size: larger;">Next</span></button>
                     </div>
                 </div>
-                <div class="row">
-                    <button class="vintage-list-item list-group-item list-group-item-action active" id="list-want-list" data-toggle="list" onclick="showTab('#list-want-list')" role="tab" aria-controls="want"><span style="font-size: larger;">Next</span></button>
+            </div>
+            <div class="tab-pane fade" id="list-want" role="tabpanel" aria-labelledby="list-want-list">
+                <div class="container">
+                    <div class="row">
+                        {% for radio_level in delivery_level.level %}
+                        <div class="col-12 col-md-6">
+                            <div class="size-form-check">
+                                <label class="form-check-label" for={{ radio_level.id_for_label }}>
+                                    {{ radio_level.choice_label }}
+                                </label>
+                                <input class="form-check-input" type="radio" name="level-radios" id="{{ radio_level.id_for_label }}" onclick="showTab('#list-submit-list')">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="tab-pane fade" id="list-want" role="tabpanel" aria-labelledby="list-want-list">
-            <div class="container">
-                <div class="row">
-                    {% for radio in delivery_level.level %}
-                    <div class="col-12 col-md-6 ">
-                        <div class="size-form-check">
-                            <label class="form-check-label" for={{ radio.id_for_label }}>
-                                {{ radio.choice_label }}
-                            </label>
-                            <input class="form-check-input" type="radio" name="size-radios" id="{{ radio.id_for_label }}" onclick="showTab('#list-to-list')">
+            <div class="tab-pane fade" id="list-submit" role="tabpanel" aria-labelledby="list-submit-list">
+                <div class="container">
+                    <div class="row text-start">
+                        <p id="ship-error"></p>
+                        <div id="ship-text">
+                            <p>You are shipping <span id="ship_size"></span> with <span id="ship_location"></span></p>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div class="tab-pane fade" id="list-submit" role="tabpanel" aria-labelledby="list-submit-list">
-            <div class="container">
-                <div class="row">
-                    <div class="col-4 offset-4">
-                        <h3>From</h3>
-                        <p>{{ seller.name }}</p>
-                        <p>{{ seller.street }}</p>
-                        <p>{{ seller.city }}, {{ seller.state }} {{ seller.zip }}</p>
+                    <div class="row">
+                        <div class="col-12 col-md-6 offset-lg-2 col-lg-4">
+                            <h3>From</h3>
+                            {% if from_form %}
+                            <table class="text-start" id="from-form">
+                                {{ from_form.as_table }}
+                            </table>
+                            <button class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" type="button" onclick="calculate_cost()"><span style="font-size: larger;">Calculate Shipping</span></button>
+                            {% else %}
+                            <div id="from-seller" class="text-start">
+                                <p id="seller-name">{{ seller.name }}</p>
+                                <p id="seller-street">{{ seller.street }}</p>
+                                <p><span id="seller-city">{{ seller.city }}</span>, <span id="seller-state">{{ seller.state }}</span> <span id="seller-postal-code">{{ seller.zip }}</span></p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <h3>To</h3>
+                            <p id="to-errors" class="text-start"></p>
+                            <div id="to-text" class="text-start">
+                                <p id="to_name"><span id="to_first_name"></span> <span id="to_last_name"></span> </p>
+                                <p id="to_address_1"></p>
+                                <p id="to_address_2"></p>
+                                <p id="to_city_state_zip"><span id="to_city"></span>, <span id="to_state"></span> <span id="to_zip"></span></p>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <p id="cost"></p>
+                        </div>
+                        {% if payment_errors %}
+                        <div class="row">
+                            {% for error in payment_errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div class="row pt-3" id="card-container">
+                            <div class="col">
+                                <div class="row">
+                                    <div id="form-container">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col text-center">
+                            <input disabled class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" id="form-submit" style="max-width: 10em;" type="submit" value="Place Order" onclick="onGetCardNonce(event)">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </section>
 {% endblock %}
 {% block end_body %}
+    <script src="{% get_static_prefix %}js/shipPaymentForm.js"></script>
     <script src="{% get_static_prefix %}js/jquery-3.6.0.min.js"></script>
-    <script>
-        $('#list-tab a').on('click', function(e) {
-          e.preventDefault()
-            console.log(this)
-          $(this).tab('show')
-        })
-    </script>
-    <script>
-        function showTab(tabID){
-            let triggerEl = $(tabID)
-            bootstrap.Tab.getOrCreateInstance(triggerEl).show()
-        }
-    </script>
+    <script src="{% get_static_prefix %}js/ship-tabs.js"></script>
 {% endblock %}

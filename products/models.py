@@ -44,6 +44,8 @@ class Seller(models.Model):
     city = models.CharField(max_length=4000)
     state = models.CharField(max_length=4000)
     zip = models.CharField(max_length=4000)
+    email = models.EmailField(max_length=254, blank=True, null=True)
+    phone = models.CharField(max_length=4000, blank=True, null=True)
 
     slug = models.SlugField(max_length=4000, blank=True)
 

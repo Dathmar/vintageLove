@@ -51,7 +51,12 @@
                             <a class="dropdown-item dropdown-item-blue" href="{% url 'store:our-purpose-retail' %}">Retail</a>
                         </div>
                     </li>{% endcomment %}
+                    {% if user.is_authenticated != True %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'bespoke-shipping:create-by-seller-id' 'unknown' %}">Ship</a></li>
+                    {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'bespoke-shipping:create' %}">Ship</a></li>
+                    {% endif %}
+
                     <li class="nav-item"><a class="nav-link" href="{% url 'store:join_movement' %}">Join</a></li>
                     {%  if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'logout' %}">Logout</a></li>
@@ -99,7 +104,10 @@
         <div style="text-align: center;"><span class="copyright"><br>©2021 Global Vintage Love<br><br></span></div>
     </section>
     <script src="{% get_static_prefix %}bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="{% get_static_prefix %}js/session_cookie.js"></script>
+    {% if hide_subscribe != True %}
     <script src="{% get_static_prefix %}js/email-signups.js"></script>
+    {% endif %}
     {% block end_body %}{% endblock %}
 </body>
 
