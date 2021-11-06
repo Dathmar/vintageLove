@@ -1,7 +1,11 @@
-from django.shortcuts import render, reverse
+from django.shortcuts import render, reverse, HttpResponseRedirect
 from products.models import Category, Product, ProductImage
 from django.http.response import JsonResponse
 from django.conf import settings
+from .forms import JoinMovement
+
+from base.Emailing import EmailThread
+
 import mailchimp_marketing as mailchimpMarketing
 from mailchimp_marketing.api_client import ApiClientError
 import json
@@ -16,7 +20,7 @@ def index(request):
     product_lst = product_lst[:12]
 
     products = product_lst.values('id', 'title', 'retail_price',
-                                                'wholesale_price', 'status__disply_wholesale', 'slug')
+                                  'wholesale_price', 'status__disply_wholesale', 'slug')
 
     for product in products:
         images = []
@@ -43,7 +47,19 @@ def our_purpose_retail(request):
 
 
 def join_movement(request):
-    return render(request, 'join-movement.html')
+    if request.method == 'POST':
+        form = JoinMovement(request.POST)
+
+        if form.is_valid():
+            send_join_email(form)
+            return render(request, 'join-movement-complete.html')
+    else:
+        form = JoinMovement()
+
+    context = {
+        'join_form': form,
+    }
+    return render(request, 'join-movement.html', context)
 
 
 def privacy_policy(request):
@@ -82,3 +98,46 @@ def marketing_signup(request):
             }
 
         return JsonResponse(data)
+
+
+def send_join_email(form):
+
+    first_name = form.cleaned_data['first_name']
+    last_name = form.cleaned_data['last_name']
+    subject = form.cleaned_data['subject']
+    message = form.cleaned_data['message']
+
+    email_subject = f'New Join Email {first_name} {last_name}'
+
+    if settings.ENVIRONMENT == 'localhost':
+        email_subject = f'!!TESTING!! - {subject}'
+
+    body = f'''
+        Name: {first_name} {last_name}
+        Subject: {subject}
+        Message:
+        {message}
+        '''
+
+    html_body = f"""
+                    <!DOCTYPE html>
+                    <html>
+                        <head>
+                        </head>
+                        <body>
+                            <p>Name: {first_name} {last_name}</p>
+                            <p>Subject: {subject}</p>
+                            <p>Message:</p>
+                            <p>{message}</p>
+                        </body>
+                    </html>
+                    """
+
+    EmailThread(
+        subject=email_subject,
+        message=body,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient=settings.EMAIL_HOST_USER,
+        fail_silently=False,
+        html_message=html_body
+    ).start()
