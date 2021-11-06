@@ -114,7 +114,6 @@ def create(request, seller_slug=None):
                     'seller': seller,
                     'hide_subscribe': True,
                     'square_js_url': settings.SQUARE_JS_URL,
-                    'thing': 'payment failed',
                     'paymen_errors': payment_result
                 }
 
@@ -129,7 +128,6 @@ def create(request, seller_slug=None):
                 'seller': seller,
                 'hide_subscribe': True,
                 'square_js_url': settings.SQUARE_JS_URL,
-                'thing': size_form.errors,
             }
 
             if from_form:
