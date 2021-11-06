@@ -15,6 +15,7 @@ import uuid
 
 # Create your views here.
 def create(request, seller_slug=None):
+    from_form = None
     if not request.session.get('idempotency_shipping_key'):
         request.session['idempotency_shipping_key'] = str(uuid.uuid4())
 
@@ -24,7 +25,7 @@ def create(request, seller_slug=None):
         delivery_level = DeliveryLevel(request.POST)
 
         seller = None
-
+        from_form_valid = True
         if seller_slug == 'unknown':
             from_form = FromForm(request.POST)
             if from_form.is_valid():
@@ -42,17 +43,7 @@ def create(request, seller_slug=None):
                     from_address += '\n' + from_address2
                 from_address += '\n' + from_city + ', ' + from_state + ' ' + from_postal_code
             else:
-                context = {
-                    'size_form': size_form,
-                    'ship_to_form': ship_to_form,
-                    'delivery_level': delivery_level,
-                    'seller': seller,
-                    'hide_subscribe': True,
-                    'square_js_url': settings.SQUARE_JS_URL,
-                    'from_form': from_form,
-                }
-                return render(request, 'bespoke_shipping.html', context)
-
+                from_form_valid = False
         elif seller_slug:
             seller = get_object_or_404(Seller, slug=seller_slug)
         else:
@@ -64,7 +55,7 @@ def create(request, seller_slug=None):
             from_email = seller.email
             from_phone = seller.phone
 
-        if size_form.is_valid() and ship_to_form.is_valid():
+        if size_form.is_valid() and ship_to_form.is_valid() and delivery_level.is_valid() and from_form_valid:
             size = size_form.cleaned_data['size']
 
             ship_to_first_name = ship_to_form.cleaned_data['first_name']
@@ -81,7 +72,7 @@ def create(request, seller_slug=None):
                 ship_to_address += '\n' + ship_to_address2
             ship_to_address += '\n' + ship_to_city + ', ' + ship_to_state + ' ' + ship_to_postal_code
 
-            shipping_level = delivery_level.cleaned_data['shipping_level']
+            shipping_level = delivery_level.cleaned_data['level']
 
             cost, distance = calculate_shipping_cost(size, from_address, ship_to_address, shipping_level)
 
@@ -102,6 +93,7 @@ def create(request, seller_slug=None):
                                                    from_phone=from_phone,
                                                    to_name=ship_to_first_name + ' ' + ship_to_last_name,
                                                    to_address=ship_to_address,
+                                                   to_email=ship_to_email,
                                                    ship_size=size,
                                                    ship_location=shipping_level,
                                                    cost=cost,
@@ -110,19 +102,24 @@ def create(request, seller_slug=None):
 
                 send_internal_shipping_notification(shipping)
 
-                render(request, 'bespoke_shipping_complete.html', {'shipping': shipping})
+                return render(request, 'bespoke_shipping_complete.html', {'shipping': shipping})
             else:
                 context = {
+                    'size_form_errors': size_form.errors,
                     'size_form': size_form,
+                    'ship_to_form_errors': ship_to_form.errors,
                     'ship_to_form': ship_to_form,
                     'delivery_level': delivery_level,
+                    'delivery_level_errors': delivery_level.errors,
                     'seller': seller,
                     'hide_subscribe': True,
                     'square_js_url': settings.SQUARE_JS_URL,
+                    'thing': 'payment failed',
+                    'paymen_errors': payment_result
                 }
 
                 if from_form:
-                    context.update({'from_form': from_form})
+                    context.update({'from_form': from_form, 'from_form_errors': from_form.errors})
                 return render(request, 'bespoke_shipping.html', context)
         else:
             context = {
@@ -132,6 +129,7 @@ def create(request, seller_slug=None):
                 'seller': seller,
                 'hide_subscribe': True,
                 'square_js_url': settings.SQUARE_JS_URL,
+                'thing': size_form.errors,
             }
 
             if from_form:
@@ -276,7 +274,6 @@ def send_internal_shipping_notification(shipping):
         Shipping Destination
         Name: {shipping.to_name}
         E-mail: {shipping.to_email}
-        Phone: {shipping.to_phone}
         Address:
         {shipping.to_address}
         
@@ -300,7 +297,6 @@ def send_internal_shipping_notification(shipping):
                             <p>Shipping Destination</p>
                             <p>Name: {shipping.to_name}</p>
                             <p>E-mail: {shipping.to_email}</p>
-                            <p>Phone: {shipping.to_phone}</p>
                             <p>Address:</p>
                             <p>{shipping.to_address}</p>
                         </body>

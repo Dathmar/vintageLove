@@ -33,6 +33,12 @@ class SizeForm(forms.Form):
                                                              "class": "size-form-check"}),
                              choices=size_choices)
 
+    def clean_size(self):
+        size = self.cleaned_data.get('size')
+        if not size:
+            raise forms.ValidationError('Please select a size.')
+        return size
+
 
 class ShipToForm(forms.Form):
     first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'First Name'}),
@@ -44,7 +50,7 @@ class ShipToForm(forms.Form):
     address1 = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Address 1'}),
                                max_length=200)
     address2 = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Address 2'}),
-                               max_length=200)
+                               max_length=200, required=False)
     postal_code = forms.CharField(widget=forms.NumberInput(attrs={'placeholder': 'Postal Code'}))
     city = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'City'}),
                            max_length=200)
@@ -59,5 +65,5 @@ class DeliveryLevel(forms.Form):
                       ('placement', mark_safe(f'<img src="{ get_static_prefix }img/in_home.png" height="150"><br/>'
                                               'In home delivery and placement.<br/>(+$50)')))
 
-    level = forms.ChoiceField(widget=forms.RadioSelect(),
+    level = forms.ChoiceField(widget=forms.RadioSelect(attrs={"onclick": "showTab('#list-submit-list')"}),
                               choices=shipping_level)

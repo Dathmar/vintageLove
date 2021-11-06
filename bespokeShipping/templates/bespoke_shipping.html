@@ -7,6 +7,7 @@
 
 {% block content %}
 <section id="heading" class="text-center blue-background">
+{{ thing }}
     <h1 class="white-font">Bespoke Vintage Shipping</h1>
     <p class="white-font">Tell us about the piece, enter your address, get an instant quote</p>
     <div class="list-group list-group-horizontal-md orange-font vintage-font" id="list-tab" role="tablist">
@@ -16,17 +17,27 @@
         <a class="vintage-list-item list-group-item list-group-item-action" id="list-submit-list" data-toggle="list" href="#list-submit" role="tab" aria-controls="submit"><span style="font-size: larger;">4 Complete your shipping</span></a>
     </div>
     <form method="post">
+        {% csrf_token %}
         <div class="tab-content white-font" id="nav-tabContent" style="padding-top: 1.5em; padding-bottom: 1.5em;">
             <div class="tab-pane fade show active" id="list-size" role="tabpanel" aria-labelledby="list-size-list">
                 <div class="container">
                     <div class="row">
+                        {% if size_form_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <ul>
+                                {% for error in size_form_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
                         {% for radio in size_form.size %}
                         <div class="col-6 col-lg-3">
                             <div class="size-form-check">
                                 <label class="form-check-label" for={{ radio.id_for_label }}>
                                     {{ radio.choice_label }}
                                 </label>
-                                <input class="form-check-input" type="radio" name="size-radios" id="{{ radio.id_for_label }}" onclick="showTab('#list-to-list')">
+                                {{ radio.tag }}
                             </div>
                         </div>
                         {% endfor %}
@@ -37,6 +48,15 @@
                 <div class="container ">
                     <div class="row text-start">
                         <div class="col-12 col-md-4 offset-md-4">
+                            {% if ship_to_form_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <ul>
+                                    {% for error in ship_to_form_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
                             <table>
                                 {{ ship_to_form.as_table }}
                             </table>
@@ -50,13 +70,22 @@
             <div class="tab-pane fade" id="list-want" role="tabpanel" aria-labelledby="list-want-list">
                 <div class="container">
                     <div class="row">
+                        {% if ship_to_form_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <ul>
+                                    {% for error in delivery_level_form_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
                         {% for radio_level in delivery_level.level %}
                         <div class="col-6">
                             <div class="size-form-check">
                                 <label class="form-check-label" for={{ radio_level.id_for_label }}>
                                     {{ radio_level.choice_label }}
                                 </label>
-                                <input class="form-check-input" type="radio" name="level-radios" id="{{ radio_level.id_for_label }}" onclick="showTab('#list-submit-list')">
+                                {{ radio_level.tag }}
                             </div>
                         </div>
                         {% endfor %}
@@ -72,9 +101,18 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-12 col-md-6 col-lg-4">
+                        <div class="col-12 col-md-6 offset-lg-2 col-lg-4">
                             <h3>From</h3>
                             {% if from_form %}
+                                {% if from_form_errors %}
+                                    <div class="alert alert-danger" role="alert">
+                                        <ul>
+                                            {% for error in delivery_level_form_errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
                             <table class="text-start" id="from-form">
                                 {{ from_form.as_table }}
                             </table>
