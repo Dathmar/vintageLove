@@ -60,7 +60,7 @@ class Seller(models.Model):
         super(Seller, self).save()
 
         if not Seller.objects.filter(id=self.id).exists():
-            generate_qr_code('https://www.localvintagestore.com/ship/' + str(self.slug),
+            generate_qr_code('https://www.globalvintagelove.com/ship/' + str(self.slug),
                              'media/bespoke-shipping/' + str(self.slug) + '_qr.png')
 
     def get_qr_url(self):
@@ -109,7 +109,7 @@ class Product(models.Model):
 
         if not Product.objects.filter(id=self.id).exists():
             super(Product, self).save()
-            generate_qr_code('https://www.localvintagestore.com/products/' + str(self.id),
+            generate_qr_code('https://www.globalvintagelove.com/products/' + str(self.id),
                              'media/qr_img/' + str(self.id) + '_qr.png')
         else:
             super(Product, self).save()

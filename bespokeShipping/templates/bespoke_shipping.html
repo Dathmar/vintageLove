@@ -8,6 +8,7 @@
 {% block content %}
 <section id="heading" class="text-center blue-background">
     <h1 class="white-font">Bespoke Vintage Shipping</h1>
+    <p class="white-font">Tell us about the piece, enter your address, get an instant quote</p>
     <div class="list-group list-group-horizontal-md orange-font vintage-font" id="list-tab" role="tablist">
         <a class="vintage-list-item list-group-item list-group-item-action active" id="list-size-list" data-toggle="list" href="#list-size" role="tab" aria-controls="size"><span style="font-size: larger;">1 Size of piece</span></a>
         <a class="vintage-list-item list-group-item list-group-item-action" id="list-to-list" data-toggle="list" href="#list-to" role="tab" aria-controls="to"><span style="font-size: larger;">2 Where its going</span></a>
@@ -20,7 +21,7 @@
                 <div class="container">
                     <div class="row">
                         {% for radio in size_form.size %}
-                        <div class="col-12 col-md-6 col-lg-3">
+                        <div class="col-6 col-lg-3">
                             <div class="size-form-check">
                                 <label class="form-check-label" for={{ radio.id_for_label }}>
                                     {{ radio.choice_label }}
@@ -35,7 +36,7 @@
             <div class="tab-pane fade" id="list-to" role="tabpanel" aria-labelledby="list-to-list">
                 <div class="container ">
                     <div class="row text-start">
-                        <div class="col-4 offset-4">
+                        <div class="col-12 col-md-4 offset-md-4">
                             <table>
                                 {{ ship_to_form.as_table }}
                             </table>
@@ -50,7 +51,7 @@
                 <div class="container">
                     <div class="row">
                         {% for radio_level in delivery_level.level %}
-                        <div class="col-12 col-md-6">
+                        <div class="col-6">
                             <div class="size-form-check">
                                 <label class="form-check-label" for={{ radio_level.id_for_label }}>
                                     {{ radio_level.choice_label }}
@@ -71,7 +72,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-12 col-md-6 offset-lg-2 col-lg-4">
+                        <div class="col-12 col-md-6 col-lg-4">
                             <h3>From</h3>
                             {% if from_form %}
                             <table class="text-start" id="from-form">

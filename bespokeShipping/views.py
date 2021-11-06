@@ -315,3 +315,9 @@ def send_internal_shipping_notification(shipping):
         fail_silently=False,
         html_message=html_body
     ).start()
+
+
+def qr_grid(request):
+    sellers = Seller.objects.all()
+
+    return render(request, 'seller-qr-grid.html', {'sellers': sellers})

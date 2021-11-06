@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="product-section body-padding text-center">
+        <div class="row">
+            {% for seller in sellers %}
+            <div class="col-3">
+                <img class="w-75" src="{{ seller.get_qr_url }}"/>
+                <p>{{ seller.name }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+    </section>
+{% endblock %}
