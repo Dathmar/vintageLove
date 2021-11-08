@@ -106,6 +106,7 @@ def send_join_email(form):
     last_name = form.cleaned_data['last_name']
     subject = form.cleaned_data['subject']
     message = form.cleaned_data['message']
+    email = form.cleaned_data['email']
 
     email_subject = f'New Join Email {first_name} {last_name}'
 
@@ -115,6 +116,7 @@ def send_join_email(form):
     body = f'''
         Name: {first_name} {last_name}
         Subject: {subject}
+        Email: {email}
         Message:
         {message}
         '''
@@ -127,6 +129,7 @@ def send_join_email(form):
                         <body>
                             <p>Name: {first_name} {last_name}</p>
                             <p>Subject: {subject}</p>
+                            <p>Email: {email}</p>
                             <p>Message:</p>
                             <p>{message}</p>
                         </body>

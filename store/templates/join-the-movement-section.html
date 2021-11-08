@@ -2,14 +2,14 @@
     <section>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-12 col-md-6" style="height: 538px; background-image: url('{% get_static_prefix %}img/join_hero.webp'); background-size: cover; background-position: center;">
+                <div class="col-sm-12 col-md-6" style="height: 600px; background-image: url('{% get_static_prefix %}img/join_hero.webp'); background-size: cover; background-position: center;">
                     <div class="text-center">
                         <h3 class="orange-font cinzel-font mt-5">JOIN THE MOVEMENT</h3>
                         <span class="mt-2">Let us help grow your vintage business without making any more<br/>
                             investments than you already have... we are in this together!</span>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-6 orange-background text-center" style="position: relative; height: 538px">
+                <div class="col-sm-12 col-md-6 orange-background text-center" style="position: relative; height: 600px">
                     <form method="post" class="vertical-center">
                         {% csrf_token %}
                         {{ form_valid }}
@@ -20,7 +20,7 @@
                                 </div>
                             {% endfor %}
                         {% endif %}
-                        <div class="row g-4">
+                        <div class="row g-3">
                             <div class="col-sm-10 offset-sm-1 col-md-5 offset-md-1">
                                 {{ join_form.first_name }}
                             </div>
@@ -28,17 +28,22 @@
                                 {{ join_form.last_name }}
                             </div>
                         </div>
-                        <div class="row g-4 mt-1">
+                        <div class="row g-3 mt-1">
+                            <div class="col-10 offset-1">
+                                {{ join_form.email }}
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-1">
                             <div class="col-10 offset-1">
                                 {{ join_form.subject }}
                             </div>
                         </div>
-                        <div class="row g-4 mt-1">
+                        <div class="row g-3 mt-1">
                             <div class="col-10 offset-1">
                                 {{ join_form.message }}
                             </div>
                         </div>
-                        <div class="row g-4 mt-1">
+                        <div class="row g-3 mt-1">
                             <div class="col-10 offset-1">
                                 <input class="form-control btn blue-button rounded-3" id="form-submit" style="max-width: 10em;" type="submit" value="Submit">
                             </div>
