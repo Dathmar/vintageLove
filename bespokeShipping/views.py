@@ -66,6 +66,7 @@ def create(request, seller_slug=None):
             ship_to_state = ship_to_form.cleaned_data['state']
             ship_to_postal_code = ship_to_form.cleaned_data['postal_code']
             ship_to_email = ship_to_form.cleaned_data['email']
+            ship_to_phone = ship_to_form.cleaned_data['phone']
 
             ship_to_address = ship_to_address1
             if ship_to_address2:
@@ -74,7 +75,7 @@ def create(request, seller_slug=None):
 
             shipping_level = delivery_level.cleaned_data['level']
 
-            cost, distance = calculate_shipping_cost(size, from_address, ship_to_address, shipping_level)
+            cost, distance, supported_state = calculate_shipping_cost(size, from_address, ship_to_address, shipping_level)
 
             # now charge the card
             charge_cost = cost * 100
@@ -94,6 +95,7 @@ def create(request, seller_slug=None):
                                                    to_name=ship_to_first_name + ' ' + ship_to_last_name,
                                                    to_address=ship_to_address,
                                                    to_email=ship_to_email,
+                                                   to_phone=ship_to_phone,
                                                    ship_size=size,
                                                    ship_location=shipping_level,
                                                    cost=cost,
@@ -107,18 +109,17 @@ def create(request, seller_slug=None):
                 context = {
                     'size_form_errors': size_form.errors,
                     'size_form': size_form,
-                    'ship_to_form_errors': ship_to_form.errors,
                     'ship_to_form': ship_to_form,
                     'delivery_level': delivery_level,
                     'delivery_level_errors': delivery_level.errors,
                     'seller': seller,
                     'hide_subscribe': True,
                     'square_js_url': settings.SQUARE_JS_URL,
-                    'paymen_errors': payment_result
+                    'payment_errors': payment_result
                 }
 
                 if from_form:
-                    context.update({'from_form': from_form, 'from_form_errors': from_form.errors})
+                    context.update({'from_form': from_form})
                 return render(request, 'bespoke_shipping.html', context)
         else:
             context = {

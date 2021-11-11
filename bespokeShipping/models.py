@@ -19,6 +19,7 @@ class Shipping(models.Model):
     to_name = models.CharField(max_length=1000)
     to_email = models.EmailField(max_length=1000)
     to_address = models.TextField(max_length=1000)
+    to_phone = models.CharField(max_length=1000, blank=True, null=True)
     ship_size = models.CharField(max_length=10, choices=size_choices)
     ship_location = models.CharField(max_length=10, choices=location_choices)
     cost = models.DecimalField(max_digits=10, decimal_places=2)

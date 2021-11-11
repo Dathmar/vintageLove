@@ -47,6 +47,7 @@ class ShipToForm(forms.Form):
                                 max_length=200)
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Email'}),
                              max_length=200)
+    phone = forms.CharField(widget=forms.NumberInput(attrs={'placeholder': 'Phone'}))
     address1 = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Address 1'}),
                                max_length=200)
     address2 = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Address 2'}),
