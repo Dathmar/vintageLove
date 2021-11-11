@@ -153,14 +153,16 @@ async function calculate_cost() {
     from_address = get_from_address();
 
     if(ship_error === null && to_address.length > 0 && from_address.length > 0) {
-        console.log(from_address.join(' '));
-        console.log(to_address.join(' '));
-
         let ship_cost = await shipCost(this_size, from_address.join(' '), to_address.join(' '), to_door);
         console.log(ship_cost);
-        ship_cost = ship_cost.cost;
-        $('#cost').text('Your shipping cost is $' + ship_cost);
-        $('#form-submit').prop('disabled', false);
+        if(ship_cost.supported_state === false) {
+            $('#cost').text('Sorry, we do not ship to your state.');
+            $('#form-submit').prop('disabled', true);
+        } else {
+            $('#cost').text('Your shipping cost is $' + ship_cost.cost);
+            $('#form-submit').prop('disabled', false);
+        }
+
     } else {
         $('#cost').text('Cannot Calculate Shipping Costs');
         $('#form-submit').prop('disabled', true);

@@ -171,8 +171,8 @@ def ship_cost(request):
         to_address = body['to_address']
         to_door = body['to_door']
         try:
-            cost, distance = calculate_shipping_cost(ship_size, from_address, to_address, to_door)
-            return JsonResponse({'cost': cost, 'distance': str(distance)})
+            cost, distance, supported_state = calculate_shipping_cost(ship_size, from_address, to_address, to_door)
+            return JsonResponse({'cost': cost, 'distance': str(distance), 'supported_state': supported_state})
         except Exception as e:
             return JsonResponse({'error': str(e)})
 
@@ -180,61 +180,67 @@ def ship_cost(request):
 
 
 def calculate_shipping_cost(ship_size, from_address, to_address, to_door):
-    distance = calculate_distance(from_address, to_address)
-    distance = float(distance.split(' ')[0])
+    distance, to_state, from_state = calculate_distance(from_address, to_address)
+    distance = float(distance.split(' ')[0].replace(',', ''))
 
-    if distance <= 50:
-        distance_range = '0-50'
-    elif distance <= 100:
-        distance_range = '51-100'
-    elif distance <= 150:
-        distance_range = '101-150'
-    elif distance <= 200:
-        distance_range = '151-200'
-    elif distance <= 250:
-        distance_range = '201-250'
+    if to_state.casefold() not in ['tx', 'texas'] or from_state.casefold() not in ['tx', 'texas']:
+        supported_state = False
+        cost = -1
+        distance = -1
     else:
-        distance_range = '251'
+        if distance <= 50:
+            distance_range = '0-50'
+        elif distance <= 100:
+            distance_range = '51-100'
+        elif distance <= 150:
+            distance_range = '101-150'
+        elif distance <= 200:
+            distance_range = '151-200'
+        elif distance <= 250:
+            distance_range = '201-250'
+        else:
+            distance_range = '251'
 
-    shipping_chart = {
-        'small': {
-            '0-50': 50,
-            '51-100': 75,
-            '101-150': 85,
-            '151-200': 100,
-            '201-250': 100,
-            '251': 100
-        },
-        'medium': {
-            '0-50': 75,
-            '51-100': 100,
-            '101-150': 125,
-            '151-200': 150,
-            '201-250': 150,
-            '251': 150
-        },
-        'large': {
-            '0-50': 150,
-            '51-100': 200,
-            '101-150': 250,
-            '151-200': 300,
-            '201-250': 300,
-            '251': 300
-        },
-        'set': {
-            '0-50': 250,
-            '51-100': 300,
-            '101-150': 350,
-            '151-200': 500,
-            '201-250': 500,
-            '251': 500
-        },
-    }
-    cost = shipping_chart[ship_size][distance_range]
-    if to_door:
+        shipping_chart = {
+            'small': {
+                '0-50': 50,
+                '51-100': 75,
+                '101-150': 85,
+                '151-200': 100,
+                '201-250': 100,
+                '251': 100
+            },
+            'medium': {
+                '0-50': 75,
+                '51-100': 100,
+                '101-150': 125,
+                '151-200': 150,
+                '201-250': 150,
+                '251': 150
+            },
+            'large': {
+                '0-50': 150,
+                '51-100': 200,
+                '101-150': 250,
+                '151-200': 300,
+                '201-250': 300,
+                '251': 300
+            },
+            'set': {
+                '0-50': 250,
+                '51-100': 300,
+                '101-150': 350,
+                '151-200': 500,
+                '201-250': 500,
+                '251': 500
+            },
+        }
+        cost = shipping_chart[ship_size][distance_range]
+        supported_state = True
+    if not to_door:
         cost += 50
 
-    return cost, distance
+    return cost, distance, supported_state
 
 
 def calculate_distance(from_address, to_address):
@@ -243,14 +249,25 @@ def calculate_distance(from_address, to_address):
         address1 = gmaps.geocode(address=from_address)
         address2 = gmaps.geocode(address=to_address)
 
+        to_state = get_address_state(address2[0]['address_components'])
+        from_state = get_address_state(address1[0]['address_components'])
+
         address1_place_id = 'place_id:' + address1[0]['place_id']
         address2_place_id = 'place_id:' + address2[0]['place_id']
 
         distance = gmaps.distance_matrix(address1_place_id, address2_place_id, mode='driving', units='imperial', )
 
-        return distance['rows'][0]['elements'][0]['distance']['text']
+        return distance['rows'][0]['elements'][0]['distance']['text'], to_state, from_state
     except Exception as e:
         raise e
+
+
+def get_address_state(address_components):
+    for component in address_components:
+        if 'administrative_area_level_1' in component['types'][0]:
+            return component['long_name']
+    else:
+        return 'no state'
 
 
 def send_internal_shipping_notification(shipping):

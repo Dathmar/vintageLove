@@ -4,6 +4,7 @@ let paymentForm;
 const tax_percent_elemt = $('tax_percent')
 const tax_amount_elemt = $('tax_amount')
 const order_cost_elemt = $('order_cost')
+const shipping_amount_elemt = $('shipping_amount')
 
 function fetchSquareAppId() {
     let sq_id = fetch('/orders/square-app-id/').then(
@@ -78,6 +79,7 @@ async function getCost() {
     let cost_info = await fetchCost()
 
     tax_percent_elemt.innerText = "Tax @ " + cost_info.tax_percent + "%"
+    shipping_amount_elemt.innerText = "$" + cost_info.shipping_amount
     tax_amount_elemt.innerText = "$" + cost_info.tax_amount
     order_cost_elemt.innerText = "$" + cost_info.order_cost
 }

@@ -125,7 +125,7 @@ def send_internal_order_notification(order):
 
 def get_order_cost_info(state, cost):
     tax_value = get_tax(state)
-    shipping_amount = 0
+    shipping_amount = get_shipping_amount(state)
 
     total_tax = round(Decimal((cost + shipping_amount) * Decimal(tax_value / Decimal(100))), 2)
     price_with_tax = round(Decimal(cost + shipping_amount + total_tax), 2)
@@ -136,6 +136,13 @@ def get_order_cost_info(state, cost):
         'tax_amount': str(total_tax),
         'order_cost': price_with_tax,
     }
+
+
+def get_shipping_amount(state):
+    if state.casefold() not in ['texas', 'tx']:
+        return Decimal('500.00')
+    else:
+        return Decimal('0.00')
 
 
 def square_app_id(request):
@@ -155,6 +162,7 @@ def order_cost(request):
                 'tax_value': 'NA',
                 'total_tax': 'NA',
                 'order_cost': 'Not Available',
+                'shipping_amount': 'NA',
             }
         else:
             state = body['state']
