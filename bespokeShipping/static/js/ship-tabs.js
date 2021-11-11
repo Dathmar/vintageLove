@@ -11,6 +11,8 @@ let from_address;
 let ship_error;
 let ship_size;
 
+const shipping_timeline_elem = $('#shipping-timeline')
+
 function showTab(tabID){
     let triggerEl = $(tabID);
     bootstrap.Tab.getOrCreateInstance(triggerEl).show();
@@ -151,6 +153,7 @@ tabEl.on('show.bs.tab', async function (event) {
 
 async function calculate_cost() {
     from_address = get_from_address();
+    shipping_timeline_elem.hide();
 
     if(ship_error === null && to_address.length > 0 && from_address.length > 0) {
         let ship_cost = await shipCost(this_size, from_address.join(' '), to_address.join(' '), to_door);
@@ -161,6 +164,19 @@ async function calculate_cost() {
         } else {
             $('#cost').text('Your shipping cost is $' + ship_cost.cost);
             $('#form-submit').prop('disabled', false);
+        }
+
+        let distance = parseFloat(ship_cost.distance);
+
+        if(distance < 51 && distance >= 0) {
+            shipping_timeline_elem.text('You will receive your item within 1 week.');
+            shipping_timeline_elem.show();
+        } else if (distance > 50 && distance < 151) {
+            shipping_timeline_elem.text('You will receive your item within 2 weeks.');
+            shipping_timeline_elem.show();
+        } else if (distance > 150) {
+            shipping_timeline_elem.text('You will receive your item in 2 to 3 weeks.');
+            shipping_timeline_elem.show();
         }
 
     } else {
