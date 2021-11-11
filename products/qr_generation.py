@@ -33,6 +33,7 @@ def generate_qr_code(url, save_loc):
 
 
 if __name__ == '__main__':
-    slug = 'furniture-architecture-comfort'
-    generate_qr_code(f'https://www.globalvintagelove.com/ship/location/{slug}',
+    slugs = ['keri-kropp-design-kerrville']
+    for slug in slugs:
+        generate_qr_code(f'https://www.globalvintagelove.com/ship/location/{slug}',
                              f'media/bespoke-shipping/{slug}_qr.png')
