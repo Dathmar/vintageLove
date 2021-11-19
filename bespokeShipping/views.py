@@ -27,7 +27,7 @@ def create(request, seller_slug=None):
 
         seller = None
         from_form_valid = True
-        if seller_slug == 'unknown' or request.user.is_anonymous():
+        if seller_slug == 'unknown':
 
             from_form = FromForm(request.POST)
             if from_form.is_valid():
@@ -60,7 +60,17 @@ def create(request, seller_slug=None):
         if size_form.is_valid() and ship_to_form.is_valid() and delivery_level.is_valid() \
                 and from_form_valid and insurance_form.is_valid():
 
-            size = size_form.cleaned_data['size']
+            small_quantity = size_form.cleaned_data['size_small']
+            media_quantity = size_form.cleaned_data['size_medium']
+            large_quantity = size_form.cleaned_data['size_large']
+            set_quantity = size_form.cleaned_data['size_set']
+
+            ship_sizes = {
+                'small': small_quantity,
+                'medium': media_quantity,
+                'large': large_quantity,
+                'set': set_quantity
+            }
 
             ship_to_first_name = ship_to_form.cleaned_data['first_name']
             ship_to_last_name = ship_to_form.cleaned_data['last_name']
@@ -80,8 +90,8 @@ def create(request, seller_slug=None):
             shipping_level = delivery_level.cleaned_data['level']
             insurance_level = insurance_form.cleaned_data['insure_level']
 
-            cost, distance, supported_state = calculate_shipping_cost(size, from_address,
-                                                                      ship_to_address, shipping_level)
+            cost, distance, supported_state = calculate_shipping_cost(ship_sizes, from_address,
+                                                                      ship_to_address, shipping_level, insurance_level)
 
             if '123 test ln' in ship_to_address.casefold():
                 cost = 0.01
@@ -107,8 +117,12 @@ def create(request, seller_slug=None):
                                                    to_address=ship_to_address,
                                                    to_email=ship_to_email,
                                                    to_phone=ship_to_phone,
-                                                   ship_size=size,
+                                                   small_quantity=small_quantity,
+                                                   media_quantity=media_quantity,
+                                                   large_quantity=large_quantity,
+                                                   set_quantity=set_quantity,
                                                    ship_location=shipping_level,
+
                                                    insurance=insurance_level,
                                                    cost=cost,
                                                    distance=distance)
@@ -184,14 +198,14 @@ def complete(request):
 def ship_cost(request):
     if request.method == 'POST':
         body = json.loads(request.body)
-        ship_size = body['ship_size']
+        ship_sizes = body['ship_sizes']
         from_address = body['from_address']
         to_address = body['to_address']
         to_door = body['to_door']
         insurance = body['insurance']
 
         try:
-            cost, distance, supported_state = calculate_shipping_cost(ship_size, from_address, to_address, to_door, insurance)
+            cost, distance, supported_state = calculate_shipping_cost(ship_sizes, from_address, to_address, to_door, insurance)
             if '123 test ln' in to_address.casefold():
                 cost = 0.01
                 distance = 0
@@ -204,9 +218,10 @@ def ship_cost(request):
     return HttpResponseNotAllowed(['POST', ])
 
 
-def calculate_shipping_cost(ship_size, from_address, to_address, to_door, insurance):
+def calculate_shipping_cost(ship_sizes, from_address, to_address, to_door, insurance):
     distance, to_state, from_state = calculate_distance(from_address, to_address)
     distance = float(distance.split(' ')[0].replace(',', ''))
+    cost = 0
 
     if to_state.casefold() not in ['tx', 'texas'] or from_state.casefold() not in ['tx', 'texas']:
         supported_state = False
@@ -260,8 +275,25 @@ def calculate_shipping_cost(ship_size, from_address, to_address, to_door, insura
                 '251': 500
             },
         }
-        cost = shipping_chart[ship_size][distance_range]
+
+        current_item = 0
+
+        for size, quantity in ship_sizes.items():
+            size_cost = shipping_chart[size][distance_range]
+
+            for i in range(int(quantity)):
+                current_item += 1
+                if current_item == 1:
+                    discount = 1
+                elif current_item >= 6:
+                    discount = 0.25
+                else:
+                    discount = 0.5
+
+                cost += size_cost * discount
+
         supported_state = True
+
     if not to_door:
         cost += 50
 

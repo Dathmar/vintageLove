@@ -32,16 +32,47 @@
                             </ul>
                         </div>
                         {% endif %}
-                        {% for radio in size_form.size %}
                         <div class="col-6 col-lg-3">
-                            <div class="size-form-check">
-                                <label class="form-check-label" for={{ radio.id_for_label }}>
-                                    {{ radio.choice_label }}
+                            <div class="size-form-check text-center">
+                                <label class="form-check-label" for={{ size_form.size_small.id_for_label }}>
+                                    {{ size_form.size_small.label }}
                                 </label>
-                                {{ radio.tag }}
+                                {{ size_form.size_small.tag }}
+                                {{ size_form.size_small }}
                             </div>
                         </div>
-                        {% endfor %}
+                        <div class="col-6 col-lg-3">
+                            <div class="size-form-check text-center">
+                                <label class="form-check-label" for={{ size_form.size_medium.id_for_label }}>
+                                    {{ size_form.size_medium.label }}
+                                </label>
+                                {{ size_form.size_medium.tag }}
+                                {{ size_form.size_medium }}
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="size-form-check text-center">
+                                <label class="form-check-label" for={{ size_form.size_large.id_for_label }}>
+                                    {{ size_form.size_large.label }}
+                                </label>
+                                {{ size_form.size_large.tag }}
+                                {{ size_form.size_large }}
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="size-form-check text-center">
+                                <label class="form-check-label" for={{ size_form.size_set.id_for_label }}>
+                                    {{ size_form.size_set.label }}
+                                </label>
+                                {{ size_form.size_set.tag }}
+                                {{ size_form.size_set }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" style="width: 120px;" id="list-want-list" type="button" data-toggle="list" onclick="showTab('#list-to-list')" role="tab" aria-controls="want"><span style="font-size: larger;">Next</span></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -117,6 +148,7 @@
                         <p id="ship-error"></p>
                         <div id="ship-text">
                             <p>You are shipping <span id="ship_size"></span> with <span id="ship_location"></span></p>
+                            <p id="insurance"></p>
                         </div>
                     </div>
                     <div class="row">

@@ -3,13 +3,16 @@ $('#list-tab a').on('click', function(e) {
     $(this).tab('show');
 })
 
-let this_size;
+let ship_sizes;
 let ship_location;
 let to_door;
 let to_address;
 let from_address;
 let ship_error;
-let ship_size;
+let ship_small;
+let ship_medium;
+let ship_large;
+let ship_set;
 let insurance;
 
 const shipping_timeline_elem = $('#shipping-timeline')
@@ -21,11 +24,11 @@ function showTab(tabID){
     bootstrap.Tab.getOrCreateInstance(triggerEl).show();
 }
 
-async function shipCost(ship_size, from_address, to_address, to_door, insurance) {
+async function shipCost(ship_sizes, from_address, to_address, to_door, insurance) {
     return await fetch('/ship/ship-cost/', {
         method: 'POST',
         headers: {"X-Requested-With": "XMLHttpRequest", "X-CSRFToken": getCookie("csrftoken")},
-        body: JSON.stringify({'ship_size': ship_size, 'from_address': from_address, 'to_address': to_address, 'to_door': to_door, insurance: insurance})
+        body: JSON.stringify({'ship_sizes': ship_sizes, 'from_address': from_address, 'to_address': to_address, 'to_door': to_door, insurance: insurance})
     }).then(
         response => {
             return response.json()
@@ -44,24 +47,34 @@ tabEl.on('shown.bs.tab', function (event) {
 })
 
 tabEl.on('show.bs.tab', async function (event) {
-    let ship_cost;
+    let ship_text;
+    ship_small = $('#id_size_small')
+    ship_medium = $('#id_size_medium')
+    ship_large = $('#id_size_large')
+    ship_set = $('#id_size_set')
 
-    if($('#id_size_0').is(':checked')) {
-        this_size = 'small'
-        ship_size = 'a small item';
-    } else if($('#id_size_1').is(':checked')) {
-        this_size = 'medium'
-        ship_size = 'a medium item';
-    } else if($('#id_size_2').is(':checked')) {
-        this_size = 'large'
-        ship_size = 'a large item';
-    } else if($('#id_size_3').is(':checked')) {
-        this_size = 'set'
-        ship_size = 'a set of items';
+    if (ship_small.val() === null || ship_small.val() === '' || ship_small.val() === 0) {
+        ship_small.val(0)
     } else {
-        this_size = null;
-        ship_size = null;
+        ship_text = ship_small.val() + ' small items '
     }
+    if (ship_medium.val() === null || ship_medium.val() === '' || ship_medium.val() === 0) {
+        ship_medium.val(0)
+    } else {
+        ship_text = ship_text + ship_medium.val() + ' medium items '
+    }
+    if (ship_large.val() === null || ship_large.val() === '' || ship_large.val() === 0) {
+        ship_large.val(0)
+    } else {
+        ship_text = ship_text + ship_large.val() + ' large items '
+    }
+    if (ship_set.val() === null || ship_set.val() === '' || ship_set.val() === 0) {
+        ship_set.val(0)
+    } else {
+        ship_text = ship_text + ship_set.val() + ' sets'
+    }
+
+    ship_size = ship_text.trim().replace("  ", " ")
 
     if($('#id_level_0').is(':checked')) {
         ship_location = 'delivery to your door';
@@ -73,17 +86,19 @@ tabEl.on('show.bs.tab', async function (event) {
         ship_location = null;
         to_door = null;
     }
-
+    let insurance_elem = $('#insurance')
     if($('#id_insure_level_0').is(':checked')) {
         insurance = false;
+        insurance_elem.text("Your shipping is insured up to the value of the service.")
     } else if($('#id_insure_level_1').is(':checked')) {
         insurance = true;
+        insurance_elem.text("Your shipping fully insured!")
     }
 
-    if(ship_size === null && ship_location === null) {
+    if(ship_small === 0 && ship_medium === 0 && ship_large === 0 && ship_set === 0 && ship_location === null) {
         ship_error = 'Please select a size and location';
-    } else if (ship_size === null) {
-        ship_error = 'Please select a size';
+    } else if (ship_small === 0 && ship_medium === 0 && ship_large === 0 && ship_set === 0) {
+        ship_error = 'Please input an item to ship';
     } else if (ship_location === null) {
         ship_error = 'Please select a location';
     } else {
@@ -174,7 +189,14 @@ async function calculate_cost() {
 
         await delay(3000);
 
-        let ship_cost = await shipCost(this_size, from_address.join(' '), to_address.join(' '), to_door, insurance);
+        ship_sizes = {
+            small: ship_small.val(),
+            medium: ship_medium.val(),
+            large: ship_large.val(),
+            set: ship_set.val()
+        }
+
+        let ship_cost = await shipCost(ship_sizes, from_address.join(' '), to_address.join(' '), to_door, insurance);
         console.log(ship_cost);
         if(ship_cost.supported_state === false) {
             cost_elem.text('Sorry, we do not ship to your state.');

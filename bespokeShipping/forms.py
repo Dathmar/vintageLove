@@ -24,14 +24,19 @@ class FromForm(forms.Form):
 
 class SizeForm(forms.Form):
     get_static_prefix = settings.STATIC_URL
-    size_choices = (('small', mark_safe(f'<img src="{ get_static_prefix }img/small.png" height="150"><br>Small')),
-                    ('medium', mark_safe(f'<img src="{ get_static_prefix }img/medium.png" height="150"><br>Medium')),
-                    ('large', mark_safe(f'<img src="{ get_static_prefix }img/large.png" height="150"><br>Large')),
-                    ('set', mark_safe(f'<img src="{ get_static_prefix }img/ship_set.png" height="150"><br>Sets')))
 
-    size = forms.ChoiceField(widget=forms.RadioSelect(attrs={"onclick": "showTab('#list-to-list')",
-                                                             "class": "size-form-check"}),
-                             choices=size_choices)
+    size_small = forms.CharField(
+        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;'}),
+        label=mark_safe(f'<img src="{ get_static_prefix }img/small.png" height="150"><br>Small'))
+    size_medium = forms.CharField(
+        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;'}),
+        label=mark_safe(f'<img src="{ get_static_prefix }img/medium.png" height="150"><br>Medium'))
+    size_large = forms.CharField(
+        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;'}),
+        label=mark_safe(f'<img src="{ get_static_prefix }img/large.png" height="150"><br>Large'))
+    size_set = forms.CharField(
+        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;'}),
+        label=mark_safe(f'<img src="{ get_static_prefix }img/ship_set.png" height="150"><br>Set'))
 
     def clean_size(self):
         size = self.cleaned_data.get('size')
