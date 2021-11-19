@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm
+from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm
 from products.models import UserSeller, Seller
 from django.conf import settings
 from django.http import JsonResponse, HttpResponseNotAllowed
@@ -23,6 +23,7 @@ def create(request, seller_slug=None):
         size_form = SizeForm(request.POST)
         ship_to_form = ShipToForm(request.POST)
         delivery_level = DeliveryLevel(request.POST)
+        insurance_form = InsuranceForm(request.POST)
 
         seller = None
         from_form_valid = True
@@ -56,7 +57,9 @@ def create(request, seller_slug=None):
             from_email = seller.email
             from_phone = seller.phone
 
-        if size_form.is_valid() and ship_to_form.is_valid() and delivery_level.is_valid() and from_form_valid:
+        if size_form.is_valid() and ship_to_form.is_valid() and delivery_level.is_valid() \
+                and from_form_valid and insurance_form.is_valid():
+
             size = size_form.cleaned_data['size']
 
             ship_to_first_name = ship_to_form.cleaned_data['first_name']
@@ -75,6 +78,7 @@ def create(request, seller_slug=None):
             ship_to_address += '\n' + ship_to_city + ', ' + ship_to_state + ' ' + ship_to_postal_code
 
             shipping_level = delivery_level.cleaned_data['level']
+            insurance_level = insurance_form.cleaned_data['insure_level']
 
             cost, distance, supported_state = calculate_shipping_cost(size, from_address,
                                                                       ship_to_address, shipping_level)
@@ -105,6 +109,7 @@ def create(request, seller_slug=None):
                                                    to_phone=ship_to_phone,
                                                    ship_size=size,
                                                    ship_location=shipping_level,
+                                                   insurance=insurance_level,
                                                    cost=cost,
                                                    distance=distance)
                 shipping.save()
@@ -119,6 +124,8 @@ def create(request, seller_slug=None):
                     'ship_to_form': ship_to_form,
                     'delivery_level': delivery_level,
                     'delivery_level_errors': delivery_level.errors,
+                    'insurance_form': insurance_form,
+                    'insurance_form_errors': insurance_form.errors,
                     'seller': seller,
                     'hide_subscribe': True,
                     'square_js_url': settings.SQUARE_JS_URL,
@@ -133,6 +140,7 @@ def create(request, seller_slug=None):
                 'size_form': size_form,
                 'ship_to_form': ship_to_form,
                 'delivery_level': delivery_level,
+                'insurance_form': insurance_form,
                 'seller': seller,
                 'hide_subscribe': True,
                 'square_js_url': settings.SQUARE_JS_URL,
@@ -153,10 +161,12 @@ def create(request, seller_slug=None):
     size_form = SizeForm()
     ship_to_form = ShipToForm()
     delivery_level = DeliveryLevel()
+    insurance_form = InsuranceForm()
     context = {
         'size_form': size_form,
         'ship_to_form': ship_to_form,
         'delivery_level': delivery_level,
+        'insurance_form': insurance_form,
         'seller': seller,
         'hide_subscribe': True,
         'square_js_url': settings.SQUARE_JS_URL,
@@ -178,9 +188,10 @@ def ship_cost(request):
         from_address = body['from_address']
         to_address = body['to_address']
         to_door = body['to_door']
-        try:
-            cost, distance, supported_state = calculate_shipping_cost(ship_size, from_address, to_address, to_door)
+        insurance = body['insurance']
 
+        try:
+            cost, distance, supported_state = calculate_shipping_cost(ship_size, from_address, to_address, to_door, insurance)
             if '123 test ln' in to_address.casefold():
                 cost = 0.01
                 distance = 0
@@ -193,7 +204,7 @@ def ship_cost(request):
     return HttpResponseNotAllowed(['POST', ])
 
 
-def calculate_shipping_cost(ship_size, from_address, to_address, to_door):
+def calculate_shipping_cost(ship_size, from_address, to_address, to_door, insurance):
     distance, to_state, from_state = calculate_distance(from_address, to_address)
     distance = float(distance.split(' ')[0].replace(',', ''))
 
@@ -252,6 +263,9 @@ def calculate_shipping_cost(ship_size, from_address, to_address, to_door):
         cost = shipping_chart[ship_size][distance_range]
         supported_state = True
     if not to_door:
+        cost += 50
+
+    if insurance:
         cost += 50
 
     return cost, distance, supported_state

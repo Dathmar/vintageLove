@@ -7,18 +7,19 @@
 {% endblock %}
 
 {% block content %}
-<section id="heading" class="text-center blue-background">
-    <h1 class="white-font">Bespoke Vintage Shipping</h1>
-    <p class="white-font">Tell us about the piece, enter your address, get an instant quote</p>
+<section id="heading" class="text-center">
+    <h1 class="blue-font">Bespoke Vintage Shipping</h1>
+    <p class="blue-font">Tell us about the piece, enter your address, get an instant quote</p>
     <div class="list-group list-group-horizontal-md orange-font vintage-font" id="list-tab" role="tablist">
         <a class="vintage-list-item list-group-item list-group-item-action active" id="list-size-list" data-toggle="list" href="#list-size" role="tab" aria-controls="size"><span style="font-size: larger;">1 Size of piece</span></a>
         <a class="vintage-list-item list-group-item list-group-item-action" id="list-to-list" data-toggle="list" href="#list-to" role="tab" aria-controls="to"><span style="font-size: larger;">2 Where its going</span></a>
         <a class="vintage-list-item list-group-item list-group-item-action" id="list-want-list" data-toggle="list" href="#list-want" role="tab" aria-controls="want"><span style="font-size: larger;">3 How you want it</span></a>
-        <a class="vintage-list-item list-group-item list-group-item-action" id="list-submit-list" data-toggle="list" href="#list-submit" role="tab" aria-controls="submit"><span style="font-size: larger;">4 Complete your shipping</span></a>
+        <a class="vintage-list-item list-group-item list-group-item-action" id="list-insure-list" data-toggle="list" href="#list-insure" role="tab" aria-controls="insure"><span style="font-size: larger;">4 Select Your Insurance</span></a>
+        <a class="vintage-list-item list-group-item list-group-item-action" id="list-submit-list" data-toggle="list" href="#list-submit" role="tab" aria-controls="submit"><span style="font-size: larger;">5 Complete your shipping</span></a>
     </div>
     <form method="post">
         {% csrf_token %}
-        <div class="tab-content white-font" id="nav-tabContent" style="padding-top: 1.5em; padding-bottom: 1.5em;">
+        <div class="tab-content blue-font" id="nav-tabContent" style="padding-top: 1.5em; padding-bottom: 1.5em;">
             <div class="tab-pane fade show active" id="list-size" role="tabpanel" aria-labelledby="list-size-list">
                 <div class="container">
                     <div class="row">
@@ -54,7 +55,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <button class="vintage-list-item list-group-item list-group-item-action active" id="list-want-list" type="button" data-toggle="list" onclick="showTab('#list-want-list')" role="tab" aria-controls="want"><span style="font-size: larger;">Next</span></button>
+                        <div class="col">
+                            <button class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" style="width: 120px;" id="list-want-list" type="button" data-toggle="list" onclick="showTab('#list-want-list')" role="tab" aria-controls="want"><span style="font-size: larger;">Next</span></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -77,6 +80,31 @@
                                     {{ radio_level.choice_label }}
                                 </label>
                                 {{ radio_level.tag }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="list-insure" role="tabpanel" aria-labelledby="list-insure-list">
+                <div class="container">
+                    <div class="row">
+                        {% if insure_level_form_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <ul>
+                                    {% for error in insurance_form_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        {% for radio_insure in insurance_form.insure_level %}
+                        <div class="col-6">
+                            <div class="size-form-check">
+                                <label class="form-check-label" for={{ radio_insure.id_for_label }}>
+                                    {{ radio_insure.choice_label }}
+                                </label>
+                                {{ radio_insure.tag }}
                             </div>
                         </div>
                         {% endfor %}
@@ -132,7 +160,7 @@
                               <div>A</div>
                               <div>C</div>
                             </div>
-                            <p id="cost"></p>
+                            <p id="cost" style="font-size: larger"></p>
                             <p id="shipping-timeline"></p>
                         </div>
                         {% if payment_errors %}

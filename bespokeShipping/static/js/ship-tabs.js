@@ -10,6 +10,7 @@ let to_address;
 let from_address;
 let ship_error;
 let ship_size;
+let insurance;
 
 const shipping_timeline_elem = $('#shipping-timeline')
 const loading_elem = $('#load')
@@ -20,11 +21,11 @@ function showTab(tabID){
     bootstrap.Tab.getOrCreateInstance(triggerEl).show();
 }
 
-async function shipCost(ship_size, from_address, to_address, to_door) {
+async function shipCost(ship_size, from_address, to_address, to_door, insurance) {
     return await fetch('/ship/ship-cost/', {
         method: 'POST',
         headers: {"X-Requested-With": "XMLHttpRequest", "X-CSRFToken": getCookie("csrftoken")},
-        body: JSON.stringify({'ship_size': ship_size, 'from_address': from_address, 'to_address': to_address, 'to_door': to_door})
+        body: JSON.stringify({'ship_size': ship_size, 'from_address': from_address, 'to_address': to_address, 'to_door': to_door, insurance: insurance})
     }).then(
         response => {
             return response.json()
@@ -71,6 +72,12 @@ tabEl.on('show.bs.tab', async function (event) {
     } else {
         ship_location = null;
         to_door = null;
+    }
+
+    if($('#id_insure_level_0').is(':checked')) {
+        insurance = false;
+    } else if($('#id_insure_level_1').is(':checked')) {
+        insurance = true;
     }
 
     if(ship_size === null && ship_location === null) {
@@ -167,7 +174,7 @@ async function calculate_cost() {
 
         await delay(3000);
 
-        let ship_cost = await shipCost(this_size, from_address.join(' '), to_address.join(' '), to_door);
+        let ship_cost = await shipCost(this_size, from_address.join(' '), to_address.join(' '), to_door, insurance);
         console.log(ship_cost);
         if(ship_cost.supported_state === false) {
             cost_elem.text('Sorry, we do not ship to your state.');

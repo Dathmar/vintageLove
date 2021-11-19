@@ -66,5 +66,16 @@ class DeliveryLevel(forms.Form):
                       ('placement', mark_safe(f'<img src="{ get_static_prefix }img/in_home.png" height="150"><br/>'
                                               'In home delivery and placement.<br/>(+$50)')))
 
-    level = forms.ChoiceField(widget=forms.RadioSelect(attrs={"onclick": "showTab('#list-submit-list')"}),
+    level = forms.ChoiceField(widget=forms.RadioSelect(attrs={"onclick": "showTab('#list-insure-list')"}),
                               choices=shipping_level)
+
+
+class InsuranceForm(forms.Form):
+    get_static_prefix = settings.STATIC_URL
+    insurance_level = ((True, mark_safe(f'<img src="{ get_static_prefix }img/free-insurance.png" height="150"><br/>'
+                                        f'Insurance up to the value of the shipping service<br/>(free)')),
+                       (False, mark_safe(f'<img src="{ get_static_prefix }img/fill-coverage-insurance.png" height="150"><br/>'
+                                         f'Full Coverage up to the purchase price of the piece<br/>($50)')))
+
+    insure_level = forms.ChoiceField(widget=forms.RadioSelect(attrs={"onclick": "showTab('#list-submit-list')"}),
+                                     choices=insurance_level)

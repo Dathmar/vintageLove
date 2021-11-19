@@ -22,6 +22,7 @@ class Shipping(models.Model):
     to_phone = models.CharField(max_length=1000, blank=True, null=True)
     ship_size = models.CharField(max_length=10, choices=size_choices)
     ship_location = models.CharField(max_length=10, choices=location_choices)
+    insurance = models.BooleanField(default=False)
     cost = models.DecimalField(max_digits=10, decimal_places=2)
     distance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
