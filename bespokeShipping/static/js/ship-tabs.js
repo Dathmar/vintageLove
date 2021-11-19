@@ -53,22 +53,22 @@ tabEl.on('show.bs.tab', async function (event) {
     ship_large = $('#id_size_large')
     ship_set = $('#id_size_set')
 
-    if (ship_small.val() === null || ship_small.val() === '' || ship_small.val() === 0) {
+    if (ship_small.val() === null || ship_small.val() === '' || ship_small.val() === 0 || ship_small.val() === '0') {
         ship_small.val(0)
     } else {
         ship_text = ship_small.val() + ' small items '
     }
-    if (ship_medium.val() === null || ship_medium.val() === '' || ship_medium.val() === 0) {
+    if (ship_medium.val() === null || ship_medium.val() === '' || ship_medium.val() === 0 || ship_medium.val() === '0') {
         ship_medium.val(0)
     } else {
         ship_text = ship_text + ship_medium.val() + ' medium items '
     }
-    if (ship_large.val() === null || ship_large.val() === '' || ship_large.val() === 0) {
+    if (ship_large.val() === null || ship_large.val() === '' || ship_large.val() === 0 || ship_large.val() === '0') {
         ship_large.val(0)
     } else {
         ship_text = ship_text + ship_large.val() + ' large items '
     }
-    if (ship_set.val() === null || ship_set.val() === '' || ship_set.val() === 0) {
+    if (ship_set.val() === null || ship_set.val() === '' || ship_set.val() === 0 || ship_set.val() === '0') {
         ship_set.val(0)
     } else {
         ship_text = ship_text + ship_set.val() + ' sets'
