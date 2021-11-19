@@ -2,10 +2,28 @@
 {% load static %}
 {% block content %}
     <div class="container">
-        <div class="row">
-            <div class="col-12">
-                {% include 'seller-product-list-cards.html' %}
-            </div>
-        </div>
+        <a href="{% url 'seller:add-product' %}" class="btn btn-primary vintage-button blue-font rounded-3 mt-3" style="width: 16em;">Add A Product</a>
+        <table class="table table-sm table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Product Title</th>
+                    <th scope="col">Product ID</th>
+                    <th scope="col">Retail Price</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">QR Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></td>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.retail_price }}</td>
+                    <td>{{ product.status }}</td>
+                    <td><a href="{{ product.get_qr_url }}">QR URL</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
