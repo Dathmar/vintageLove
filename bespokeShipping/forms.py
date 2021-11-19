@@ -38,11 +38,30 @@ class SizeForm(forms.Form):
         widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;'}),
         label=mark_safe(f'<img src="{ get_static_prefix }img/ship_set.png" height="150"><br>Set'))
 
-    def clean_size(self):
-        size = self.cleaned_data.get('size')
-        if not size:
-            raise forms.ValidationError('Please select a size.')
-        return size
+    def clean_size_small(self):
+        size_small = self.cleaned_data.get('size_small')
+        if size_small < 0:
+            raise forms.ValidationError('Enter a positive number.')
+        return size_small
+
+    def clean_size_medium(self):
+        size_medium = self.cleaned_data.get('size_medium')
+        if size_medium < 0:
+            raise forms.ValidationError('Enter a positive number.')
+        return size_medium
+
+    def clean_size_large(self):
+        size_large = self.cleaned_data.get('size_large')
+        if size_large < 0:
+            raise forms.ValidationError('Enter a positive number.')
+        return size_large
+
+    def clean_size_set(self):
+        size_set = self.cleaned_data.get('size_set')
+        if size_set < 0:
+            raise forms.ValidationError('Enter a positive number.')
+        return size_set
+
 
 
 class ShipToForm(forms.Form):
