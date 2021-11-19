@@ -12,6 +12,8 @@ let ship_error;
 let ship_size;
 
 const shipping_timeline_elem = $('#shipping-timeline')
+const loading_elem = $('#load')
+const cost_elem = $('#cost')
 
 function showTab(tabID){
     let triggerEl = $(tabID);
@@ -150,38 +152,47 @@ tabEl.on('show.bs.tab', async function (event) {
     calculate_cost();
 })
 
+function delay(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
 
 async function calculate_cost() {
+
     from_address = get_from_address();
-    shipping_timeline_elem.hide();
 
     if(ship_error === null && to_address.length > 0 && from_address.length > 0) {
+        shipping_timeline_elem.hide();
+        cost_elem.hide();
+        loading_elem.show()
+
+        await delay(3000);
+
         let ship_cost = await shipCost(this_size, from_address.join(' '), to_address.join(' '), to_door);
         console.log(ship_cost);
         if(ship_cost.supported_state === false) {
-            $('#cost').text('Sorry, we do not ship to your state.');
+            cost_elem.text('Sorry, we do not ship to your state.');
             $('#form-submit').prop('disabled', true);
         } else {
-            $('#cost').text('Your shipping cost is $' + ship_cost.cost);
+            cost_elem.text('Your shipping cost is $' + ship_cost.cost);
             $('#form-submit').prop('disabled', false);
         }
-
         let distance = parseFloat(ship_cost.distance);
 
         if(distance < 51 && distance >= 0) {
             shipping_timeline_elem.text('You will receive your item within 1 week.');
-            shipping_timeline_elem.show();
+
         } else if (distance > 50 && distance < 151) {
             shipping_timeline_elem.text('You will receive your item within 2 weeks.');
-            shipping_timeline_elem.show();
         } else if (distance > 150) {
             shipping_timeline_elem.text('You will receive your item in 2 to 3 weeks.');
-            shipping_timeline_elem.show();
         }
-
+        loading_elem.hide()
+        shipping_timeline_elem.show();
+        cost_elem.show();
     } else {
         $('#cost').text('Cannot Calculate Shipping Costs');
         $('#form-submit').prop('disabled', true);
+        loading_elem.hide()
     }
 }
 

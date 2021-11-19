@@ -3,6 +3,7 @@
 
 {% block extra_header %}
     <script type="text/javascript" src="{{ square_js_url }}"></script>
+    <link rel="stylesheet" href="{% get_static_prefix %}css/loading.css">
 {% endblock %}
 
 {% block content %}
@@ -47,15 +48,6 @@
                 <div class="container ">
                     <div class="row text-start">
                         <div class="col-12 col-md-4 offset-md-4">
-                            {% if ship_to_form_errors %}
-                            <div class="alert alert-danger" role="alert">
-                                <ul>
-                                    {% for error in ship_to_form_errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            {% endif %}
                             <table>
                                 {{ ship_to_form.as_table }}
                             </table>
@@ -69,7 +61,7 @@
             <div class="tab-pane fade" id="list-want" role="tabpanel" aria-labelledby="list-want-list">
                 <div class="container">
                     <div class="row">
-                        {% if ship_to_form_errors %}
+                        {% if delivery_level_form_errors %}
                             <div class="alert alert-danger" role="alert">
                                 <ul>
                                     {% for error in delivery_level_form_errors %}
@@ -103,15 +95,6 @@
                         <div class="col-12 col-md-6 offset-lg-2 col-lg-4">
                             <h3>From</h3>
                             {% if from_form %}
-                                {% if from_form_errors %}
-                                    <div class="alert alert-danger" role="alert">
-                                        <ul>
-                                            {% for error in delivery_level_form_errors %}
-                                                <li>{{ error }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                {% endif %}
                             <table class="text-start" id="from-form">
                                 {{ from_form.as_table }}
                             </table>
@@ -136,6 +119,19 @@
 
                         </div>
                         <div class="row">
+                            <div id="load" style="display: none;">
+                              <div>G</div>
+                              <div>N</div>
+                              <div>I</div>
+                              <div>T</div>
+                              <div>A</div>
+                              <div>L</div>
+                              <div>U</div>
+                              <div>C</div>
+                              <div>L</div>
+                              <div>A</div>
+                              <div>C</div>
+                            </div>
                             <p id="cost"></p>
                             <p id="shipping-timeline"></p>
                         </div>
@@ -170,4 +166,5 @@
     <script src="{% get_static_prefix %}js/shipPaymentForm.js"></script>
     <script src="{% get_static_prefix %}js/jquery-3.6.0.min.js"></script>
     <script src="{% get_static_prefix %}js/ship-tabs.js"></script>
+    <script src="{% get_static_prefix %}js/live-chat.js"></script>
 {% endblock %}
