@@ -26,16 +26,20 @@ class SizeForm(forms.Form):
     get_static_prefix = settings.STATIC_URL
 
     size_small = forms.CharField(
-        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;'}),
+        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
+                                        'placeholder': 'Qty', 'min': '0', 'max': '99'}),
         label=mark_safe(f'<img src="{ get_static_prefix }img/small.png" height="150"><br>Small'))
     size_medium = forms.CharField(
-        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;'}),
+        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
+                                        'placeholder': 'Qty', 'min': '0', 'max': '99'}),
         label=mark_safe(f'<img src="{ get_static_prefix }img/medium.png" height="150"><br>Medium'))
     size_large = forms.CharField(
-        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;'}),
+        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
+                                        'placeholder': 'Qty', 'min': '0', 'max': '99'}),
         label=mark_safe(f'<img src="{ get_static_prefix }img/large.png" height="150"><br>Large'))
     size_set = forms.CharField(
-        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;'}),
+        widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
+                                        'placeholder': 'Qty', 'min': '0', 'max': '99'}),
         label=mark_safe(f'<img src="{ get_static_prefix }img/ship_set.png" height="150"><br>Set'))
 
     def clean_size_small(self):
