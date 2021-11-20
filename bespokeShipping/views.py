@@ -51,6 +51,7 @@ def create(request, seller_slug=None):
         else:
             seller = get_object_or_404(UserSeller, user=request.user).seller
 
+
         if seller:
             from_address = seller.street + '\n' + seller.city + ', ' + seller.state + ' ' + seller.zip
             from_name = seller.name

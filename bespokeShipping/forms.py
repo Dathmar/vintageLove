@@ -28,19 +28,19 @@ class SizeForm(forms.Form):
     size_small = forms.CharField(
         widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
                                         'placeholder': 'Qty', 'min': '0', 'max': '99'}),
-        label=mark_safe(f'<img src="{ get_static_prefix }img/small.png" height="150"><br>Small'))
+        label=mark_safe(f'<div style="height:150px"><img src="{ get_static_prefix }img/small.png" height="150px"></div><br>Small<br>'))
     size_medium = forms.CharField(
         widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
                                         'placeholder': 'Qty', 'min': '0', 'max': '99'}),
-        label=mark_safe(f'<img src="{ get_static_prefix }img/medium.png" height="150"><br>Medium'))
+        label=mark_safe(f'<div style="height:150px;"><img src="{ get_static_prefix }img/medium.png" width="225px"></div><br>Medium<br>'))
     size_large = forms.CharField(
         widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
                                         'placeholder': 'Qty', 'min': '0', 'max': '99'}),
-        label=mark_safe(f'<img src="{ get_static_prefix }img/large.png" height="150"><br>Large'))
+        label=mark_safe(f'<div style="height:150px"><img src="{ get_static_prefix }img/large.png" width="175px"></div><br>Large<br>'))
     size_set = forms.CharField(
         widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
                                         'placeholder': 'Qty', 'min': '0', 'max': '99'}),
-        label=mark_safe(f'<img src="{ get_static_prefix }img/ship_set.png" height="150"><br>Set'))
+        label=mark_safe(f'<div style="height:150px"><img src="{ get_static_prefix }img/ship_set.png" height="150px"></div><br>Set<br>'))
 
     def clean_size_small(self):
         size_small = self.cleaned_data.get('size_small')
