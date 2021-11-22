@@ -161,3 +161,23 @@ class ProductImage(models.Model):
     def __repr__(self):
         return self.image.url
 
+
+class Attribute(models.Model):
+    name = models.CharField(max_length=4000)
+
+    create_datetime = models.DateTimeField('date created', auto_now_add=True)
+    update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+class AttributeValue(models.Model):
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    value = models.CharField(max_length=4000)
+
+    create_datetime = models.DateTimeField('date created', auto_now_add=True)
+    update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+    def __str__(self):
+        return self.value
