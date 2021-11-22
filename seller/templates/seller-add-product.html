@@ -1,10 +1,37 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block extra_header %}
+    <script>
+        let seller_list = {{ sellers }}
+    </script>
+{% endblock %}
 {% block content %}
-    <div class="container">
-
+    <div class="container" id="product-defaults">
         <table class="table table-sm table-striped">
             {{ product_form.as_table }}
         </table>
     </div>
+    <div class="container" id="product-attributes">
+
+    </div>
+    <div class="container" id="product-images>
+        <table class="table table-sm table-striped">
+            {% for image_form in image_formset %}
+            {{ image_form.as_table }}
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+{% block end_body %}
+    <script src="{% get_static_prefix %}js/jquery-3.6.0.min.js"></script>
+    <script>
+        let seller_elm = $('#id_seller')
+        seller_elm.find('option').remove().end()
+        seller_list.forEach(function(seller, idx) {
+            seller_elm.append($('<option>', {
+                value: idx,
+                text: seller
+            }))
+        })
+    </script>
 {% endblock %}

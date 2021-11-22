@@ -1,11 +1,11 @@
 from django import forms
-from products.models import ProductStatus
+from products.models import ProductStatus, Seller
 
 
 class ProductForm(forms.Form):
     statuses = ProductStatus.objects.all().values_list('id', 'name')
 
-    # seller = forms.CharField(label='Seller', max_length=100, widget=forms.Select(choices=None))
+    seller = forms.CharField(label='Seller', max_length=100, widget=forms.Select(choices=Seller.objects.all().values_list('id', 'name')))
     title = forms.CharField(label='Title', max_length=4000)
     description = forms.CharField(label='Description', max_length=8000, widget=forms.Textarea)
 
@@ -20,5 +20,3 @@ class ProductForm(forms.Form):
     origin = forms.CharField(label='Origin', max_length=4000)
 
     status = forms.CharField(label='Status', max_length=100, widget=forms.Select(choices=statuses))
-
-    # attributes = forms.CharField(label='Attributes', max_length=4000, required=False)
