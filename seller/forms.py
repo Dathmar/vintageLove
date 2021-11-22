@@ -1,5 +1,5 @@
 from django import forms
-from products.models import ProductStatus, Seller
+from products.models import ProductStatus, Seller, Category
 
 
 class ProductForm(forms.Form):
@@ -20,3 +20,17 @@ class ProductForm(forms.Form):
     origin = forms.CharField(label='Origin', max_length=4000)
 
     status = forms.CharField(label='Status', max_length=100, widget=forms.Select(choices=statuses))
+
+
+class ProductImageForm(forms.Form):
+    image = forms.ImageField(label='Image')
+
+
+class ProductCategoryForm(forms.Form):
+    categories = []
+    categories.append(tuple([None, 'None']))
+    for cat in Category.objects.all():
+        categories.append((cat.id, cat.name))
+
+    category = forms.CharField(label='Category', max_length=100, widget=forms.Select(choices=categories))
+

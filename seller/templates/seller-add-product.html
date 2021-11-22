@@ -6,21 +6,29 @@
     </script>
 {% endblock %}
 {% block content %}
-    <div class="container" id="product-defaults">
-        <table class="table table-sm table-striped">
-            {{ product_form.as_table }}
-        </table>
-    </div>
-    <div class="container" id="product-attributes">
-
-    </div>
-    <div class="container" id="product-images>
-        <table class="table table-sm table-striped">
-            {% for image_form in image_formset %}
-            {{ image_form.as_table }}
-            {% endfor %}
-        </table>
-    </div>
+    <form method="post">
+    {% csrf_token %}
+        <div class="container" id="product-defaults">
+            <table class="table table-sm table-striped">
+                {{ product_form.as_table }}
+            </table>
+        </div>
+        <div class="container pt-5" id="product-categories">
+            <table class="table table-sm table-striped">
+                {% for category in category_formset %}
+                {{ category.as_table }}
+                {% endfor %}
+            </table>
+        </div>
+        <div class="container pt-5" id="product-images">
+            <table class="table table-sm table-striped">
+                {% for image_form in image_formset %}
+                    {{ image_form.as_table }}
+                {% endfor %}
+            </table>
+        </div>
+        <input class="btn btn-primary blue-button rounded-3 mb-5 mt-2" type="submit" value="Add Product">
+    </form>
 {% endblock %}
 {% block end_body %}
     <script src="{% get_static_prefix %}js/jquery-3.6.0.min.js"></script>

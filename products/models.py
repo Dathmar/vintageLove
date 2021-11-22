@@ -100,13 +100,16 @@ class Product(models.Model):
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
-            slug_count = Product.objects.filter(slug=self.slug).count() + 1
+            slug_base = slugify(self.title)
+            slug = slug_base
+            count = 0
+            while Product.objects.filter(slug=slug).exists():
+                count += 1
+                slug = f'{slug_base}-{count}'
 
-            if slug_count != 1:
-                self.slug = f'{self.slug}-{slug_count}'
+            self.slug = slug
 
         if not Product.objects.filter(id=self.id).exists():
             super(Product, self).save()
