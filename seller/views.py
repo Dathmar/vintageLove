@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.html import mark_safe
 from django.forms import formset_factory
 
-from products.models import UserSeller, Product, ProductImage, ProductCategory, Seller
+from products.models import UserSeller, Product, ProductImage, ProductCategory, Category
 from .forms import ProductForm, ProductImageForm, ProductCategoryForm
 
 
@@ -42,7 +42,8 @@ def add_product(request):
         product_form = ProductForm(request.POST)
         image_formset = ImageFormset(request.POST, request.FILES)
         category_formset = CategoryFormset(request.POST)
-        if product_form.is_valid():
+
+        if product_form.is_valid() and image_formset.is_valid() and category_formset.is_valid():
             product = Product.objects.create(
                 title=product_form.cleaned_data['title'],
                 description=product_form.cleaned_data['description'],
@@ -60,19 +61,20 @@ def add_product(request):
 
             count = 1
             for image_form in image_formset:
-                product_image = ProductImage.objects.create(
-                    product=product,
-                    image=image_form.cleaned_data['image'],
-                    sequence=count,
-                )
-                product_image.save()
-                count += 1
+                if image_form.cleaned_data.get('image'):
+                    product_image = ProductImage.objects.create(
+                        product=product,
+                        image=image_form.cleaned_data.get('image'),
+                        sequence=count,
+                    )
+                    product_image.save()
+                    count += 1
 
             for category in category_formset:
-                if category:
+                if category.cleaned_data.get('category'):
                     product_category = ProductCategory.objects.create(
                         product=product,
-                        category=category['category'],
+                        category=Category.objects.get(id=int(category.cleaned_data.get('category'))),
                     )
                     product_category.save()
 

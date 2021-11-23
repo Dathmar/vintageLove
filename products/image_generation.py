@@ -1,4 +1,4 @@
-from pathlib import Path
+'''from pathlib import Path
 import os
 import sys
 
@@ -9,16 +9,18 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vintageLove.settings")
 import django
 django.setup()
 
-from products.models import ProductImage
+from products.models import ProductImage'''
 from PIL import Image
 
 
 def gen_resize(infile, max_size):
+    format = None
     with Image.open(infile) as im:
         new_size = get_new_image_size(max_size, (im.width, im.height))
-        im_resized = im.resize(new_size)
+        im_resized = im.resize(new_size, Image.ANTIALIAS)
+        format = im.format
 
-    return im_resized
+    return im_resized, format
 
 
 def get_new_image_size(max_size, image_size):
@@ -32,7 +34,7 @@ def get_new_image_size(max_size, image_size):
     return (int(image_size[0] * ratio), int(image_size[1] * ratio))
 
 
-if __name__ == "__main__":
+'''if __name__ == "__main__":
 
     for pImage in ProductImage.objects.all():
         media_dir = Path(__file__).resolve().parent.parent
@@ -45,4 +47,4 @@ if __name__ == "__main__":
 
         pImage.image_height = new_img.height
         pImage.image_width = new_img.width
-        pImage.save()
+        pImage.save()'''

@@ -6,6 +6,8 @@ from django.shortcuts import reverse
 
 import uuid
 
+from .image_generation import gen_resize
+
 
 class ProductStatus(models.Model):
     name = models.CharField(max_length=50)
@@ -157,6 +159,17 @@ class ProductImage(models.Model):
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+    def save(self, *args, **kwargs):
+        super(ProductImage, self).save()
+
+        new_img, format = gen_resize(self.image.path, (500, 400))
+        new_img.save(self.image.path, format)
+
+        self.image_height = new_img.height
+        self.image_width = new_img.width
+        super(ProductImage, self).save()
+
 
     def __str__(self):
         return 'product ' + self.product.title + ' - image ' + str(self.sequence)

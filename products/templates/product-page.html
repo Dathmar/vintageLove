@@ -22,7 +22,7 @@
             <div class="d-flex flex-wrap flex-lg-nowrap">
                 {% if product_images.count == 1 %}
                 <div style="width: 100%">
-                <img src="{{ product_images.0.image.url }}" style="margin: auto; height: 50rem; width: {% if image.image.image_width < image.image.image_height %}{% widthratio image.image.image_width image.image.image_height 50 %}{% else %}{% widthratio image.image.image_height image.image.image_width 50 %}{% endif %}rem;"/>
+                <img src="{{ product_images.0.image.url }}" style="margin: auto;"/>
                 </div>
                 {% else %}
                 <div id="productCarousel" class="carousel carousel-dark slide lazy ms-md-120" data-bs-interval="false" data-bs-ride="carousel">
