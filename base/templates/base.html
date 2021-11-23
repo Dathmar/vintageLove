@@ -1,4 +1,5 @@
 {% load static %}
+{% load is_user_seller %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -58,11 +59,20 @@
                     {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'bespoke-shipping:create' %}">Ship</a></li>
                     {% endif %}
-
-                    <li class="nav-item"><a class="nav-link" href="{% url 'store:join_movement' %}">Join</a></li>
                     {%  if user.is_authenticated %}
+                    {% if user|is_seller %}
+                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">Account</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item dropdown-item-blue" href="{% url 'seller:product-list' %}">My Products</a>
+                            <a class="dropdown-item dropdown-item-blue" href="{% url 'seller:add-product' %}">Add Product</a>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'store:join_movement' %}">Join</a></li>
+                    {% endif %}
                     <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'logout' %}">Logout</a></li>
                     {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'store:join_movement' %}">Join</a></li>
                     <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'login' %}">Log In</a></li>
                     {% endif %}
                 </ul>
