@@ -27,6 +27,7 @@ urlpatterns = [
     path('android-chrome-512x512.png', RedirectView.as_view(url=staticfiles_storage.url('img/android-chrome-512x512.png'))),
     path('browserconfig.xml', RedirectView.as_view(url=staticfiles_storage.url('img/browserconfig.xml'))),
     path('mstile-150x150.png', RedirectView.as_view(url=staticfiles_storage.url('img/mstile-150x150.png'))),
+    path('robots.txt', RedirectView.as_view(url=staticfiles_storage.url('robots.txt'))),
     path('admin/', admin.site.urls),
     path('', include('store.urls', namespace='store')),
     path('products/', include('products.urls', namespace='products')),
