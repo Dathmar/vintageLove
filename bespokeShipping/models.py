@@ -2,6 +2,13 @@ from django.db import models
 from products.models import Seller
 
 
+class ShippingStatus(models.Model):
+    name = models.CharField(max_length=1000)
+
+    create_datetime = models.DateTimeField('date created', auto_now_add=True)
+    update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+
 # Create your models here.
 class Shipping(models.Model):
     size_choices = (('small', 'Small'),
@@ -24,10 +31,16 @@ class Shipping(models.Model):
     media_quantity = models.IntegerField(default=0, blank=True, null=True)
     large_quantity = models.IntegerField(default=0, blank=True, null=True)
     set_quantity = models.IntegerField(default=0, blank=True, null=True)
+    small_description = models.TextField(max_length=1000, blank=True, null=True)
+    medium_description = models.TextField(max_length=1000, blank=True, null=True)
+    large_description = models.TextField(max_length=1000, blank=True, null=True)
+    set_description = models.TextField(max_length=1000, blank=True, null=True)
     ship_location = models.CharField(max_length=10, choices=location_choices)
     insurance = models.BooleanField(default=False)
     cost = models.DecimalField(max_digits=10, decimal_places=2)
     distance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+    status = models.ForeignKey(ShippingStatus, on_delete=models.CASCADE, blank=True, null=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)

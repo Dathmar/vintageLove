@@ -66,6 +66,11 @@ def create(request, seller_slug=None):
             large_quantity = size_form.cleaned_data['size_large']
             set_quantity = size_form.cleaned_data['size_set']
 
+            small_description = size_form.cleaned_data['small_description']
+            medium_description = size_form.cleaned_data['medium_description']
+            large_description = size_form.cleaned_data['large_description']
+            set_description = size_form.cleaned_data['set_description']
+
             ship_sizes = {
                 'small': small_quantity,
                 'medium': media_quantity,
@@ -122,6 +127,10 @@ def create(request, seller_slug=None):
                                                    media_quantity=media_quantity,
                                                    large_quantity=large_quantity,
                                                    set_quantity=set_quantity,
+                                                   small_description=small_description,
+                                                   medium_description=medium_description,
+                                                   large_description=large_description,
+                                                   set_description=set_description,
                                                    ship_location=shipping_level,
 
                                                    insurance=insurance_level,

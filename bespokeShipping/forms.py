@@ -28,44 +28,35 @@ class SizeForm(forms.Form):
     size_small = forms.CharField(
         widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
                                         'placeholder': 'Qty', 'min': '0', 'max': '99'}),
-        label=mark_safe(f'<div style="height:150px"><img src="{ get_static_prefix }img/small.png" height="150px"></div><br>Small<br>'))
+        label=mark_safe(f'<div style="height:150px"><img src="{ get_static_prefix }img/small.png" '
+                        f'width="200px"></div><br>Small<br>'))
+    small_description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'size-form-textarea', 'placeholder': 'Wooden coffee table...',
+                                     'rows': '2', 'style': 'width:100%;'}), required=False)
     size_medium = forms.CharField(
         widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
                                         'placeholder': 'Qty', 'min': '0', 'max': '99'}),
-        label=mark_safe(f'<div style="height:150px;"><img src="{ get_static_prefix }img/medium.png" width="225px"></div><br>Medium<br>'))
+        label=mark_safe(f'<div style="height:150px;"><img src="{ get_static_prefix }img/medium.png" '
+                        f'width="225px"></div><br>Medium<br>'))
+    medium_description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'size-form-textarea', 'placeholder': 'White chest of drawers...',
+                                     'rows': '2', 'style': 'width:100%;'}), required=False)
     size_large = forms.CharField(
         widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
                                         'placeholder': 'Qty', 'min': '0', 'max': '99'}),
-        label=mark_safe(f'<div style="height:150px"><img src="{ get_static_prefix }img/large.png" width="175px"></div><br>Large<br>'))
+        label=mark_safe(f'<div style="height:150px"><img src="{ get_static_prefix }img/large.png" '
+                        f'width="175px"></div><br>Large<br>'))
+    large_description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'size-form-textarea', 'placeholder': 'Tall grey armoire...',
+                                     'rows': '2', 'style': 'width:100%;'}), required=False)
     size_set = forms.CharField(
         widget=forms.NumberInput(attrs={'class': 'size-form-input', 'style': 'width:75px;',
                                         'placeholder': 'Qty', 'min': '0', 'max': '99'}),
-        label=mark_safe(f'<div style="height:150px"><img src="{ get_static_prefix }img/ship_set.png" height="150px"></div><br>Set<br>'))
-
-    def clean_size_small(self):
-        size_small = self.cleaned_data.get('size_small')
-        if size_small < 0:
-            raise forms.ValidationError('Enter a positive number.')
-        return size_small
-
-    def clean_size_medium(self):
-        size_medium = self.cleaned_data.get('size_medium')
-        if size_medium < 0:
-            raise forms.ValidationError('Enter a positive number.')
-        return size_medium
-
-    def clean_size_large(self):
-        size_large = self.cleaned_data.get('size_large')
-        if size_large < 0:
-            raise forms.ValidationError('Enter a positive number.')
-        return size_large
-
-    def clean_size_set(self):
-        size_set = self.cleaned_data.get('size_set')
-        if size_set < 0:
-            raise forms.ValidationError('Enter a positive number.')
-        return size_set
-
+        label=mark_safe(f'<div style="height:150px"><img src="{ get_static_prefix }img/ship_set.png" '
+                        f'width="200px"></div><br>Set<br>'))
+    set_description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'size-form-textarea', 'placeholder': 'Kitchen table and chairs...',
+                                     'rows': '2', 'style': 'width:100%;'}), required=False)
 
 
 class ShipToForm(forms.Form):
