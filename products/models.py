@@ -54,6 +54,9 @@ class Seller(models.Model):
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
+    class Meta:
+        ordering = ('name',)
+
     def __str__(self):
         return self.name
 
@@ -97,7 +100,7 @@ class Product(models.Model):
 
     status = models.ForeignKey(ProductStatus, default=1, on_delete=models.PROTECT)
 
-    attributes = models.JSONField(null=True)
+    attributes = models.JSONField(null=True, blank=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
