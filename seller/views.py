@@ -61,14 +61,17 @@ def add_product(request):
 
             count = 1
             for image_form in image_formset:
-                if image_form.cleaned_data.get('image'):
-                    product_image = ProductImage.objects.create(
-                        product=product,
-                        image=image_form.cleaned_data.get('image'),
-                        sequence=count,
-                    )
-                    product_image.save()
-                    count += 1
+                try:
+                    if image_form.cleaned_data.get('image'):
+                        product_image = ProductImage.objects.create(
+                            product=product,
+                            image=image_form.cleaned_data.get('image'),
+                            sequence=count,
+                        )
+                        product_image.save()
+                        count += 1
+                except:
+                    pass
 
             for category in category_formset:
                 if category.cleaned_data.get('category'):

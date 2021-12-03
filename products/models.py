@@ -166,8 +166,8 @@ class ProductImage(models.Model):
     def save(self, *args, **kwargs):
         super(ProductImage, self).save()
 
-        new_img, format = gen_resize(self.image.path, (500, 400))
-        new_img.save(self.image.path, format)
+        new_img = gen_resize(self.image.path, (500, 400))
+        new_img.save(self.image.path)
 
         self.image_height = new_img.height
         self.image_width = new_img.width

@@ -15,14 +15,12 @@ import piexif
 
 
 def rotate_image(img):
-    exif_bytes = None
     if "exif" in img.info:
         exif_dict = piexif.load(img.info["exif"])
 
         if piexif.ImageIFD.Orientation in exif_dict["0th"]:
             orientation = exif_dict["0th"].pop(piexif.ImageIFD.Orientation)
             exif_bytes = piexif.dump(exif_dict)
-            print(orientation)
             if orientation == 2:
                 img = img.transpose(Image.FLIP_LEFT_RIGHT)
             elif orientation == 3:
@@ -38,18 +36,17 @@ def rotate_image(img):
             elif orientation == 8:
                 img = img.rotate(90, expand=True)
 
-    # could return exif_bytes here if needed
     return img
 
 
 def gen_resize(infile, max_size):
-    format = None
     with Image.open(infile) as im:
-        new_size = get_new_image_size(max_size, (im.width, im.height))
-        im_resized = im.resize(new_size, Image.ANTIALIAS)
-        format = im.format
+        rotated = rotate_image(im)
 
-    return im_resized, format
+    new_size = get_new_image_size(max_size, (rotated.width, rotated.height))
+    im_resized = rotated.resize(new_size, Image.ANTIALIAS)
+
+    return im_resized
 
 
 def get_new_image_size(max_size, image_size):
@@ -61,6 +58,13 @@ def get_new_image_size(max_size, image_size):
         ratio = max_size[1] / image_size[1]
 
     return (int(image_size[0] * ratio), int(image_size[1] * ratio))
+
+
+if __name__ == "__main__":
+    img = 'test.jpeg'
+    new_image = gen_resize(img, (300, 300))
+
+    new_image.save('test2', format)
 
 
 '''if __name__ == "__main__":
