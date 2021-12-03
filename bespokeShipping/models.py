@@ -28,7 +28,7 @@ class Shipping(models.Model):
     to_address = models.TextField(max_length=1000)
     to_phone = models.CharField(max_length=1000, blank=True, null=True)
     small_quantity = models.IntegerField(default=0, blank=True, null=True)
-    media_quantity = models.IntegerField(default=0, blank=True, null=True)
+    medium_quantity = models.IntegerField(default=0, blank=True, null=True)
     large_quantity = models.IntegerField(default=0, blank=True, null=True)
     set_quantity = models.IntegerField(default=0, blank=True, null=True)
     small_description = models.TextField(max_length=1000, blank=True, null=True)
@@ -40,7 +40,7 @@ class Shipping(models.Model):
     cost = models.DecimalField(max_digits=10, decimal_places=2)
     distance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
-    status = models.ForeignKey(ShippingStatus, on_delete=models.CASCADE, blank=True, null=True)
+    # status = models.ForeignKey(ShippingStatus, on_delete=models.CASCADE, blank=True, null=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)

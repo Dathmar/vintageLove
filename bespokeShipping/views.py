@@ -16,6 +16,7 @@ import uuid
 # Create your views here.
 def create(request, seller_slug=None):
     from_form = None
+
     if not request.session.get('idempotency_shipping_key'):
         request.session['idempotency_shipping_key'] = str(uuid.uuid4())
 
@@ -62,7 +63,7 @@ def create(request, seller_slug=None):
                 and from_form_valid and insurance_form.is_valid():
 
             small_quantity = size_form.cleaned_data['size_small']
-            media_quantity = size_form.cleaned_data['size_medium']
+            medium_quantity = size_form.cleaned_data['size_medium']
             large_quantity = size_form.cleaned_data['size_large']
             set_quantity = size_form.cleaned_data['size_set']
 
@@ -73,7 +74,7 @@ def create(request, seller_slug=None):
 
             ship_sizes = {
                 'small': small_quantity,
-                'medium': media_quantity,
+                'medium': medium_quantity,
                 'large': large_quantity,
                 'set': set_quantity
             }
@@ -124,7 +125,7 @@ def create(request, seller_slug=None):
                                                    to_email=ship_to_email,
                                                    to_phone=ship_to_phone,
                                                    small_quantity=small_quantity,
-                                                   media_quantity=media_quantity,
+                                                   medium_quantity=medium_quantity,
                                                    large_quantity=large_quantity,
                                                    set_quantity=set_quantity,
                                                    small_description=small_description,
@@ -351,7 +352,21 @@ def send_internal_shipping_notification(shipping):
 
     body = f'''
         We have a new shipping order
-
+        
+        Details:
+        Small items:
+        Quantity: {shipping.small_quantity}
+        Description: {shipping.small_description}
+        Medium items:
+        Quantity: {shipping.medium_quantity}
+        Description: {shipping.medium_description}
+        Large items:
+        Quantity: {shipping.large_quantity}
+        Description: {shipping.large_description}
+        Set items:
+        Quantity: {shipping.set_quantity}
+        Description: {shipping.set_description}
+        
         Shipping Origin
         Name: {shipping.from_name}
         E-mail: {shipping.from_email}
@@ -362,6 +377,7 @@ def send_internal_shipping_notification(shipping):
         Shipping Destination
         Name: {shipping.to_name}
         E-mail: {shipping.to_email}
+        Phone: {shipping.to_phone}
         Address:
         {shipping.to_address}
         
@@ -375,6 +391,19 @@ def send_internal_shipping_notification(shipping):
                         <body>
                             <p>We have a new shipping order</p>
                             <p></p>
+                            <p>Details:</p>
+                            <p>Small items:</p>
+                            <p>Quantity: {shipping.small_quantity}</p>
+                            <p>Description: {shipping.small_description}</p>
+                            <p>Medium items:</p>
+                            <p>Quantity: {shipping.medium_quantity}</p>
+                            <p>Description: {shipping.medium_description}</p>
+                            <p>Large items:</p>
+                            <p>Quantity: {shipping.large_quantity}</p>
+                            <p>Description: {shipping.large_description}</p>
+                            <p>Set items:</p>
+                            <p>Quantity: {shipping.set_quantity}</p>
+                            <p>Description: {shipping.set_description}</p>
                             <p>Shipping Origin</p>
                             <p>Name: {shipping.from_name}</p>
                             <p>E-mail: {shipping.from_email}</p>
@@ -385,6 +414,7 @@ def send_internal_shipping_notification(shipping):
                             <p>Shipping Destination</p>
                             <p>Name: {shipping.to_name}</p>
                             <p>E-mail: {shipping.to_email}</p>
+                            <p>Phone: {shipping.to_phone}</p>
                             <p>Address:</p>
                             <p>{shipping.to_address}</p>
                         </body>
