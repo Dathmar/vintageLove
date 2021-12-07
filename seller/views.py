@@ -2,6 +2,7 @@ from django.shortcuts import render, get_list_or_404, get_object_or_404, reverse
 from django.contrib.auth.decorators import login_required
 from django.utils.html import mark_safe
 from django.forms import formset_factory
+from django.utils.html import escapejs
 
 from products.models import UserSeller, Product, ProductImage, ProductCategory, Category
 from .forms import ProductForm, ProductImageForm, ProductCategoryForm
@@ -30,7 +31,7 @@ def add_product(request):
     sellers = ""
     seller_list = []
     for seller in user_sellers:
-        sellers += "'" + seller.seller.name + "',"
+        sellers += "'" + escapejs(seller.seller.name) + "',"
         seller_list.append(seller.seller)
 
     sellers = mark_safe("[" + sellers[:-1] + "]")
@@ -92,7 +93,7 @@ def add_product(request):
             }
             return render(request, 'seller-add-product.html', context=context)
 
-    ImageFormset = formset_factory(ProductImageForm, extra=4)
+    ImageFormset = formset_factory(ProductImageForm, extra=7)
     CategoryFormset = formset_factory(ProductCategoryForm, extra=3)
 
     product_form = ProductForm()
