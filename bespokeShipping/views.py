@@ -28,7 +28,9 @@ def create(request, seller_slug=None):
 
         seller = None
         from_form_valid = True
-        if seller_slug == 'unknown':
+        if seller_slug:
+            seller = get_object_or_404(Seller, slug=seller_slug)
+        elif seller_slug == 'unknown' or request.user.is_anonymous:
 
             from_form = FromForm(request.POST)
             if from_form.is_valid():
@@ -47,11 +49,8 @@ def create(request, seller_slug=None):
                 from_address += '\n' + from_city + ', ' + from_state + ' ' + from_postal_code
             else:
                 from_form_valid = False
-        elif seller_slug:
-            seller = get_object_or_404(Seller, slug=seller_slug)
         else:
             seller = get_object_or_404(UserSeller, user=request.user).seller
-
 
         if seller:
             from_address = seller.street + '\n' + seller.city + ', ' + seller.state + ' ' + seller.zip
@@ -175,11 +174,11 @@ def create(request, seller_slug=None):
                 context.update({'from_form': from_form})
             return render(request, 'bespoke_shipping.html', context)
     from_form = None
-    if seller_slug == 'unknown':
+    if seller_slug:
+        seller = get_object_or_404(Seller, slug=seller_slug)
+    elif seller_slug == 'unknown' or request.user.is_anonymous:
         from_form = FromForm()
         seller = None
-    elif seller_slug:
-        seller = get_object_or_404(Seller, slug=seller_slug)
     else:
         seller = get_object_or_404(UserSeller, user=request.user).seller
 
