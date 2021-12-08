@@ -153,6 +153,8 @@ class ProductCategory(models.Model):
 
 
 class ProductImage(models.Model):
+    image_size_choices = ((1, 'Small'), (2, 'Large'))
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='product_images', height_field='image_height', width_field='image_width')
     sequence = models.IntegerField()
@@ -164,15 +166,20 @@ class ProductImage(models.Model):
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
     def save(self, *args, **kwargs):
-        super(ProductImage, self).save()
+        if ProductImage.objects.filter(id=self.id).exists():
+            super(ProductImage, self).save()
+        else:
+            super(ProductImage, self).save()
 
-        new_img = gen_resize(self.image.path, (500, 400))
-        new_img.save(self.image.path)
+            height_max = 500
+            width_max = 400
 
-        self.image_height = new_img.height
-        self.image_width = new_img.width
-        super(ProductImage, self).save()
+            new_img = gen_resize(self.image.path, (height_max, width_max))
+            new_img.save(self.image.path)
 
+            self.image_height = new_img.height
+            self.image_width = new_img.width
+            super(ProductImage, self).save()
 
     def __str__(self):
         return 'product ' + self.product.title + ' - image ' + str(self.sequence)
@@ -200,3 +207,19 @@ class AttributeValue(models.Model):
 
     def __str__(self):
         return self.value
+
+
+class HomepageProducts(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, unique=True)
+    sequence = models.IntegerField(unique=True)
+
+    create_datetime = models.DateTimeField('date created', auto_now_add=True)
+    update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+    def __str__(self):
+        return self.product.title
+
+    class Meta:
+        ordering = ['sequence']
+        verbose_name_plural = 'Homepage Products'
+

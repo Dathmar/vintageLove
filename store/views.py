@@ -1,5 +1,5 @@
 from django.shortcuts import render, reverse, HttpResponseRedirect
-from products.models import Category, Product, ProductImage
+from products.models import Category, Product, ProductImage, HomepageProducts
 from django.http.response import JsonResponse
 from django.conf import settings
 from .forms import JoinMovement
@@ -16,7 +16,9 @@ def index(request):
     categories = Category.objects.all().order_by('id')
 
     product_lst = Product.objects.filter(status__available_to_sell=True,
-                                         productimage__sequence=1).order_by("-create_datetime")
+                                         productimage__sequence=1,
+                                         pk__in=HomepageProducts.objects.all().order_by('sequence').values('product_id')
+                                         )
     product_lst = product_lst[:12]
 
     products = product_lst.values('id', 'title', 'retail_price',

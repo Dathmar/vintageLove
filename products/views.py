@@ -9,6 +9,7 @@ from django.conf import settings
 
 from base.Emailing import EmailThread
 
+
 # Create your views here.
 def product(request, product_id):
     item = Product.objects.get(pk=product_id)
