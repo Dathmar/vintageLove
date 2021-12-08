@@ -10,8 +10,8 @@ urlpatterns = [
     path('categroy/<slug:category_slug>/', views.product_list, name='all-products'),
     path('stage/<slug:stage>/', views.product_list_stage, name='stage-products'),
     path('', views.product_list, name='all-products'),
-    path('qr-grid', views.product_qr_grid, name='qr-grid'),
+    path('qr-grid/', views.product_qr_grid, name='qr-grid'),
     path('<uuid:product_id>/', views.product, name='product'),
-    path('<uuid:product_id>/product_sold', views.product_sold, name='product-sold'),
+    path('<uuid:product_id>/product_sold/', views.product_sold, name='product-sold'),
     path('<slug:product_slug>/', views.product_w_slug, name='product-slug'),
 ]
