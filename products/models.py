@@ -12,7 +12,7 @@ from .image_generation import gen_resize
 class ProductStatus(models.Model):
     name = models.CharField(max_length=50)
     available_to_sell = models.BooleanField(default=1)
-    disply_wholesale = models.BooleanField(default=0)
+    display_wholesale = models.BooleanField(default=0)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
@@ -210,7 +210,7 @@ class AttributeValue(models.Model):
 
 
 class HomepageProducts(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, unique=True)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, primary_key=True)
     sequence = models.IntegerField(unique=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)

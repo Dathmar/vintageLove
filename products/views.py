@@ -151,18 +151,18 @@ def filter_by_price(product_lst, price_min, price_max):
             price_min = tmp
 
         product_lst = product_lst.filter(
-            Q(status__disply_wholesale=False, retail_price__range=(price_min, price_max))
-            | Q(status__disply_wholesale=True, wholesale_price__range=(price_min, price_max))
+            Q(status__display_wholesale=False, retail_price__range=(price_min, price_max))
+            | Q(status__display_wholesale=True, wholesale_price__range=(price_min, price_max))
         )
     elif price_min:
         product_lst = product_lst.filter(
-            Q(status__disply_wholesale=False, retail_price=price_min)
-            | Q(status__disply_wholesale=True, wholesale_price=price_min)
+            Q(status__display_wholesale=False, retail_price=price_min)
+            | Q(status__display_wholesale=True, wholesale_price=price_min)
         )
     elif price_max:
         product_lst = product_lst.filter(
-            Q(status__disply_wholesale=False, retail_price=price_max)
-            | Q(status__disply_wholesale=True, wholesale_price=price_max)
+            Q(status__display_wholesale=False, retail_price=price_max)
+            | Q(status__display_wholesale=True, wholesale_price=price_max)
         )
 
     return product_lst
@@ -188,7 +188,7 @@ def product_list(request, category_slug=None):
     product_pages = make_pages(request, product_lst.values('id'), 12)
 
     products = product_pages.object_list.values('id', 'title', 'retail_price',
-                                                'wholesale_price', 'status__disply_wholesale', 'slug')
+                                                'wholesale_price', 'status__display_wholesale', 'slug')
 
     for product in products:
         images = []
@@ -226,7 +226,7 @@ def product_list_stage(request, stage):
     product_pages = make_pages(request, product_lst.values('id'), 12)
 
     products = product_pages.object_list.values('id', 'title', 'retail_price',
-                                                'wholesale_price', 'status__disply_wholesale', 'slug')
+                                                'wholesale_price', 'status__display_wholesale', 'slug')
 
     for product in products:
         images = []

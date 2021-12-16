@@ -22,7 +22,7 @@ def index(request):
     product_lst = product_lst[:12]
 
     products = product_lst.values('id', 'title', 'retail_price',
-                                  'wholesale_price', 'status__disply_wholesale', 'slug')
+                                  'wholesale_price', 'status__display_wholesale', 'slug')
 
     for product in products:
         images = []
