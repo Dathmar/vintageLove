@@ -1,6 +1,13 @@
 from django.contrib import admin
-from .models import Shipping
+from .models import Shipping, ShippingStatus
 
 
 # Register your models here.
-admin.site.register(Shipping)
+@admin.register(Shipping)
+class ShippingAdmin(admin.ModelAdmin):
+    list_display = ['to_name', 'to_email', 'from_name', 'from_email']
+
+
+@admin.register(ShippingStatus)
+class ShippingStatusAdmin(admin.ModelAdmin):
+    list_display = ['name']
