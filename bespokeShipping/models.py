@@ -24,6 +24,11 @@ class Shipping(models.Model):
                     ('set', 'Sets'))
     location_choices = (('door', 'To Door'),
                         ('placement', 'In home placement'))
+    window_choices = (('morning', 'Morning'),
+                      ('mid-day', 'Mid-day'),
+                      ('afternoon', 'Afternoon'),
+                      ('evening', 'Evening'))
+
 
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, blank=True, null=True)
     from_name = models.CharField(max_length=1000)
@@ -48,6 +53,7 @@ class Shipping(models.Model):
     distance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     status = models.ForeignKey(ShippingStatus, on_delete=models.CASCADE, blank=True, null=True)
+    order_window = models.CharField(max_length=10, choices=window_choices, blank=True, null=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
@@ -55,13 +61,13 @@ class Shipping(models.Model):
     def save(self, *args, **kwargs):
         if not Shipping.objects.filter(id=self.id).exists():
             to_status = 'created'
-            status_change = send_ship_status_email(self, to_status=to_status)
+            send_ship_status_email(self, to_status=to_status)
             send_internal_shipping_notification(self)
         else:
-            last_status = Shipping.objects.filter(id=self.id).values('status')
+            last_status = Shipping.objects.get(id=self.id).status
             if last_status != self.status:
-                to_status = self.status
-                status_change = send_ship_status_email(self, to_status=to_status)
+                to_status = self.status.name
+                send_ship_status_email(self, to_status=to_status)
 
         super(Shipping, self).save()
 
