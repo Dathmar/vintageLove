@@ -1,12 +1,19 @@
 from django.db import models
 from products.models import Seller
+from base.Emailing import send_ship_status_email, send_internal_shipping_notification
 
 
 class ShippingStatus(models.Model):
-    name = models.CharField(max_length=1000)
+    name = models.CharField(max_length=1000, unique=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'Shipping Statuses'
 
 
 # Create your models here.
@@ -40,7 +47,26 @@ class Shipping(models.Model):
     cost = models.DecimalField(max_digits=10, decimal_places=2)
     distance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
-    # status = models.ForeignKey(ShippingStatus, on_delete=models.CASCADE, blank=True, null=True)
+    status = models.ForeignKey(ShippingStatus, on_delete=models.CASCADE, blank=True, null=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not Shipping.objects.filter(id=self.id).exists():
+            to_status = 'created'
+            status_change = send_ship_status_email(self, to_status=to_status)
+            send_internal_shipping_notification(self)
+        else:
+            last_status = Shipping.objects.filter(id=self.id).values('status')
+            if last_status != self.status:
+                to_status = self.status
+                status_change = send_ship_status_email(self, to_status=to_status)
+
+        super(Shipping, self).save()
+
+    def __str__(self):
+        return f'{self.id} {self.to_name}'
+
+    class Meta:
+        ordering = ['-create_datetime']

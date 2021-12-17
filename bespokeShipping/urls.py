@@ -9,4 +9,5 @@ urlpatterns = [
     path('location/<slug:seller_slug>/', views.create, name='create-by-seller-id'),
     path('ship-cost/', views.ship_cost, name='ship-cost'),
     path('qr-grid/', views.qr_grid, name='qr-grid'),
+    path('ship-create-view/', views.CreateView.as_view(), name='ship-create-view'),
 ]

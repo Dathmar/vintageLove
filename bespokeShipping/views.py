@@ -1,19 +1,98 @@
 from django.shortcuts import render, get_object_or_404
 from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm
+from .models import ShippingStatus
 from products.models import UserSeller, Seller
 from django.conf import settings
 from django.http import JsonResponse, HttpResponseNotAllowed
 from .models import Shipping
 
 from orders.views import submit_payment
-from base.Emailing import EmailThread
 
 import json
 import googlemaps
 import uuid
 
+from django.views import View
 
-# Create your views here.
+
+class CreateView(View):
+    size_form = SizeForm
+    ship_to_form = ShipToForm
+    delivery_level = DeliveryLevel
+    insurance_form = InsuranceForm
+    from_form = FromForm
+
+    create_template = 'bespoke_shipping.html'
+    complete_template = 'bespoke_shipping_complete.html'
+
+    @staticmethod
+    def seller_context(request, seller_slug=None):
+        if seller_slug:
+            return get_object_or_404(Seller, slug=seller_slug)
+        elif request.user.is_authenticated:
+            return get_object_or_404(UserSeller, user=request.user).seller
+        else:
+            return None
+
+    def get(self, request, *args, **kwargs):
+        if not request.session.get('idempotency_shipping_key'):
+            request.session['idempotency_shipping_key'] = str(uuid.uuid4())
+
+        seller = self.seller_context(request, kwargs.get('seller_slug'))
+        if seller:
+            from_form = self.from_form
+        else:
+            from_form = None
+
+        context = {
+            'size_form': self.size_form,
+            'ship_to_form': self.ship_to_form,
+            'delivery_level': self.delivery_level,
+            'insurance_form': self.insurance_form,
+            'seller': seller,
+            'hide_subscribe': True,
+            'square_js_url': settings.SQUARE_JS_URL,
+        }
+
+        if from_form:
+            context.update({'from_form': from_form})
+
+        return render(request, self.create_template, context)
+
+    def post(self, request, *args, **kwargs):
+        size_form = self.size_form(request.POST)
+        ship_to_form = self.ship_to_form(request.POST)
+        delivery_level = self.delivery_level(request.POST)
+        insurance_form = self.insurance_form(request.POST)
+
+        seller = self.seller_context(request, kwargs.get('seller_slug'))
+        if seller:
+            from_form = None
+        else:
+            from_form = self.from_form(request.POST)
+
+        # if all forms are valid
+        if size_form.is_valid() and ship_to_form.is_valid() and delivery_level.is_valid() and \
+           insurance_form.is_valid() and (seller or from_form.is_valid()):
+            pass
+
+        else:  # if any form is invalid
+            context = {
+                'size_form': size_form,
+                'ship_to_form': ship_to_form,
+                'delivery_level': delivery_level,
+                'insurance_form': insurance_form,
+                'seller': seller,
+                'hide_subscribe': True,
+                'square_js_url': settings.SQUARE_JS_URL,
+            }
+
+            if from_form:
+                context.update({'from_form': from_form})
+
+            return render(request, self.create_template, context)
+
+
 def create(request, seller_slug=None):
     from_form = None
 
@@ -35,18 +114,15 @@ def create(request, seller_slug=None):
             from_form = FromForm(request.POST)
             if from_form.is_valid():
                 from_name = from_form.cleaned_data['store_name']
-                from_address1 = from_form.cleaned_data['store_address_1']
-                from_address2 = from_form.cleaned_data['store_address_2']
-                from_city = from_form.cleaned_data['store_city']
-                from_state = from_form.cleaned_data['store_state']
-                from_postal_code = from_form.cleaned_data['store_postal_code']
                 from_phone = from_form.cleaned_data['store_phone']
                 from_email = from_form.cleaned_data['store_email']
 
-                from_address = from_address1
-                if from_address2:
-                    from_address += '\n' + from_address2
-                from_address += '\n' + from_city + ', ' + from_state + ' ' + from_postal_code
+                from_address = from_form.cleaned_data['store_address_1']
+                if from_form.cleaned_data['store_address_2']:
+                    from_address += '\n' + from_form.cleaned_data['store_address_2']
+                from_address += '\n' + from_form.cleaned_data['store_city'] + ', ' \
+                                + from_form.cleaned_data['store_state'] + ' ' \
+                                + from_form.cleaned_data['store_postal_code']
             else:
                 from_form_valid = False
         else:
@@ -114,31 +190,35 @@ def create(request, seller_slug=None):
 
             if payment_result == 'pass':
                 # now create the shipping
+                init_status = ShippingStatus.objects.get(name='Order Received')
                 shipping = Shipping.objects.create(seller=seller,
                                                    from_name=from_name,
                                                    from_address=from_address,
                                                    from_email=from_email,
                                                    from_phone=from_phone,
+
                                                    to_name=ship_to_first_name + ' ' + ship_to_last_name,
                                                    to_address=ship_to_address,
                                                    to_email=ship_to_email,
                                                    to_phone=ship_to_phone,
+
                                                    small_quantity=small_quantity,
                                                    medium_quantity=medium_quantity,
                                                    large_quantity=large_quantity,
                                                    set_quantity=set_quantity,
+
                                                    small_description=small_description,
                                                    medium_description=medium_description,
                                                    large_description=large_description,
                                                    set_description=set_description,
                                                    ship_location=shipping_level,
 
+                                                   status=init_status,
+
                                                    insurance=insurance_level,
                                                    cost=cost,
                                                    distance=distance)
                 shipping.save()
-
-                send_internal_shipping_notification(shipping)
 
                 return render(request, 'bespoke_shipping_complete.html', {'shipping': shipping})
             else:
@@ -215,7 +295,8 @@ def ship_cost(request):
         insurance = body['insurance']
 
         try:
-            cost, distance, supported_state = calculate_shipping_cost(ship_sizes, from_address, to_address, to_door, insurance)
+            cost, distance, supported_state = calculate_shipping_cost(ship_sizes, from_address, to_address, to_door,
+                                                                      insurance)
             if '123 test ln' in to_address.casefold():
                 cost = 0.01
                 distance = 0
@@ -338,96 +419,6 @@ def get_address_state(address_components):
             return component['long_name']
     else:
         return 'no state'
-
-
-def send_internal_shipping_notification(shipping):
-    subject = f'New Shipping Order Received for {shipping.from_name}'
-
-    if settings.ENVIRONMENT == 'localhost':
-        subject = f'!!TESTING!! - {subject}'
-
-    if '123 test ln' in shipping.to_address.casefold():
-        subject = f'!!TESTING!! - {subject}'
-
-    body = f'''
-        We have a new shipping order
-        
-        Details:
-        Small items:
-        Quantity: {shipping.small_quantity}
-        Description: {shipping.small_description}
-        Medium items:
-        Quantity: {shipping.medium_quantity}
-        Description: {shipping.medium_description}
-        Large items:
-        Quantity: {shipping.large_quantity}
-        Description: {shipping.large_description}
-        Set items:
-        Quantity: {shipping.set_quantity}
-        Description: {shipping.set_description}
-        
-        Shipping Origin
-        Name: {shipping.from_name}
-        E-mail: {shipping.from_email}
-        Phone: {shipping.from_phone}
-        Address:
-        {shipping.from_address}
-
-        Shipping Destination
-        Name: {shipping.to_name}
-        E-mail: {shipping.to_email}
-        Phone: {shipping.to_phone}
-        Address:
-        {shipping.to_address}
-        
-        '''
-
-    html_body = f"""
-                    <!DOCTYPE html>
-                    <html>
-                        <head>
-                        </head>
-                        <body>
-                            <p>We have a new shipping order</p>
-                            <p></p>
-                            <p>Details:</p>
-                            <p>Small items:</p>
-                            <p>Quantity: {shipping.small_quantity}</p>
-                            <p>Description: {shipping.small_description}</p>
-                            <p>Medium items:</p>
-                            <p>Quantity: {shipping.medium_quantity}</p>
-                            <p>Description: {shipping.medium_description}</p>
-                            <p>Large items:</p>
-                            <p>Quantity: {shipping.large_quantity}</p>
-                            <p>Description: {shipping.large_description}</p>
-                            <p>Set items:</p>
-                            <p>Quantity: {shipping.set_quantity}</p>
-                            <p>Description: {shipping.set_description}</p>
-                            <p>Shipping Origin</p>
-                            <p>Name: {shipping.from_name}</p>
-                            <p>E-mail: {shipping.from_email}</p>
-                            <p>Phone: {shipping.from_phone}</p>
-                            <p>Address:</p>
-                            <p>{shipping.from_address}</p>
-                            <p></p>
-                            <p>Shipping Destination</p>
-                            <p>Name: {shipping.to_name}</p>
-                            <p>E-mail: {shipping.to_email}</p>
-                            <p>Phone: {shipping.to_phone}</p>
-                            <p>Address:</p>
-                            <p>{shipping.to_address}</p>
-                        </body>
-                    </html>
-                    """
-
-    EmailThread(
-        subject=subject,
-        message=body,
-        from_email=settings.EMAIL_HOST_USER,
-        recipient=settings.EMAIL_HOST_USER,
-        fail_silently=False,
-        html_message=html_body
-    ).start()
 
 
 def qr_grid(request):
