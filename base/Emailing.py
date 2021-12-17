@@ -18,7 +18,7 @@ def send_ship_status_email(ShippingOrder, to_status):
         ship_delivered_email(ShippingOrder)
 
 
-def ship_create_email(ShippingOrder):
+def items_details(ShippingOrder):
     items = ''
     small_quantity = int(ShippingOrder.small_quantity)
     if small_quantity > 0:
@@ -49,15 +49,29 @@ def ship_create_email(ShippingOrder):
         else:
             items += 'items '
 
+    return items
+
+
+def insurance_details(ShippingOrder):
     if ShippingOrder.insurance:
         insurance = 'Your order is fully insured.'
     else:
         insurance = 'Your order is insured up to the cost of the service.'
+    return insurance
 
+
+def ship_location_details(ShippingOrder):
     if ShippingOrder.ship_location == 'door':
         ship_location = 'We will provide delivery to your door.'
     else:
         ship_location = 'We place your item in your home.'
+    return ship_location
+
+
+def ship_create_email(ShippingOrder):
+    items = items_details(ShippingOrder)
+    insurance = insurance_details(ShippingOrder)
+    ship_location = ship_location_details(ShippingOrder)
 
     global_merge_vars = {
         'items': items,
@@ -89,6 +103,42 @@ def ship_picked_up_email(ShippingOrder):
         recipient=ShippingOrder.to_email,
         global_merge_vars_dict=global_merge_vars,
     ).start()
+
+
+def ship_delivered_email(ShippingOrder):
+    global_merge_vars = {
+        'from_name': ShippingOrder.from_name,
+        'from_address': ShippingOrder.from_address,
+        'to_name': ShippingOrder.to_name,
+        'to_address': ShippingOrder.to_address,
+    }
+
+    EmailTemplateThread(
+        template="Shipping Order - Thank You",
+        recipient=ShippingOrder.to_email,
+        global_merge_vars_dict=global_merge_vars,
+    ).start()
+
+
+def ship_out_email(ShippingOrder):
+    items = items_details(ShippingOrder)
+    insurance = insurance_details(ShippingOrder)
+    ship_location = ship_location_details(ShippingOrder)
+
+    global_merge_vars = {
+        'items': items,
+        'order_window': ShippingOrder.order_window,
+        'to_address': ShippingOrder.to_address,
+        'placement': ship_location,
+        'insurance': insurance,
+    }
+
+    EmailTemplateThread(
+        template="Shipping Order - On the Way",
+        recipient=ShippingOrder.to_email,
+        global_merge_vars_dict=global_merge_vars,
+    ).start()
+
 
 def send_internal_shipping_notification(shipping):
     subject = f'New Shipping Order Received for {shipping.from_name}'
