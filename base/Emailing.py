@@ -10,6 +10,12 @@ shipping_create_template_id = '13384681'
 def send_ship_status_email(ShippingOrder, to_status):
     if to_status == 'created':
         ship_create_email(ShippingOrder)
+    elif to_status == 'Picked Up':
+        ship_picked_up_email(ShippingOrder)
+    elif to_status == 'Out for Delivery':
+        ship_out_email(ShippingOrder)
+    elif to_status == 'Delivered':
+        ship_delivered_email(ShippingOrder)
 
 
 def ship_create_email(ShippingOrder):
@@ -61,7 +67,6 @@ def ship_create_email(ShippingOrder):
         'to_address': ShippingOrder.to_address,
         'placement': ship_location,
         'insurance': insurance,
-        'LIST:COMPANY': 'Global Vintage Love'
     }
 
     EmailTemplateThread(
@@ -70,6 +75,20 @@ def ship_create_email(ShippingOrder):
         global_merge_vars_dict=global_merge_vars,
     ).start()
 
+
+def ship_picked_up_email(ShippingOrder):
+    global_merge_vars = {
+        'from_name': ShippingOrder.from_name,
+        'from_address': ShippingOrder.from_address,
+        'to_name': ShippingOrder.to_name,
+        'to_address': ShippingOrder.to_address,
+    }
+
+    EmailTemplateThread(
+        template="Shipping Order - Picked Up",
+        recipient=ShippingOrder.to_email,
+        global_merge_vars_dict=global_merge_vars,
+    ).start()
 
 def send_internal_shipping_notification(shipping):
     subject = f'New Shipping Order Received for {shipping.from_name}'
