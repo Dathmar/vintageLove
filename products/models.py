@@ -61,13 +61,21 @@ class Seller(models.Model):
         return self.name
 
     def save(self):
-        self.slug = slugify(self.name)
+        if not self.slug:
+            slug_base = slugify(self.name + " " + self.city)
+            slug = slug_base
+            count = 0
+            while Seller.objects.filter(slug=slug).exists():
+                count += 1
+                slug = f'{slug_base}-{count}'
+
+            self.slug = slug
+
+        super(Seller, self).save()
 
         if not Seller.objects.filter(id=self.id).exists():
             generate_qr_code('https://www.globalvintagelove.com/ship/location/' + str(self.slug),
                              'media/bespoke-shipping/' + str(self.slug) + '_qr.png')
-
-        super(Seller, self).save()
 
     def get_qr_url(self):
         return '/media/bespoke-shipping/' + str(self.slug) + '_qr.png'
