@@ -7,4 +7,4 @@ from .models import Delivery
 @login_required(login_url='/login/?next=/deliveries/')
 def my_deliveries(request):
     deliveries = Delivery.objects.filter(user=request.user)
-    return render(request, 'deliveries/my_deliveries.html', {'deliveries': deliveries})
+    return render(request, 'deliveries/my-deliveries.html', {'deliveries': deliveries})
