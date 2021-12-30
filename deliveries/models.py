@@ -14,7 +14,7 @@ class Delivery(models.Model):
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.shipping} - {self.user} - {self.scheduled_date}'
 
     class Meta:
         verbose_name = 'Delivery'

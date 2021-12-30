@@ -6,8 +6,9 @@
 
 {% block content %}
     <div class="container body-padding">
-        <h1>Your shipping order has been completed</h1>
-        <span>Thank you for shipping through Vintage Love!</span>
+        {% for delivery in deliveries %}
+            {{ delivery }} <br>
+        {% endfor %}
     </div>
 
 {% endblock %}
