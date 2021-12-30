@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <a href="{% url 'seller:add-product' %}" class="btn btn-primary vintage-button blue-font rounded-3 mt-3" style="width: 16em;">Add A Product</a>
+        <a href="{% url 'seller:product-list' %}" class="btn btn-primary vintage-button blue-font rounded-3 mt-3" style="width: 16em;">View Products</a>
+
+    </div>
+{% endblock %}
