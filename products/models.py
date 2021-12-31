@@ -218,7 +218,8 @@ class AttributeValue(models.Model):
 
 
 class HomepageProducts(models.Model):
-    product = models.OneToOneField(Product, on_delete=models.CASCADE, primary_key=True)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, primary_key=True,
+                                   limit_choices_to={'status__available_to_sell': 'True'})
     sequence = models.IntegerField(unique=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)

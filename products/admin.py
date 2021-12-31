@@ -54,11 +54,6 @@ class HomepageProductsAdmin(admin.ModelAdmin):
     list_editable = ['product', 'sequence']
     list_display_links = None
 
-    def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
-        if db_field.name == "product":
-            kwargs["queryset"] = db_field.related_model.objects.filter(status__available_to_sell=True)
-        return super(HomepageProductsAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
 
 admin.site.register(ProductCategory)
 admin.site.register(ProductStatus)
