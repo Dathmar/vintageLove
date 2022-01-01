@@ -6,9 +6,29 @@
 
 {% block content %}
     <div class="container body-padding">
-        {% for delivery in deliveries %}
-            {{ delivery }} <br>
-        {% endfor %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">From</th>
+                    <th scope="col">To</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Timeframe</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for delivery in deliveries %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ delivery.shipping.from_address }}</td>
+                        <td>{{ delivery.shipping.to_address }}</td>
+                        <td>{{ delivery.scheduled_date }}</td>
+                        <td>{{ delivery.window_choices }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
     </div>
 
 {% endblock %}
