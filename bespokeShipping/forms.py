@@ -16,7 +16,7 @@ class FromForm(forms.Form):
                                   label='State', max_length=100)
     store_postal_code = forms.CharField(widget=forms.NumberInput(attrs={'placeholder': 'Postal Code'}),
                                         label='Postal Code', max_length=100)
-    store_phone = forms.CharField(widget=forms.NumberInput(attrs={'placeholder': 'Store Phone'}),
+    store_phone = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Store Phone'}),
                                   label='Phone', max_length=100)
     store_email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Store Email (optional)'}),
                                    label='Email', max_length=100, required=False)
@@ -66,7 +66,7 @@ class ShipToForm(forms.Form):
                                 max_length=200)
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Email'}),
                              max_length=200)
-    phone = forms.CharField(widget=forms.NumberInput(attrs={'placeholder': 'Phone'}))
+    phone = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Phone'}))
     address1 = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Address 1'}),
                                max_length=200)
     address2 = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Address 2'}),

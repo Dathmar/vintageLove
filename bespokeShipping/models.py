@@ -1,6 +1,7 @@
 from django.db import models
 from products.models import Seller
 from base.Emailing import send_ship_status_email, send_internal_shipping_notification
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class ShippingStatus(models.Model):
@@ -34,11 +35,11 @@ class Shipping(models.Model):
     from_name = models.CharField(max_length=1000)
     from_email = models.EmailField(max_length=1000, blank=True, null=True)
     from_address = models.TextField(max_length=1000)
-    from_phone = models.CharField(max_length=1000, blank=True, null=True)
+    from_phone = PhoneNumberField(blank=True, null=True)
     to_name = models.CharField(max_length=1000)
     to_email = models.EmailField(max_length=1000)
     to_address = models.TextField(max_length=1000)
-    to_phone = models.CharField(max_length=1000, blank=True, null=True)
+    to_phone = PhoneNumberField(blank=True, null=True)
     small_quantity = models.IntegerField(default=0, blank=True, null=True)
     medium_quantity = models.IntegerField(default=0, blank=True, null=True)
     large_quantity = models.IntegerField(default=0, blank=True, null=True)
