@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404
-from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm
-from .models import ShippingStatus
+from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm, DeliveryLevelQuote, InsuranceFormQuote
+from .models import ShippingStatus, Quote, Shipping
 from products.models import UserSeller, Seller
 from django.conf import settings
 from django.http import JsonResponse, HttpResponseNotAllowed
-from .models import Shipping
+
+import logging
 
 from orders.views import submit_payment
 
@@ -13,6 +14,174 @@ import googlemaps
 import uuid
 
 from django.views import View
+
+
+logger = logging.getLogger(__name__)
+
+
+def quote_context(request):
+    sellers = Seller.objects.all()
+    return render(request, 'quote-context.html', {'sellers': sellers})
+
+
+class CreateQuoteView(View):
+    size_form = SizeForm
+    ship_to_form = ShipToForm
+    delivery_level = DeliveryLevelQuote
+    insurance_form = InsuranceFormQuote
+    from_form = FromForm
+
+    create_template = 'create-quote.html'
+    complete_template = 'complete-quote.html'
+
+    def get(self, request, seller_slug=None):
+        size_form = self.size_form
+        ship_to_form = self.ship_to_form
+        delivery_level = self.delivery_level
+        insurance_form = self.insurance_form
+
+        seller = seller_context(request.user, seller_slug)
+
+        if seller:
+            from_form = None
+        else:
+            from_form = self.from_form
+
+        context = {
+            'size_form': size_form,
+            'ship_to_form': ship_to_form,
+            'delivery_level': delivery_level,
+            'insurance_form': insurance_form,
+            'from_form': from_form,
+            'seller': seller,
+            'hide_subscribe': True,
+        }
+        return render(request, self.create_template, context)
+
+    def post(self, request, seller_slug=None):
+        size_form = self.size_form(request.POST)
+        ship_to_form = self.ship_to_form(request.POST)
+        delivery_level = self.delivery_level(request.POST)
+        insurance_form = self.insurance_form(request.POST)
+
+        seller = seller_context(request.user, seller_slug)
+
+        if seller:
+            from_form = None
+        else:
+            from_form = self.from_form(request.POST)
+
+        if size_form.is_valid() and ship_to_form.is_valid() and delivery_level.is_valid() and \
+           insurance_form.is_valid() and (seller or from_form.is_valid()):
+
+            if seller:
+                from_address = seller.street + '\n' + seller.city + ', ' + seller.state + ' ' + seller.zip
+                from_name = seller.name
+                from_email = seller.email
+                from_phone = seller.phone
+            else:
+                from_name = from_form.cleaned_data['store_name']
+                from_phone = from_form.cleaned_data['store_phone']
+                from_email = from_form.cleaned_data['store_email']
+
+                from_address = from_form.cleaned_data['store_address_1']
+                if from_form.cleaned_data['store_address_2']:
+                    from_address += '\n' + from_form.cleaned_data['store_address_2']
+                from_address += '\n' + from_form.cleaned_data['store_city'] + ', ' \
+                                + from_form.cleaned_data['store_state'] + ' ' \
+                                + from_form.cleaned_data['store_postal_code']
+
+            small_quantity = size_form.cleaned_data['size_small']
+            medium_quantity = size_form.cleaned_data['size_medium']
+            large_quantity = size_form.cleaned_data['size_large']
+            set_quantity = size_form.cleaned_data['size_set']
+
+            small_description = size_form.cleaned_data['small_description']
+            medium_description = size_form.cleaned_data['medium_description']
+            large_description = size_form.cleaned_data['large_description']
+            set_description = size_form.cleaned_data['set_description']
+
+            ship_sizes = {
+                'small': small_quantity,
+                'medium': medium_quantity,
+                'large': large_quantity,
+                'set': set_quantity
+            }
+
+            ship_to_first_name = ship_to_form.cleaned_data['first_name']
+            ship_to_last_name = ship_to_form.cleaned_data['last_name']
+            ship_to_address1 = ship_to_form.cleaned_data['address1']
+            ship_to_address2 = ship_to_form.cleaned_data['address2']
+            ship_to_city = ship_to_form.cleaned_data['city']
+            ship_to_state = ship_to_form.cleaned_data['state']
+            ship_to_postal_code = ship_to_form.cleaned_data['postal_code']
+            ship_to_email = ship_to_form.cleaned_data['email']
+            ship_to_phone = ship_to_form.cleaned_data['phone']
+
+            ship_to_address = ship_to_address1
+            if ship_to_address2:
+                ship_to_address += '\n' + ship_to_address2
+            ship_to_address += '\n' + ship_to_city + ', ' + ship_to_state + ' ' + ship_to_postal_code
+
+            shipping_level = delivery_level.cleaned_data['level']
+            insurance_level = insurance_form.cleaned_data['insure_level']
+
+            cost, distance, supported_state = calculate_shipping_cost(ship_sizes, from_address,
+                                                                      ship_to_address, shipping_level, insurance_level)
+
+            quote = Quote(
+                seller=seller,
+                from_name=from_name,
+                from_address=from_address,
+                from_email=from_email,
+                from_phone=from_phone,
+
+                to_name=ship_to_first_name + ' ' + ship_to_last_name,
+                to_address=ship_to_address,
+                to_email=ship_to_email,
+                to_phone=ship_to_phone,
+
+                small_quantity=small_quantity,
+                medium_quantity=medium_quantity,
+                large_quantity=large_quantity,
+                set_quantity=set_quantity,
+
+                small_description=small_description,
+                medium_description=medium_description,
+                large_description=large_description,
+                set_description=set_description,
+                ship_location=shipping_level,
+
+                insurance=insurance_level,
+                cost=cost,
+                distance=distance,
+
+                paid=False
+            )
+            quote.save()
+
+            return render(request, 'complete-quote.html', {'email': ship_to_email })
+
+        else:
+            context = {
+                'size_form': size_form,
+                'ship_to_form': ship_to_form,
+                'delivery_level': delivery_level,
+                'insurance_form': insurance_form,
+                'from_form': from_form,
+                'seller': seller,
+                'hide_subscribe': True,
+            }
+            return render(request, self.create_template, context)
+
+
+def seller_context(user, seller_slug=None):
+    if seller_slug:
+        return get_object_or_404(Seller, slug=seller_slug)
+    elif user.is_authenticated:
+        return get_object_or_404(UserSeller, user=user).seller
+    else:
+        return None
 
 
 class CreateView(View):
@@ -25,20 +194,10 @@ class CreateView(View):
     create_template = 'bespoke_shipping.html'
     complete_template = 'bespoke_shipping_complete.html'
 
-    @staticmethod
-    def seller_context(request, seller_slug=None):
-        if seller_slug:
-            return get_object_or_404(Seller, slug=seller_slug)
-        elif request.user.is_authenticated:
-            return get_object_or_404(UserSeller, user=request.user).seller
-        else:
-            return None
-
     def get(self, request, *args, **kwargs):
-        if not request.session.get('idempotency_shipping_key'):
-            request.session['idempotency_shipping_key'] = str(uuid.uuid4())
+        request.session['idempotency_shipping_key'] = str(uuid.uuid4())
 
-        seller = self.seller_context(request, kwargs.get('seller_slug'))
+        seller = seller_context(request.user, kwargs.get('seller_slug'))
         if seller:
             from_form = self.from_form
         else:
@@ -65,7 +224,7 @@ class CreateView(View):
         delivery_level = self.delivery_level(request.POST)
         insurance_form = self.insurance_form(request.POST)
 
-        seller = self.seller_context(request, kwargs.get('seller_slug'))
+        seller = seller_context(request, kwargs.get('seller_slug'))
         if seller:
             from_form = None
         else:
@@ -222,6 +381,7 @@ def create(request, seller_slug=None):
 
                 return render(request, 'bespoke_shipping_complete.html', {'shipping': shipping})
             else:
+                logger.warning('Payment failed for shipping: ' + str(payment_result))
                 context = {
                     'size_form_errors': size_form.errors,
                     'size_form': size_form,
@@ -240,6 +400,15 @@ def create(request, seller_slug=None):
                     context.update({'from_form': from_form})
                 return render(request, 'bespoke_shipping.html', context)
         else:
+            if size_form.errors:
+                logger.warning('Size form errors: ' + str(size_form.errors))
+            if ship_to_form.errors:
+                logger.warning('Ship to form errors: ' + str(ship_to_form.errors))
+            if delivery_level.errors:
+                logger.warning('Delivery level errors: ' + str(delivery_level.errors))
+            if insurance_form.errors:
+                logger.warning('Insurance form errors: ' + str(insurance_form.errors))
+
             context = {
                 'size_form': size_form,
                 'ship_to_form': ship_to_form,
@@ -410,6 +579,7 @@ def calculate_distance(from_address, to_address):
 
         return distance['rows'][0]['elements'][0]['distance']['text'], to_state, from_state
     except Exception as e:
+        logger.error(f'error during distance calculation {e}')
         raise e
 
 

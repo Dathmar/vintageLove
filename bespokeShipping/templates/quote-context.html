@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Choose the Seller</h1>
+        </div>
+    </div>
+    {% for seller in sellers %}
+    <div class="row">
+        <a href="/ship/quote/{{ seller.slug }}/">{{ seller.name }}</a>
+    </div>
+    {% endfor %}
+    <div class="row">
+        <a href="/ship/quote/unknown/">Enter Location Manually</a>
+    </div>
+</div>
+{% endblock %}

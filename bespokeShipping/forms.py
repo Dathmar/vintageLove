@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.safestring import mark_safe
 from django.conf import settings
+from phonenumber_field.formfields import PhoneNumberField
 
 
 class FromForm(forms.Form):
@@ -16,8 +17,8 @@ class FromForm(forms.Form):
                                   label='State', max_length=100)
     store_postal_code = forms.CharField(widget=forms.NumberInput(attrs={'placeholder': 'Postal Code'}),
                                         label='Postal Code', max_length=100)
-    store_phone = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Store Phone'}),
-                                  label='Phone', max_length=100)
+    store_phone = PhoneNumberField(widget=forms.TextInput(attrs={'placeholder': 'Store Phone'}),
+                                   label='Phone')
     store_email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Store Email (optional)'}),
                                    label='Email', max_length=100, required=False)
 
@@ -66,7 +67,7 @@ class ShipToForm(forms.Form):
                                 max_length=200)
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Email'}),
                              max_length=200)
-    phone = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Phone'}))
+    phone = PhoneNumberField(widget=forms.TextInput(attrs={'placeholder': 'Phone'}))
     address1 = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Address 1'}),
                                max_length=200)
     address2 = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Address 2'}),
@@ -89,6 +90,16 @@ class DeliveryLevel(forms.Form):
                               choices=shipping_level)
 
 
+class DeliveryLevelQuote(forms.Form):
+    get_static_prefix = settings.STATIC_URL
+    shipping_level = (('door', mark_safe(f'<img src="{ get_static_prefix }img/to_door.png" height="150"><br/>'
+                                         f'Delivery to your door.<br/>(free)')),
+                      ('placement', mark_safe(f'<img src="{ get_static_prefix }img/in_home.png" height="150"><br/>'
+                                              'In home delivery and placement.<br/>(+$50)')))
+
+    level = forms.ChoiceField(widget=forms.RadioSelect(), choices=shipping_level)
+
+
 class InsuranceForm(forms.Form):
     get_static_prefix = settings.STATIC_URL
     insurance_level = ((True, mark_safe(f'<img src="{ get_static_prefix }img/free-insurance.png" height="150"><br/>'
@@ -98,3 +109,13 @@ class InsuranceForm(forms.Form):
 
     insure_level = forms.ChoiceField(widget=forms.RadioSelect(attrs={"onclick": "showTab('#list-submit-list')"}),
                                      choices=insurance_level)
+
+
+class InsuranceFormQuote(forms.Form):
+    get_static_prefix = settings.STATIC_URL
+    insurance_level = ((True, mark_safe(f'<img src="{ get_static_prefix }img/free-insurance.png" height="150"><br/>'
+                                        f'Insurance up to the value of the shipping service<br/>(free)')),
+                       (False, mark_safe(f'<img src="{ get_static_prefix }img/fill-coverage-insurance.png" height="150"><br/>'
+                                         f'Full Coverage up to the purchase price of the piece<br/>($50)')))
+
+    insure_level = forms.ChoiceField(widget=forms.RadioSelect(), choices=insurance_level)

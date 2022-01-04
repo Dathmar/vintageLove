@@ -2,6 +2,7 @@ from django.db import models
 from products.models import Seller
 from base.Emailing import send_ship_status_email, send_internal_shipping_notification
 from phonenumber_field.modelfields import PhoneNumberField
+import uuid
 
 
 class ShippingStatus(models.Model):
@@ -71,6 +72,48 @@ class Shipping(models.Model):
                 send_ship_status_email(self, to_status=to_status)
 
         super(Shipping, self).save()
+
+    def __str__(self):
+        return f'{self.id} {self.to_name}'
+
+    class Meta:
+        ordering = ['-create_datetime']
+
+
+class Quote(models.Model):
+    size_choices = (('small', 'Small'),
+                    ('medium', 'Medium'),
+                    ('large', 'Large'),
+                    ('set', 'Sets'))
+    location_choices = (('door', 'To Door'),
+                        ('placement', 'In home placement'))
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, blank=True, null=True)
+    from_name = models.CharField(max_length=1000)
+    from_email = models.EmailField(max_length=1000, blank=True, null=True)
+    from_address = models.TextField(max_length=1000)
+    from_phone = PhoneNumberField(blank=True, null=True)
+    to_name = models.CharField(max_length=1000)
+    to_email = models.EmailField(max_length=1000)
+    to_address = models.TextField(max_length=1000)
+    to_phone = PhoneNumberField(blank=True, null=True)
+    small_quantity = models.IntegerField(default=0, blank=True, null=True)
+    medium_quantity = models.IntegerField(default=0, blank=True, null=True)
+    large_quantity = models.IntegerField(default=0, blank=True, null=True)
+    set_quantity = models.IntegerField(default=0, blank=True, null=True)
+    small_description = models.TextField(max_length=1000, blank=True, null=True)
+    medium_description = models.TextField(max_length=1000, blank=True, null=True)
+    large_description = models.TextField(max_length=1000, blank=True, null=True)
+    set_description = models.TextField(max_length=1000, blank=True, null=True)
+    ship_location = models.CharField(max_length=10, choices=location_choices)
+    insurance = models.BooleanField(default=False)
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    distance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    paid = models.BooleanField(default=False)
+
+    create_datetime = models.DateTimeField('date created', auto_now_add=True)
+    update_datetime = models.DateTimeField('date updated', auto_now=True)
 
     def __str__(self):
         return f'{self.id} {self.to_name}'

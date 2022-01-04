@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <form method="post">
+        {% csrf_token %}
+            <div class="row">
+                {% if size_form_errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                        {% for error in size_form_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                <div class="col-12 col-md-6 col-xl-3 pt-3">
+                    <div class="size-form-check text-center">
+                        <label class="form-check-label" for={{ size_form.size_small.id_for_label }}>
+                            {{ size_form.size_small.label }}
+                        </label>
+                        {{ size_form.size_small.tag }}
+                        {{ size_form.size_small }}
+                    </div>
+                    <div class="pt-2 w-100">
+                        {{ size_form.small_description }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3 pt-3">
+                    <div class="size-form-check text-center">
+                        <label class="form-check-label" for={{ size_form.size_medium.id_for_label }}>
+                            {{ size_form.size_medium.label }}
+                        </label>
+                        {{ size_form.size_medium.tag }}
+                        {{ size_form.size_medium }}
+                    </div>
+                    <div class="pt-2 w-100">
+                        {{ size_form.medium_description }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3 pt-3">
+                    <div class="size-form-check text-center">
+                        <label class="form-check-label" for={{ size_form.size_large.id_for_label }}>
+                            {{ size_form.size_large.label }}
+                        </label>
+                        {{ size_form.size_large.tag }}
+                        {{ size_form.size_large }}
+                    </div>
+                    <div class="pt-2 w-100">
+                        {{ size_form.large_description }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3 pt-3">
+                    <div class="size-form-check text-center">
+                        <label class="form-check-label" for={{ size_form.size_set.id_for_label }}>
+                            {{ size_form.size_set.label }}
+                        </label>
+                        {{ size_form.size_set.tag }}
+                        {{ size_form.size_set }}
+                    </div>
+                    <div class="pt-2 w-100">
+                        {{ size_form.set_description }}
+                    </div>
+                </div>
+            </div>
+            <div class="row text-start pt-4">
+                <div class="col-12 col-md-6">
+                    <h5>Ship Item To</h5>
+                    <table>
+                        {{ ship_to_form.as_table }}
+                    </table>
+                </div>
+                <div class="col-12 col-md-6 pt-4 pt-md-0">
+                    <h5>Ship Item From</h5>
+                    {% if from_form %}
+                    <table>
+                        {{ ship_from_form.as_table }}
+                    </table>
+                    {% else %}
+                        <div id="from-seller" class="text-start">
+                            <p id="seller-name">{{ seller.name }}</p>
+                            <p id="seller-street">{{ seller.street }}</p>
+                            <p><span id="seller-city">{{ seller.city }}</span>, <span id="seller-state">{{ seller.state }}</span> <span id="seller-postal-code">{{ seller.zip }}</span></p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row pt-4">
+                <div class="col-12">
+                    <h5>Delivery Location</h5>
+                    {% if delivery_level_form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <ul>
+                                {% for error in delivery_level_form.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                </div>
+                {% for radio_level in delivery_level.level %}
+                    <div class="col-6">
+                        <div class="size-form-check">
+                            <label class="form-check-label" for={{ radio_level.id_for_label }}>
+                                {{ radio_level.choice_label }}
+                            </label>
+                            {{ radio_level.tag }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="row pt-4">
+                <div class="col-12">
+                    <h5>Insurance</h5>
+                    {% if insure_level_form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <ul>
+                                {% for error in insurance_form.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+                {% for radio_insure in insurance_form.insure_level %}
+                    <div class="col-6">
+                        <div class="size-form-check">
+                            <label class="form-check-label" for={{ radio_insure.id_for_label }}>
+                                {{ radio_insure.choice_label }}
+                            </label>
+                            {{ radio_insure.tag }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="row text-center">
+                <div class="col text-center">
+                    <button class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" type="button" onclick="calculate_cost()"><span style="font-size: larger;">Calculate Shipping</span></button>
+                </div>
+            </div>
+            <div class="row">
+                <p id="cost" style="font-size: larger"></p>
+                <p id="shipping-timeline"></p>
+            </div>
+            <div class="row text-center">
+                <div class="col text-center">
+                    <input disabled class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" id="form-submit" style="max-width: 10em;" type="submit" value="Send Quote">
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block end_body %}
+    <script src="{% get_static_prefix %}js/jquery-3.6.0.min.js"></script>
+    <script src="{% get_static_prefix %}js/quote_cost.js"></script>
+{% endblock %}
