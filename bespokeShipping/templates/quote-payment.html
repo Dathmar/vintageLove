@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_header %}
+    <script type="text/javascript" src="{{ square_js_url }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Quote Details</h1>
+            <p>Cost {{ quote.cost }}</p>
+        </div>
+    </div>
+    <div class="row pt-3" id="card-container">
+        <div class="col">
+            <div class="row">
+                <div id="form-container">
+                    <div id="sq-card"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+{% block end_body %}
+    <script src="{% get_static_prefix %}js/shipPaymentForm.js"></script>
+    <script >setSquareAppID();</script>
+    <script src="{% get_static_prefix %}js/live-chat.js"></script>
+{% endblock %}

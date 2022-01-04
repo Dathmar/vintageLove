@@ -3,7 +3,7 @@ from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm,
 from .models import ShippingStatus, Quote, Shipping
 from products.models import UserSeller, Seller
 from django.conf import settings
-from django.http import JsonResponse, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponseNotAllowed, Http404
 
 import logging
 
@@ -22,6 +22,77 @@ logger = logging.getLogger(__name__)
 def quote_context(request):
     sellers = Seller.objects.all()
     return render(request, 'quote-context.html', {'sellers': sellers})
+
+
+class PayQuote(View):
+    pay_template = 'quote-payment.html'
+    complete_template = 'quote-payment-complete.html'
+
+    def get(self, request, quote_id=None):
+        request.session['idempotency_shipping_key'] = str(uuid.uuid4())
+        quote = get_object_or_404(Quote, pk=quote_id)
+        context = {
+            'quote': quote,
+            'hide_subscribe': True,
+            'square_js_url': settings.SQUARE_JS_URL,
+        }
+        return render(request, 'quote-payment.html', context)
+
+    def post(self, request, quote_id=None):
+        quote = get_object_or_404(pk=quote_id)
+
+        if not quote.paid:
+            charge_cost = quote.cost * 100
+            idempotency_key = request.session.get('idempotency_shipping_key')
+            nonce = request.session.get('nonce')
+
+            payment_result = submit_payment(charge_cost, nonce, idempotency_key)
+            request.session['idempotency_shipping_key'] = False
+
+            if payment_result == 'pass':
+                quote.paid = True
+                quote.save()
+                init_status = ShippingStatus.objects.get(name='Order Received')
+                shipping = Shipping.objects.create(
+                    seller=quote.seller,
+                    from_name=quote.from_name,
+                    from_address=quote.from_address,
+                    from_email=quote.from_email,
+                    from_phone=quote.from_phone,
+
+                    to_name=quote.to_name,
+                    to_address=quote.to_address,
+                    to_email=quote.to_email,
+                    to_phone=quote.to_phone,
+
+                    small_quantity=quote.small_quantity,
+                    medium_quantity=quote.medium_quantity,
+                    large_quantity=quote.large_quantity,
+                    set_quantity=quote.set_quantity,
+
+                    small_description=quote.small_description,
+                    medium_description=quote.medium_description,
+                    large_description=quote.large_description,
+                    set_description=quote.set_description,
+                    ship_location=quote.shipping_level,
+
+                    status=init_status,
+
+                    insurance=quote.insurance_level,
+                    cost=quote.cost,
+                    distance=quote.distance
+                )
+                shipping.save()
+                return render(request, self.complete_template)
+
+        context = {
+            'quote': quote,
+            'hide_subscribe': True,
+            'square_js_url': settings.SQUARE_JS_URL,
+            'payment_errors': payment_result.errors
+        }
+
+        return submit_payment(request, self.pay_template, context)
 
 
 class CreateQuoteView(View):
@@ -129,7 +200,7 @@ class CreateQuoteView(View):
             cost, distance, supported_state = calculate_shipping_cost(ship_sizes, from_address,
                                                                       ship_to_address, shipping_level, insurance_level)
 
-            quote = Quote(
+            quote = Quote.objects.create(
                 seller=seller,
                 from_name=from_name,
                 from_address=from_address,
@@ -255,8 +326,7 @@ class CreateView(View):
 def create(request, seller_slug=None):
     from_form = None
 
-    if not request.session.get('idempotency_shipping_key'):
-        request.session['idempotency_shipping_key'] = str(uuid.uuid4())
+    request.session['idempotency_shipping_key'] = str(uuid.uuid4())
 
     if request.method == 'POST':
         size_form = SizeForm(request.POST)

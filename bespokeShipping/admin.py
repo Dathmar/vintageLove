@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Shipping, ShippingStatus
+from .models import Shipping, ShippingStatus, Quote
 
 
 # Register your models here.
@@ -14,3 +14,6 @@ class ShippingAdmin(admin.ModelAdmin):
 @admin.register(ShippingStatus)
 class ShippingStatusAdmin(admin.ModelAdmin):
     list_display = ['name']
+
+
+admin.site.register(Quote)
