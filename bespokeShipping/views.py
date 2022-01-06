@@ -92,7 +92,7 @@ class PayQuote(View):
             'payment_errors': payment_result.errors
         }
 
-        return submit_payment(request, self.pay_template, context)
+        return render(request, self.pay_template, context)
 
 
 class CreateQuoteView(View):
@@ -451,7 +451,8 @@ def create(request, seller_slug=None):
 
                 return render(request, 'bespoke_shipping_complete.html', {'shipping': shipping})
             else:
-                logger.warning('Payment failed for shipping: ' + str(payment_result))
+
+                logger.error(f'Payment failed for shipping: {str(payment_result)} - {ship_to_first_name} {ship_to_last_name} - {ship_to_phone} - {ship_to_email}')
                 context = {
                     'size_form_errors': size_form.errors,
                     'size_form': size_form,
@@ -470,14 +471,23 @@ def create(request, seller_slug=None):
                     context.update({'from_form': from_form})
                 return render(request, 'bespoke_shipping.html', context)
         else:
+            ship_to_first_name = ship_to_form.cleaned_data['first_name']
+            ship_to_last_name = ship_to_form.cleaned_data['last_name']
+            ship_to_email = ship_to_form.cleaned_data['email']
+            ship_to_phone = ship_to_form.cleaned_data['phone']
+
             if size_form.errors:
-                logger.warning('Size form errors: ' + str(size_form.errors))
+                logger.error(f'Size form errors: {str(size_form.errors)} - {ship_to_first_name} {ship_to_last_name} '
+                             f'- {ship_to_phone} - {ship_to_email}')
             if ship_to_form.errors:
-                logger.warning('Ship to form errors: ' + str(ship_to_form.errors))
+                logger.error(f'Ship to form errors: {str(ship_to_form.errors)} - {ship_to_first_name} '
+                             f'{ship_to_last_name} - {ship_to_phone} - {ship_to_email}')
             if delivery_level.errors:
-                logger.warning('Delivery level errors: ' + str(delivery_level.errors))
+                logger.error(f'Delivery level errors: {str(delivery_level.errors)} - '
+                             f'{ship_to_first_name} {ship_to_last_name} - {ship_to_phone} - {ship_to_email}')
             if insurance_form.errors:
-                logger.warning('Insurance form errors: ' + str(insurance_form.errors))
+                logger.error(f'Insurance form errors: {str(insurance_form.errors)} - '
+                             f'{ship_to_first_name} {ship_to_last_name} - {ship_to_phone} - {ship_to_email}')
 
             context = {
                 'size_form': size_form,
