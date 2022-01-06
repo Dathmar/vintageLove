@@ -1,6 +1,6 @@
 from django.db import models
 from products.models import Seller
-from base.Emailing import send_ship_status_email, send_internal_shipping_notification
+from base.Emailing import send_ship_status_email, send_internal_shipping_notification, quote_notification_email
 from phonenumber_field.modelfields import PhoneNumberField
 import uuid
 
@@ -30,7 +30,6 @@ class Shipping(models.Model):
                       ('mid-day', 'Mid-day'),
                       ('afternoon', 'Afternoon'),
                       ('evening', 'Evening'))
-
 
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, blank=True, null=True)
     from_name = models.CharField(max_length=1000)
@@ -118,5 +117,35 @@ class Quote(models.Model):
     def __str__(self):
         return f'{self.id} {self.to_name}'
 
+    def save(self, *args, **kwargs):
+        if not Quote.objects.filter(id=self.id).exists():
+            quote_notification_email(self)
+
+        super(Shipping, self).save()
+
     class Meta:
         ordering = ['-create_datetime']
+
+
+class ShippingFileType(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+def get_shipping_upload_path(instance, filename):
+    return f'shipping_files/{instance.shipping.id}/{filename}'
+
+
+class ShippingFile(models.Model):
+    shipping = models.ForeignKey(Shipping, on_delete=models.CASCADE)
+    type = models.ForeignKey(ShippingFileType, on_delete=models.CASCADE)
+    file = models.FileField(upload_to=get_shipping_upload_path)
+
+    def __str__(self):
+        return f'{self.shipping.id} {self.file.name}'
+
+    class Meta:
+        ordering = ['-shipping__create_datetime']
+

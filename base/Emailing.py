@@ -105,6 +105,30 @@ def ship_picked_up_email(ShippingOrder):
     ).start()
 
 
+def quote_notification_email(Quote):
+    items = items_details(Quote)
+    insurance = insurance_details(Quote)
+    ship_location = ship_location_details(Quote)
+
+    global_merge_vars = {
+        'items': items,
+        'from_name': Quote.from_name,
+        'from_address': Quote.from_address,
+        'to_name': Quote.to_name,
+        'to_address': Quote.to_address,
+        'quote_id': Quote.id,
+        'quote_cost': Quote.cost,
+        'placement': ship_location,
+        'insurance': insurance,
+    }
+
+    EmailTemplateThread(
+        template="Quote - Created",
+        recipient=Quote.to_email,
+        global_merge_vars_dict=global_merge_vars,
+    ).start()
+
+
 def ship_delivered_email(ShippingOrder):
     global_merge_vars = {
         'from_name': ShippingOrder.from_name,
