@@ -10,6 +10,6 @@ urlpatterns = [
     path('qr-grid/', views.qr_grid, name='qr-grid'),
     path('ship-create-view/', views.CreateView.as_view(), name='ship-create-view'),
     path('quote/', views.quote_context, name='quote-context'),
-    path('pay-quote/<uuid:quote_id>/', views.PayQuote.as_view(), name='pay-quote'),
+    path('review-quote/<uuid:quote_id>/', views.PayQuote.as_view(), name='pay-quote'),
     path('quote/<slug:seller_slug>/', views.CreateQuoteView.as_view(), name='quote-create'),
 ]
