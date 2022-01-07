@@ -116,7 +116,7 @@ def quote_notification_email(Quote):
         'from_address': Quote.from_address,
         'to_name': Quote.to_name,
         'to_address': Quote.to_address,
-        'quote_id': Quote.id,
+        'quote_id': str(Quote.id),
         'quote_cost': Quote.cost,
         'placement': ship_location,
         'insurance': insurance,
