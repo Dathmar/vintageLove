@@ -121,7 +121,7 @@ class Quote(models.Model):
         if not Quote.objects.filter(id=self.id).exists():
             quote_notification_email(self)
 
-        super(Shipping, self).save()
+        super(Quote, self).save()
 
     class Meta:
         ordering = ['-create_datetime']
