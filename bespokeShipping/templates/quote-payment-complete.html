@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block extra_header %}
+    <script type="text/javascript" src="{{ square_js_url }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Thank you!</h1>
+            <p>Your shippment has been paid for and is on the way!</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block end_body %}
+    <script src="{% get_static_prefix %}js/live-chat.js"></script>
+{% endblock %}

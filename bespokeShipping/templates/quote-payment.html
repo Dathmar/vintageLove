@@ -13,16 +13,30 @@
             <p>Cost {{ quote.cost }}</p>
         </div>
     </div>
-    <div class="row pt-3" id="card-container">
-        <div class="col">
-            <div class="row">
-                <div id="form-container">
-                    <div id="sq-card"></div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="row pt-3" id="card-container">
+            <div class="col">
+                <div class="row">
+                    <div id="form-container">
+                        <div id="sq-card"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
+        {% if payment_errors %}
+        <div class="row pt-3">
+            <div class="col">
+                {{ payment_errors }}                }
+            </div>
+        </div>
+        {% endif %}
+        <div class="row pt-3">
+            <div class="col text-center">
+                <input class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" id="form-submit" style="max-width: 10em;" type="submit" value="Pay" onclick="onGetCardNonce(event)">
+            </div>
+        </div>
+    </form>
 </div>
 {% endblock %}
 {% block end_body %}

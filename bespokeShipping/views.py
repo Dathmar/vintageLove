@@ -31,6 +31,9 @@ class PayQuote(View):
     def get(self, request, quote_id=None):
         request.session['idempotency_shipping_key'] = str(uuid.uuid4())
         quote = get_object_or_404(Quote, pk=quote_id)
+
+        if quote.paid:
+            return render(request, self.complete_template, {'quote': quote})
         context = {
             'quote': quote,
             'hide_subscribe': True,
@@ -39,7 +42,10 @@ class PayQuote(View):
         return render(request, 'quote-payment.html', context)
 
     def post(self, request, quote_id=None):
-        quote = get_object_or_404(pk=quote_id)
+        quote = get_object_or_404(Quote, pk=quote_id)
+        payment_result = None
+        if quote.paid:
+            return render(request, self.complete_template, {'quote': quote})
 
         if not quote.paid:
             charge_cost = quote.cost * 100
@@ -74,11 +80,11 @@ class PayQuote(View):
                     medium_description=quote.medium_description,
                     large_description=quote.large_description,
                     set_description=quote.set_description,
-                    ship_location=quote.shipping_level,
+                    ship_location=quote.ship_location,
 
                     status=init_status,
 
-                    insurance=quote.insurance_level,
+                    insurance=quote.insurance,
                     cost=quote.cost,
                     distance=quote.distance
                 )
@@ -89,8 +95,11 @@ class PayQuote(View):
             'quote': quote,
             'hide_subscribe': True,
             'square_js_url': settings.SQUARE_JS_URL,
-            'payment_errors': payment_result.errors
+
         }
+
+        if payment_result:
+            context |= {'payment_errors': payment_result.errors}
 
         return render(request, self.pay_template, context)
 
