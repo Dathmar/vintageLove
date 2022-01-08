@@ -9,7 +9,10 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h1>Quote Details</h1>
+            <h1>Your delivery quote is ready!</h1>
+            <p>Thanks for giving us an opportunity to deliver your treasure!</p>
+            <p>Below are the details of your delivery estimate. Simply enter your credit card details to complete the order and we will schedule the pickup and delivery to you.</p>
+            <h5 class="pt-3">Quote Price</h5>
             <p>Cost {{ quote.cost }}</p>
         </div>
     </div>
@@ -27,7 +30,7 @@
         {% if payment_errors %}
         <div class="row pt-3">
             <div class="col">
-                {{ payment_errors }}                }
+                {{ payment_errors }}
             </div>
         </div>
         {% endif %}
