@@ -9,6 +9,7 @@ class Delivery(models.Model):
     shipping = models.OneToOneField(Shipping, on_delete=models.CASCADE,
                                     limit_choices_to={'status__name__in': ('Order Received', 'Picked Up')})
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    sequence = models.IntegerField(default=0)
     scheduled_date = models.DateField()
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
