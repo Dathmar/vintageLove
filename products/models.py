@@ -71,11 +71,13 @@ class Seller(models.Model):
 
             self.slug = slug
 
-        super(Seller, self).save()
-
         if not Seller.objects.filter(id=self.id).exists():
+            super(Seller, self).save()
             generate_qr_code('https://www.globalvintagelove.com/ship/location/' + str(self.slug),
                              'media/bespoke-shipping/' + str(self.slug) + '_qr.png')
+        else:
+            super(Seller, self).save()
+
 
     def get_qr_url(self):
         return '/media/bespoke-shipping/' + str(self.slug) + '_qr.png'
