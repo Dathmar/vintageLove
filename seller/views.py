@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_list_or_404, get_object_or_404, reverse
+from django.shortcuts import render, get_list_or_404, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils.html import mark_safe
 from django.forms import formset_factory
@@ -82,7 +82,7 @@ def add_product(request):
                     )
                     product_category.save()
 
-            return product_list(request)
+            return render(request, 'product-qr-grid.html', context={'products': [product,]})
         else:
 
             context = {
