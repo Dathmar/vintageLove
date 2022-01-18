@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Global Vintage Love | My Deliveries{% endblock %}
+
+
+{% block content %}
+    <div class="container body-padding">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Delivery Assignment</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p>Date: {{ assignment_date }}</p>
+                <p>Driver Name: {{ assignment_driver }}</p>
+            </div>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <table>
+                <input type="hidden" name="form-TOTAL_FORMS" id="id_form-TOTAL_FORMS" value="{{ form_count }}">
+                <input type="hidden" name="form-INITIAL_FORMS" id="id_form-INITIAL_FORMS" value="{{ form_count }}">
+                <input type="hidden" name="form-MIN_NUM_FORMS" id="id_form-MIN_NUM_FORMS" value="{{ form_count }}">
+                <input type="hidden" name="form-MAX_NUM_FORMS" id="id_form-MAX_NUM_FORMS" value="{{ form_count }}">
+            <thead>
+            <tr>
+                <td>Shipment</td>
+                <td>From Address</td>
+                <td>To Address</td>
+                <td>Delivery Order</td>
+            </tr>
+            </thead>
+            <tbody>
+                {% for form in forms %}
+
+                <tr>
+                    <td>
+                        {{ form.0.shipping }}
+                    </td>
+                    <td>{{ form.1.from_address }}</td>
+                    <td>{{ form.1.to_address }}</td>
+                    <td>{{ form.0.sequence }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+
+            <input class="btn btn-primary blue-button rounded-3 mb-5 mt-2" type="submit" value="Next">
+        </form>
+    </div>
+
+{% endblock %}
