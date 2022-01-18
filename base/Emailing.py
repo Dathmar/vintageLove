@@ -10,11 +10,11 @@ shipping_create_template_id = '13384681'
 def send_ship_status_email(ShippingOrder, to_status):
     if to_status == 'created':
         ship_create_email(ShippingOrder)
-    elif to_status == 'Picked Up':
+    elif to_status == 'Pickup Complete':
         ship_picked_up_email(ShippingOrder)
     elif to_status == 'Out for Delivery':
         ship_out_email(ShippingOrder)
-    elif to_status == 'Delivered':
+    elif to_status == 'Delivery Complete':
         ship_delivered_email(ShippingOrder)
 
 
