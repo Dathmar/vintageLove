@@ -14,12 +14,12 @@
         <div class="row">
             <div class="col-md-12">
                 <p>Date: {{ assignment_date }}</p>
-                <p>Driver Name: {{ assignment_driver }}</p>
+                <p>Vehical: {{ assignment_driver }}</p>
             </div>
         </div>
         <form method="post">
             {% csrf_token %}
-            <table>
+            <table class="table table-bordered table-striped">
                 <input type="hidden" name="form-TOTAL_FORMS" id="id_form-TOTAL_FORMS" value="{{ form_count }}">
                 <input type="hidden" name="form-INITIAL_FORMS" id="id_form-INITIAL_FORMS" value="{{ form_count }}">
                 <input type="hidden" name="form-MIN_NUM_FORMS" id="id_form-MIN_NUM_FORMS" value="{{ form_count }}">
@@ -27,27 +27,30 @@
             <thead>
             <tr>
                 <td>Shipment</td>
-                <td>From Address</td>
-                <td>To Address</td>
-                <td>Delivery Order</td>
+                <td>Order</td>
+                <td>Status</td>
+                <td>Address</td>
+                <td>Notes</td>
+                <td>Requested Date</td>
             </tr>
             </thead>
             <tbody>
                 {% for form in forms %}
 
                 <tr>
-                    <td>
-                        {{ form.0.shipping }}
-                    </td>
-                    <td>{{ form.1.from_address }}</td>
-                    <td>{{ form.1.to_address }}</td>
+                    <td>{{ form.0.shipping }}</td>
                     <td>{{ form.0.sequence }}</td>
+                    <td>{{ form.1.status }}</td>
+                    <td>{{ form.1.to_address }}</td>
+                    <td>{{ form.1.notes }}</td>
+                    <td>{{ form.1.requested_date }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
             </table>
 
             <input class="btn btn-primary blue-button rounded-3 mb-5 mt-2" type="submit" value="Next">
+            <button class="btn btn-primary blue-button rounded-3 mb-5 mt-2" value="Print" onclick="window.print();">Print</button>
         </form>
     </div>
 

@@ -1,20 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load tz %}
 
 {% block page_title %}Global Vintage Love | My Deliveries{% endblock %}
 
 
 {% block content %}
+    {% timezone "US/Central" %}
     <div class="container body-padding">
         <form method="post">
+            <h1>Pickups</h1>
             {% csrf_token %}
-            <table>
+            <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <td>Select</td>
                         <td>Shipping ID</td>
-                        <td>From Address</td>
-                        <td>To Address</td>
+                        <td>Date Received</td>
+                        <td>Store Name</td>
+                        <td>Address</td>
+                        <td>Description</td>
+                        <td>Notes</td>
+                        <td>Requested Date</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -22,17 +29,45 @@
                     <tr>
                         <td><input type="checkbox" name="shippings" value="{{ shipping.0.0 }}" id="id_shippings_{{ forloop.counter0 }}"></td>
                         <td>{{ shipping.1.id }}</td>
+                        <td>{{ shipping.1.create_datetime }}</td>
+                        <td>{{ shipping.1.from_name }}</td>
                         <td>{{ shipping.1.from_address }}</td>
-                        <td>{{ shipping.1.to_address }}</td>
+                        <td>{{ shipping.1.description }}</td></td>
+                        <td>{{ shipping.1.notes }}</td>
+                        <td>{{ shipping.1.requested_date }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
 
+            <h1>Deliveries</h1>
+            {% csrf_token %}
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td>Select</td>
+                        <td>Address</td>
+                        <td>Notes</td>
+                        <td>Requested Date</td>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for shipping in form %}
+                    <tr>
+                        <td><input type="checkbox" name="shippings" value="{{ shipping.0.0 }}" id="id_shippings_{{ forloop.counter0 }}"></td>
+                        <td>{{ shipping.1.id }}</td>
+                        <td>{{ shipping.1.to_address }}</td>
+                        <td>{{ shipping.1.notes }}</td>
+                        <td>{{ shipping.1.requested_date }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
             {{ date_driver_form.as_p }}
             <input class="btn btn-primary blue-button rounded-3 mb-5 mt-2" type="submit" value="Next">
+            <button class="btn btn-primary blue-button rounded-3 mb-5 mt-2" value="Print" onclick="window.print();">Print</button>
         </form>
     </div>
-
+{% endtimezone %}
 {% endblock %}
