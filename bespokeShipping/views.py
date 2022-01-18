@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404
-from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm, DeliveryLevelQuote, InsuranceFormQuote
+from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm, DeliveryLevelQuote, InsuranceFormQuote, \
+    ShippingNotes
 from .models import ShippingStatus, Quote, Shipping
 from products.models import UserSeller, Seller
 from django.conf import settings
-from django.http import JsonResponse, HttpResponseNotAllowed, Http404
+from django.http import JsonResponse, HttpResponseNotAllowed
 
 import logging
 
@@ -83,6 +84,8 @@ class PayQuote(View):
                     ship_location=quote.ship_location,
 
                     status=init_status,
+                    notes=quote.notes,
+                    requested_date=quote.requested_date,
 
                     insurance=quote.insurance,
                     cost=quote.cost,
@@ -110,6 +113,7 @@ class CreateQuoteView(View):
     delivery_level = DeliveryLevelQuote
     insurance_form = InsuranceFormQuote
     from_form = FromForm
+    shipping_notes = ShippingNotes
 
     create_template = 'create-quote.html'
     complete_template = 'complete-quote.html'
@@ -119,6 +123,7 @@ class CreateQuoteView(View):
         ship_to_form = self.ship_to_form
         delivery_level = self.delivery_level
         insurance_form = self.insurance_form
+        shipping_notes = self.shipping_notes
 
         seller = seller_context(request.user, seller_slug)
 
@@ -133,6 +138,7 @@ class CreateQuoteView(View):
             'delivery_level': delivery_level,
             'insurance_form': insurance_form,
             'from_form': from_form,
+            'shipping_notes': shipping_notes,
             'seller': seller,
             'hide_subscribe': True,
         }
@@ -143,6 +149,7 @@ class CreateQuoteView(View):
         ship_to_form = self.ship_to_form(request.POST)
         delivery_level = self.delivery_level(request.POST)
         insurance_form = self.insurance_form(request.POST)
+        shipping_notes = self.shipping_notes(request.POST)
 
         seller = seller_context(request.user, seller_slug)
 
@@ -152,7 +159,7 @@ class CreateQuoteView(View):
             from_form = self.from_form(request.POST)
 
         if size_form.is_valid() and ship_to_form.is_valid() and delivery_level.is_valid() and \
-           insurance_form.is_valid() and (seller or from_form.is_valid()):
+           insurance_form.is_valid() and (seller or from_form.is_valid()) and shipping_notes.is_valid():
 
             if seller:
                 from_address = seller.street + '\n' + seller.city + ', ' + seller.state + ' ' + seller.zip
@@ -208,6 +215,8 @@ class CreateQuoteView(View):
 
             cost, distance, supported_state = calculate_shipping_cost(ship_sizes, from_address,
                                                                       ship_to_address, shipping_level, insurance_level)
+            note = shipping_notes.cleaned_data['notes']
+            requested_date = shipping_notes.cleaned_data['requested_date']
 
             quote = Quote.objects.create(
                 seller=seller,
@@ -235,8 +244,10 @@ class CreateQuoteView(View):
                 insurance=insurance_level,
                 cost=cost,
                 distance=distance,
+                notes=note,
+                requested_date=requested_date,
 
-                paid=False
+                paid=False,
             )
             quote.save()
 

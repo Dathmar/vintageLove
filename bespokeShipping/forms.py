@@ -119,3 +119,10 @@ class InsuranceFormQuote(forms.Form):
                                          f'Full Coverage up to the purchase price of the piece<br/>($50)')))
 
     insure_level = forms.ChoiceField(widget=forms.RadioSelect(), choices=insurance_level)
+
+
+class ShippingNotes(forms.Form):
+    notes = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Shipping Notes'}),
+                            max_length=4000, required=False)
+    requested_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'Optional', 'type': 'date'}, format='%m/%d/%Y'),)
+
