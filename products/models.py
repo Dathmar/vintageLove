@@ -13,6 +13,7 @@ class ProductStatus(models.Model):
     name = models.CharField(max_length=50)
     available_to_sell = models.BooleanField(default=1)
     display_wholesale = models.BooleanField(default=0)
+    display_order = models.IntegerField(default=0)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
@@ -22,6 +23,7 @@ class ProductStatus(models.Model):
 
     class Meta:
         verbose_name_plural = 'product statuses'
+        ordering = ['display_order']
 
 
 class Category(models.Model):
