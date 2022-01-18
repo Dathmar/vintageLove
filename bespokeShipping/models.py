@@ -55,9 +55,24 @@ class Shipping(models.Model):
 
     status = models.ForeignKey(ShippingStatus, on_delete=models.CASCADE, blank=True, null=True)
     order_window = models.CharField(max_length=10, choices=window_choices, blank=True, null=True)
+    notes = models.TextField(max_length=4000, blank=True, null=True)
+    requested_date = models.DateField(blank=True, null=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+    def description(self):
+        description = ''
+        if self.small_description:
+            description += f' {self.small_description}'
+        if self.medium_description:
+            description += f' {self.medium_description}'
+        if self.large_description:
+            description += f' {self.large_description}'
+        if self.set_description:
+            description += f' {self.set_description}'
+
+        return description
 
     def save(self, *args, **kwargs):
         if not Shipping.objects.filter(id=self.id).exists():
@@ -72,8 +87,9 @@ class Shipping(models.Model):
 
         super(Shipping, self).save()
 
+
     def __str__(self):
-        return f'{self.id} {self.to_name}'
+        return f'{self.id}'
 
     class Meta:
         ordering = ['-create_datetime']
@@ -110,7 +126,9 @@ class Quote(models.Model):
     cost = models.DecimalField(max_digits=10, decimal_places=2)
     distance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     paid = models.BooleanField(default=False)
+    requested_date = models.DateField(blank=True, null=True)
 
+    notes = models.TextField(max_length=4000, blank=True, null=True)
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
