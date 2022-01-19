@@ -1,0 +1,30 @@
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td>Select</td>
+                        <td>ID</td>
+                        <td>Address</td>
+                        <td>Notes</td>
+                        <td>Requested Date</td>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for delivery in deliveries %}
+                    <tr>
+                        <td><input type="checkbox" name="deliveries" value="{{ delivery.1.id }}" id="id_deliveries_{{ forloop.counter0 }}"></td>
+                        <td>{{ delivery.1.id }}</td>
+                        <td>{{ delivery.1.to_address }}</td>
+                        {% if delivery.1.notes %}
+                            <td>{{ delivery.1.notes }}</td>
+                        {% else %}
+                            <td>&nbsp;</td>
+                        {% endif %}
+                        {% if delivery.1.requested_date %}
+                            <td>{{ delivery.1.requested_date }}</td>
+                        {% else %}
+                            <td>&nbsp;</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>

@@ -1,0 +1,40 @@
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td>Select</td>
+                        <td>ID</td>
+                        <td>Date Received</td>
+                        <td>Store Name</td>
+                        <td>Address</td>
+                        <td>Description</td>
+                        <td>Notes</td>
+                        <td>Requested Date</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for pickup in pickups %}
+                    <tr>
+                        <td><input type="checkbox" name="pickups" value="{{ pickup.1.id }}" id="id_pickups_{{ forloop.counter0 }}"></td>
+                        <td>{{ pickup.1.id }}</td>
+                        <td>{{ pickup.1.create_datetime }}</td>
+                        <td>{{ pickup.1.from_name }}</td>
+                        <td>{{ pickup.1.from_address }}</td>
+                        {% if pickup.1.description %}
+                            <td>{{ pickup.1.description }}</td>
+                        {% else %}
+                            <td>&nbsp;</td>
+                        {% endif %}
+                        {% if pickup.1.notes %}
+                            <td>{{ pickup.1.notes }}</td>
+                        {% else %}
+                            <td>&nbsp;</td>
+                        {% endif %}
+                        {% if pickup.1.requested_date %}
+                            <td>{{ pickup.1.requested_date }}</td>
+                        {% else %}
+                            <td>&nbsp;</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
