@@ -3,6 +3,8 @@ from products.models import Seller
 from base.Emailing import send_ship_status_email, send_internal_shipping_notification, quote_notification_email
 from phonenumber_field.modelfields import PhoneNumberField
 import uuid
+import base62
+from random import getrandbits
 
 
 class ShippingStatus(models.Model):
@@ -87,7 +89,6 @@ class Shipping(models.Model):
 
         super(Shipping, self).save()
 
-
     def __str__(self):
         return f'{self.id}'
 
@@ -132,14 +133,25 @@ class Quote(models.Model):
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
+    encoding = models.CharField(max_length=10, blank=True, null=True)
+
     def __str__(self):
         return f'{self.id} {self.to_name}'
 
     def save(self, *args, **kwargs):
         if not Quote.objects.filter(id=self.id).exists():
+            base = base62.encodebytes(self.id.bytes)
+            self.encoding = self.generate_unique_encoding()
             quote_notification_email(self)
 
         super(Quote, self).save()
+
+    def generate_unique_encoding(self):
+        while True:
+            base = base62.encodebytes(self.id.bytes + getrandbits(8).to_bytes(1, 'big'))
+            base = base[:6].zfill(6)
+            if not Quote.objects.filter(encoding=base).exists():
+                return base
 
     class Meta:
         ordering = ['-create_datetime']

@@ -17,7 +17,7 @@ import uuid
 from django.views import View
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('app_api')
 
 
 def quote_context(request):
@@ -25,13 +25,26 @@ def quote_context(request):
     return render(request, 'quote-context.html', {'sellers': sellers})
 
 
+def is_valid_uuid(uuid_string, version=4):
+    try:
+        uuid.UUID(uuid_string, version=version)
+    except ValueError:
+        return False
+    return True
+
+
 class PayQuote(View):
     pay_template = 'quote-payment.html'
     complete_template = 'quote-payment-complete.html'
 
-    def get(self, request, quote_id=None):
+    def get(self, request, *args, **kwargs):
+        encoding_id = kwargs.get('encoding')
+
         request.session['idempotency_shipping_key'] = str(uuid.uuid4())
-        quote = get_object_or_404(Quote, pk=quote_id)
+        if is_valid_uuid(encoding_id):
+            quote = get_object_or_404(Quote, pk=encoding_id)
+        else:
+            quote = get_object_or_404(Quote, encoding=encoding_id)
 
         if quote.paid:
             return render(request, self.complete_template, {'quote': quote})
@@ -42,8 +55,14 @@ class PayQuote(View):
         }
         return render(request, 'quote-payment.html', context)
 
-    def post(self, request, quote_id=None):
-        quote = get_object_or_404(Quote, pk=quote_id)
+    def post(self, request, *args, **kwargs):
+        encoding_id = kwargs.get('encoding')
+
+        if is_valid_uuid(encoding_id):
+            quote = get_object_or_404(Quote, pk=encoding_id)
+        else:
+            quote = get_object_or_404(Quote, encoding=encoding_id)
+
         payment_result = None
         if quote.paid:
             return render(request, self.complete_template, {'quote': quote})
