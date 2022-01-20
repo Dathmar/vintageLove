@@ -12,4 +12,5 @@ urlpatterns = [
     path('quote/', views.quote_context, name='quote-context'),
     path('review-quote/<str:encoding>/', views.PayQuote.as_view(), name='pay-quote'),
     path('quote/<slug:seller_slug>/', views.CreateQuoteView.as_view(), name='quote-create'),
+    path('test/', views.test, name='test'),
 ]
