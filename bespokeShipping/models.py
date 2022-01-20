@@ -10,6 +10,7 @@ import logging
 
 logger = logging.getLogger('app_api')
 
+
 class ShippingStatus(models.Model):
     name = models.CharField(max_length=1000, unique=True)
 

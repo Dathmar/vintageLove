@@ -19,12 +19,6 @@ import logging
 logger = logging.getLogger('app_api')
 
 
-def test(request):
-    quote = Quote.objects.get(id='10fd85b9-ec8c-48a3-88f6-7f98986f08a8')
-    quote_notification_text(quote)
-    return HttpResponse('ok')
-
-
 def quote_context(request):
     sellers = Seller.objects.all()
     return render(request, 'quote-context.html', {'sellers': sellers})
@@ -152,6 +146,8 @@ class CreateQuoteView(View):
         delivery_level = self.delivery_level
         insurance_form = self.insurance_form
         shipping_notes = self.shipping_notes
+
+        logger.info('seller_slug: %s' % seller_slug)
 
         seller = seller_context(request.user, seller_slug)
 
@@ -295,7 +291,11 @@ class CreateQuoteView(View):
 
 
 def seller_context(user, seller_slug=None):
-    if seller_slug:
+    logger.debug('seller_context')
+    if seller_slug.casefold() == 'unknown' or not seller_slug:
+        logger.info('Unknown seller requested')
+        return None
+    elif seller_slug:
         return get_object_or_404(Seller, slug=seller_slug)
     elif user.is_authenticated:
         return get_object_or_404(UserSeller, user=user).seller
@@ -384,7 +384,8 @@ def create(request, seller_slug=None):
 
         seller = None
         from_form_valid = True
-        if seller_slug:
+        if seller_slug and seller_slug.casefold() != 'unknown':
+            logger.debug('Seller slug: %s', seller_slug)
             seller = get_object_or_404(Seller, slug=seller_slug)
         elif seller_slug == 'unknown' or request.user.is_anonymous:
 
@@ -551,7 +552,7 @@ def create(request, seller_slug=None):
                 context.update({'from_form': from_form})
             return render(request, 'bespoke_shipping.html', context)
     from_form = None
-    if seller_slug:
+    if seller_slug and seller_slug.casefold() != 'unknown':
         seller = get_object_or_404(Seller, slug=seller_slug)
     elif seller_slug == 'unknown' or request.user.is_anonymous:
         from_form = FromForm()
