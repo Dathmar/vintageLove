@@ -1,23 +1,28 @@
-from django.shortcuts import render, get_object_or_404
-from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm, DeliveryLevelQuote, InsuranceFormQuote, \
-    ShippingNotes
-from .models import ShippingStatus, Quote, Shipping
-from products.models import UserSeller, Seller
-from django.conf import settings
-from django.http import JsonResponse, HttpResponseNotAllowed
-
-import logging
-
-from orders.views import submit_payment
-
 import json
 import googlemaps
 import uuid
 
+from django.shortcuts import render, get_object_or_404
+from django.conf import settings
+from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponse
 from django.views import View
 
+from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm, DeliveryLevelQuote, InsuranceFormQuote, \
+    ShippingNotes
+from .models import ShippingStatus, Quote, Shipping
+from products.models import UserSeller, Seller
+from orders.views import submit_payment
 
+from base.texting import quote_notification_text
+
+import logging
 logger = logging.getLogger('app_api')
+
+
+def test(request):
+    quote = Quote.objects.get(id='10fd85b9-ec8c-48a3-88f6-7f98986f08a8')
+    quote_notification_text(quote)
+    return HttpResponse('ok')
 
 
 def quote_context(request):
@@ -79,38 +84,42 @@ class PayQuote(View):
                 quote.paid = True
                 quote.save()
                 init_status = ShippingStatus.objects.get(name='Order Received')
-                shipping = Shipping.objects.create(
-                    seller=quote.seller,
-                    from_name=quote.from_name,
-                    from_address=quote.from_address,
-                    from_email=quote.from_email,
-                    from_phone=quote.from_phone,
+                if not quote.approved:
+                    shipping = Shipping.objects.create(
+                        seller=quote.seller,
+                        from_name=quote.from_name,
+                        from_address=quote.from_address,
+                        from_email=quote.from_email,
+                        from_phone=quote.from_phone,
 
-                    to_name=quote.to_name,
-                    to_address=quote.to_address,
-                    to_email=quote.to_email,
-                    to_phone=quote.to_phone,
+                        to_name=quote.to_name,
+                        to_address=quote.to_address,
+                        to_email=quote.to_email,
+                        to_phone=quote.to_phone,
 
-                    small_quantity=quote.small_quantity,
-                    medium_quantity=quote.medium_quantity,
-                    large_quantity=quote.large_quantity,
-                    set_quantity=quote.set_quantity,
+                        small_quantity=quote.small_quantity,
+                        medium_quantity=quote.medium_quantity,
+                        large_quantity=quote.large_quantity,
+                        set_quantity=quote.set_quantity,
 
-                    small_description=quote.small_description,
-                    medium_description=quote.medium_description,
-                    large_description=quote.large_description,
-                    set_description=quote.set_description,
-                    ship_location=quote.ship_location,
+                        small_description=quote.small_description,
+                        medium_description=quote.medium_description,
+                        large_description=quote.large_description,
+                        set_description=quote.set_description,
+                        ship_location=quote.ship_location,
 
-                    status=init_status,
-                    notes=quote.notes,
-                    requested_date=quote.requested_date,
+                        status=init_status,
+                        notes=quote.notes,
+                        requested_date=quote.requested_date,
 
-                    insurance=quote.insurance,
-                    cost=quote.cost,
-                    distance=quote.distance
-                )
-                shipping.save()
+                        insurance=quote.insurance,
+                        cost=quote.cost,
+                        distance=quote.distance
+                    )
+                    shipping.save()
+                    quote.shipping = shipping
+                    quote.save()
+
                 return render(request, self.complete_template)
 
         context = {
@@ -270,7 +279,7 @@ class CreateQuoteView(View):
             )
             quote.save()
 
-            return render(request, 'complete-quote.html', {'email': ship_to_email })
+            return render(request, 'complete-quote.html', {'quote': quote})
 
         else:
             context = {
