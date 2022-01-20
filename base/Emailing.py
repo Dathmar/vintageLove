@@ -1,5 +1,4 @@
 import threading
-from django.core.mail import send_mail
 from django.conf import settings
 import mailchimp_transactional as mailchimpTransactional
 from mailchimp_transactional.api_client import ApiClientError
