@@ -110,6 +110,11 @@ class Quote(models.Model):
                     ('set', 'Sets'))
     location_choices = (('door', 'To Door'),
                         ('placement', 'In home placement'))
+    BARN_OPTIONS = (('0', 'Not Required'),
+                    ('1', 'Repair'),
+                    ('2', 'Warehouse'),
+                    ('3', 'One pickup - Multiple Deliveries'),
+                    ('4', 'Multiple pickups - One Delivery'),)
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, blank=True, null=True)
@@ -137,8 +142,9 @@ class Quote(models.Model):
     approved = models.BooleanField(default=False)
 
     shipping = models.ForeignKey(Shipping, on_delete=models.CASCADE, blank=True, null=True)
-
-    requested_date = models.DateField(blank=True, null=True)
+    must_go_to_barn = models.CharField(max_length=10, choices=BARN_OPTIONS, blank=True, null=True)
+    delivery_requested_date = models.DateField(blank=True, null=True)
+    pickup_requested_date = models.DateField(blank=True, null=True)
 
     notes = models.TextField(max_length=4000, blank=True, null=True)
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
@@ -151,7 +157,6 @@ class Quote(models.Model):
 
     def save(self, *args, **kwargs):
         if not Quote.objects.filter(id=self.id).exists():
-            base = base62.encodebytes(self.id.bytes)
             self.encoding = self.generate_unique_encoding()
             quote_notification_email(self)
             quote_notification_text(self)

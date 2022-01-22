@@ -240,7 +240,9 @@ class CreateQuoteView(View):
             cost, distance, supported_state = calculate_shipping_cost(ship_sizes, from_address,
                                                                       ship_to_address, shipping_level, insurance_level)
             note = shipping_notes.cleaned_data['notes']
-            requested_date = shipping_notes.cleaned_data['requested_date']
+            delivery_requested_date = shipping_notes.cleaned_data['delivery_requested_date']
+            pickup_requested_date = shipping_notes.cleaned_data['pickup_requested_date']
+            must_go_to_barn = shipping_notes.cleaned_data['must_go_to_barn']
 
             quote = Quote.objects.create(
                 seller=seller,
@@ -269,7 +271,9 @@ class CreateQuoteView(View):
                 cost=cost,
                 distance=distance,
                 notes=note,
-                requested_date=requested_date,
+                delivery_requested_date=delivery_requested_date,
+                pickup_requested_date=pickup_requested_date,
+                must_go_to_barn=must_go_to_barn,
 
                 paid=False,
             )
@@ -632,36 +636,36 @@ def calculate_shipping_cost(ship_sizes, from_address, to_address, to_door, insur
 
         shipping_chart = {
             'small': {
-                '0-50': 50,
-                '51-100': 75,
-                '101-150': 85,
-                '151-200': 100,
-                '201-250': 100,
-                '251': 100
-            },
-            'medium': {
                 '0-50': 75,
                 '51-100': 100,
-                '101-150': 125,
+                '101-150': 150,
                 '151-200': 150,
-                '201-250': 150,
-                '251': 150
+                '201-250': 200,
+                '251': 200
             },
-            'large': {
+            'medium': {
                 '0-50': 150,
-                '51-100': 200,
-                '101-150': 250,
-                '151-200': 300,
+                '51-100': 150,
+                '101-150': 200,
+                '151-200': 200,
                 '201-250': 300,
                 '251': 300
             },
-            'set': {
-                '0-50': 250,
-                '51-100': 300,
-                '101-150': 350,
-                '151-200': 500,
+            'large': {
+                '0-50': 200,
+                '51-100': 250,
+                '101-150': 300,
+                '151-200': 300,
                 '201-250': 500,
                 '251': 500
+            },
+            'set': {
+                '0-50': 300,
+                '51-100': 350,
+                '101-150': 400,
+                '151-200': 500,
+                '201-250': 700,
+                '251': 750
             },
         }
 
@@ -674,10 +678,12 @@ def calculate_shipping_cost(ship_sizes, from_address, to_address, to_door, insur
                 current_item += 1
                 if current_item == 1:
                     discount = 1
-                elif current_item >= 6:
-                    discount = 0.25
-                else:
+                elif current_item == 2:
+                    discount = 0.7
+                elif current_item in (3, 4, 5):
                     discount = 0.5
+                else:
+                    discount = 0.25
 
                 cost += size_cost * discount
 
@@ -688,6 +694,9 @@ def calculate_shipping_cost(ship_sizes, from_address, to_address, to_door, insur
 
     if insurance:
         cost += 50
+
+    if cost > 2000:
+        cost = 2000
 
     return cost, distance, supported_state
 

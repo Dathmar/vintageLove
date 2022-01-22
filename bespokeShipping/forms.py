@@ -122,7 +122,19 @@ class InsuranceFormQuote(forms.Form):
 
 
 class ShippingNotes(forms.Form):
+    BARN_OPTIONS = (('0', 'Not Required'),
+                    ('1', 'Repair'),
+                    ('2', 'Warehouse'),
+                    ('3', 'One pickup - Multiple Deliveries'),
+                    ('4', 'Multiple pickups - One Delivery'),)
+
     notes = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Shipping Notes'}),
                             max_length=4000, required=False)
-    requested_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'Optional', 'type': 'date'}, format='%m/%d/%Y'),)
+    must_go_to_barn = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Barn Status'}, ),)
+    delivery_requested_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'Optional', 'type': 'date'},
+                                                                     format='%m/%d/%Y'),
+                                              required=False)
+    pickup_requested_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'Optional', 'type': 'date'},
+                                                                   format='%m/%d/%Y'),
+                                            required=False)
 
