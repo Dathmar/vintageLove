@@ -25,7 +25,7 @@ def quote_notification_text(quote):
             {item_count} {item_count_text} to be shipped.
 
             QUOTE
-            ${quote.cost} including up to 24' trailer, team of two, fuel and mileage.
+            Please visit your personalized quote.
 
             Simply click and pay to complete the order and we will schedule the pickup and delivery to you.
 
