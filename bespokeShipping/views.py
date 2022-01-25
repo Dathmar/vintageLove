@@ -147,8 +147,6 @@ class CreateQuoteView(View):
         insurance_form = self.insurance_form
         shipping_notes = self.shipping_notes
 
-        logger.info('seller_slug: %s' % seller_slug)
-
         seller = seller_context(request.user, seller_slug)
 
         if seller:
@@ -239,6 +237,7 @@ class CreateQuoteView(View):
 
             cost, distance, supported_state = calculate_shipping_cost(ship_sizes, from_address,
                                                                       ship_to_address, shipping_level, insurance_level)
+
             note = shipping_notes.cleaned_data['notes']
             delivery_requested_date = shipping_notes.cleaned_data['delivery_requested_date']
             pickup_requested_date = shipping_notes.cleaned_data['pickup_requested_date']
@@ -295,9 +294,7 @@ class CreateQuoteView(View):
 
 
 def seller_context(user, seller_slug=None):
-    logger.debug('seller_context')
     if seller_slug.casefold() == 'unknown' or not seller_slug:
-        logger.info('Unknown seller requested')
         return None
     elif seller_slug:
         return get_object_or_404(Seller, slug=seller_slug)
@@ -389,7 +386,6 @@ def create(request, seller_slug=None):
         seller = None
         from_form_valid = True
         if seller_slug and seller_slug.casefold() != 'unknown':
-            logger.debug('Seller slug: %s', seller_slug)
             seller = get_object_or_404(Seller, slug=seller_slug)
         elif seller_slug == 'unknown' or request.user.is_anonymous:
 
@@ -689,14 +685,17 @@ def calculate_shipping_cost(ship_sizes, from_address, to_address, to_door, insur
 
         supported_state = True
 
-    if not to_door:
+    if cost > 1900:
+        cost = 1900
+
+    if to_door == 'placement':
         cost += 50
+
+    if type(insurance) == str and insurance == 'False':
+        insurance = False
 
     if insurance:
         cost += 50
-
-    if cost > 2000:
-        cost = 2000
 
     return cost, distance, supported_state
 

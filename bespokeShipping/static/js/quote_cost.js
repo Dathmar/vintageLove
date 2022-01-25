@@ -45,9 +45,9 @@ async function calculate_cost() {
     }
 
     if($('#id_level_0').is(':checked')) {
-        to_door = true;
+        to_door = 'door';
     } else if($('#id_level_1').is(':checked')) {
-        to_door = false;
+        to_door = 'placement';
     } else {
         to_door = null;
     }

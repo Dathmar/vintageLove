@@ -78,10 +78,10 @@ tabEl.on('show.bs.tab', async function (event) {
 
     if($('#id_level_0').is(':checked')) {
         ship_location = 'delivery to your door';
-        to_door = true;
+        to_door = 'door';
     } else if($('#id_level_1').is(':checked')) {
         ship_location = 'in home delivery and setup';
-        to_door = false;
+        to_door = 'placement';
     } else {
         ship_location = null;
         to_door = null;
