@@ -62,7 +62,8 @@ class Shipping(models.Model):
     status = models.ForeignKey(ShippingStatus, on_delete=models.CASCADE, blank=True, null=True)
     order_window = models.CharField(max_length=10, choices=window_choices, blank=True, null=True)
     notes = models.TextField(max_length=4000, blank=True, null=True)
-    requested_date = models.DateField(blank=True, null=True)
+    delivery_requested_date = models.DateField(blank=True, null=True)
+    pickup_requested_date = models.DateField(blank=True, null=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
@@ -186,7 +187,8 @@ class Quote(models.Model):
                 cost=self.cost,
                 distance=self.distance,
                 status=init_status,
-                requested_date=self.requested_date,
+                delivery_requested_date=self.delivery_requested_date,
+                pickup_requested_date=self.pickup_requested_date,
                 notes=self.notes,
             )
             shipping.save()
