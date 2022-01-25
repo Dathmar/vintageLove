@@ -102,10 +102,10 @@ class DeliveryLevelQuote(forms.Form):
 
 class InsuranceForm(forms.Form):
     get_static_prefix = settings.STATIC_URL
-    insurance_level = ((True, mark_safe(f'<img src="{ get_static_prefix }img/free-insurance.png" height="150"><br/>'
-                                        f'Insurance up to the value of the shipping service<br/>(free)')),
-                       (False, mark_safe(f'<img src="{ get_static_prefix }img/fill-coverage-insurance.png" height="150"><br/>'
-                                         f'Full Coverage up to the purchase price of the piece<br/>($50)')))
+    insurance_level = ((False, mark_safe(f'<img src="{ get_static_prefix }img/free-insurance.png" height="150"><br/>'
+                                         f'Insurance up to the value of the shipping service<br/>(free)')),
+                       (True, mark_safe(f'<img src="{ get_static_prefix }img/fill-coverage-insurance.png" height="150"><br/>'
+                                        f'Full Coverage up to the purchase price of the piece<br/>($50)')))
 
     insure_level = forms.ChoiceField(widget=forms.RadioSelect(attrs={"onclick": "showTab('#list-submit-list')"}),
                                      choices=insurance_level)
@@ -113,9 +113,9 @@ class InsuranceForm(forms.Form):
 
 class InsuranceFormQuote(forms.Form):
     get_static_prefix = settings.STATIC_URL
-    insurance_level = ((True, mark_safe(f'<img src="{ get_static_prefix }img/free-insurance.png" height="150"><br/>'
+    insurance_level = ((False, mark_safe(f'<img src="{ get_static_prefix }img/free-insurance.png" height="150"><br/>'
                                         f'Insurance up to the value of the shipping service<br/>(free)')),
-                       (False, mark_safe(f'<img src="{ get_static_prefix }img/fill-coverage-insurance.png" height="150"><br/>'
+                       (True, mark_safe(f'<img src="{ get_static_prefix }img/fill-coverage-insurance.png" height="150"><br/>'
                                          f'Full Coverage up to the purchase price of the piece<br/>($50)')))
 
     insure_level = forms.ChoiceField(widget=forms.RadioSelect(), choices=insurance_level)
@@ -130,11 +130,12 @@ class ShippingNotes(forms.Form):
 
     notes = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Shipping Notes'}),
                             max_length=4000, required=False)
-    must_go_to_barn = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Barn Status'}, ),)
-    delivery_requested_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'Optional', 'type': 'date'},
-                                                                     format='%m/%d/%Y'),
-                                              required=False)
+    must_go_to_barn = forms.ChoiceField(choices=BARN_OPTIONS, widget=forms.Select())
     pickup_requested_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'Optional', 'type': 'date'},
                                                                    format='%m/%d/%Y'),
                                             required=False)
+    delivery_requested_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder': 'Optional', 'type': 'date'},
+                                                                     format='%m/%d/%Y'),
+                                              required=False)
+
 
