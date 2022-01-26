@@ -105,6 +105,7 @@ class PayQuote(View):
                         status=init_status,
                         notes=quote.notes,
                         requested_date=quote.requested_date,
+                        must_go_to_barn=quote.must_go_to_barn,
 
                         insurance=quote.insurance,
                         cost=quote.cost,

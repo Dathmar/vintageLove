@@ -7,6 +7,11 @@ class ShippingFileInline(admin.TabularInline):
     model = ShippingFile
 
 
+@admin.register(Quote)
+class QuoteAdmin(admin.ModelAdmin):
+    list_display = ('from_name', 'to_name', 'approved', 'paid')
+
+
 @admin.register(Shipping)
 class ShippingAdmin(admin.ModelAdmin):
     list_display = ['to_name', 'to_email', 'to_phone', 'from_name', 'from_email', 'status', 'order_window',
@@ -24,5 +29,4 @@ class ShippingAdmin(admin.ModelAdmin):
 class ShippingStatusAdmin(admin.ModelAdmin):
     list_display = ['name']
 
-admin.site.register(Quote)
 admin.site.register(ShippingFileType)

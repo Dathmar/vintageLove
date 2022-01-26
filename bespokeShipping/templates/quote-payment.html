@@ -11,7 +11,21 @@
         <div class="col-md-12">
             <h1>Your delivery quote is ready!</h1>
             <p>Thanks for giving us an opportunity to deliver your treasure!</p>
-            <p>Below are the details of your delivery estimate. Simply enter your credit card details to complete the order and we will schedule the pickup and delivery to you.</p>
+            <p>Below are the details of your delivery estimate. </p>
+            <p>Simply enter your credit card details to complete the order and schedule the pickup and delivery to you.</p>
+            <h5>Placement</h5>
+            {% if quote.ship_location == 'door' %}
+                <p>Your treasure will be delivered to your door.</p>
+            {% else %}
+                <p>Your treasure will be delivered in your home.</p>
+            {% endif %}
+            <h5>Insurance</h5>
+            {% if quote.insurance %}
+                <p>Your treasure is fully insured.</p>
+            {% else %}
+                <p>Your treasure insured for the value of the shipment.</p>
+            {% endif %}
+
             <h5 class="pt-3">Quote Price</h5>
             <p>Cost {{ quote.cost }}</p>
         </div>

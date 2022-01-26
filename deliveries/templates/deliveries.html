@@ -10,9 +10,10 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
+                    <th scope="col">Status (pickup/delivery)</th>
                     <th scope="col">From</th>
                     <th scope="col">To</th>
-                    <th scope="col">Date</th>
+                    <th scope="col">Item(s)</th>
                     <th scope="col">Timeframe</th>
                 </tr>
             </thead>
@@ -20,10 +21,25 @@
                 {% for delivery in deliveries %}
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
+                        {% if delivery.shipping.status.name == 'Order Recieved' and delivery.shipping.must_go_to_barn == '0' %}
+                        <td>Pickup</td>
                         <td>{{ delivery.shipping.from_address }}</td>
+                        <td>{{ delivery.shipping.to_address }}</td></td>
+                        {% elif delivery.shipping.status.name == 'Order Recieved' and delivery.shipping.must_go_to_barn != '0' %}
+                        <td>Pickup</td>
+                        <td>{{ delivery.shipping.from_address }}</td>
+                        <td>Barn</td></td>
+                        {% elif  delivery.shipping.status.name != 'Order Recieved' and delivery.shipping.must_go_to_barn == '0' %}
+                        <td>Delivery</td>
+                        <td>{{ delivery.shipping.from_address }}</td></td>
                         <td>{{ delivery.shipping.to_address }}</td>
-                        <td>{{ delivery.scheduled_date }}</td>
-                        <td>{{ delivery.window_choices }}</td>
+                        {% else %}
+                        <td>Delivery</td>
+                        <td>Barn</td></td>
+                        <td>{{ delivery.shipping.to_address }}</td>
+                        {% endif %}
+                        <td>{{ delivery.shipping.description }}</td>
+                        <td>{{ delivery.shipping.order_window }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

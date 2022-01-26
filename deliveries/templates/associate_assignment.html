@@ -40,10 +40,18 @@
                 <tr>
                     <td>{{ form.0.shipping }}</td>
                     <td>{{ form.0.sequence }}</td>
-                    <td>{{ form.1.status }}</td>
+                    {% if form.2 == 'Pickup' %}
+                    <td>{{ form.2 }}</td>
                     <td>{{ form.1.to_address }}</td>
                     <td>{{ form.1.notes }}</td>
-                    <td>{{ form.1.requested_date }}</td>
+                    <td>{{ form.1.pickup_requested_date }}</td>
+                    {% else %}
+                    <td>{{ form.2 }}</td>
+                    <td>{{ form.1.to_address }}</td>
+                    <td>{{ form.1.notes }}</td>
+                    <td>{{ form.1.delivery_requested_date }}</td>
+                    {% endif %}
+
                 </tr>
                 {% endfor %}
             </tbody>

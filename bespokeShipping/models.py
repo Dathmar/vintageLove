@@ -36,6 +36,11 @@ class Shipping(models.Model):
                       ('mid-day', 'Mid-day'),
                       ('afternoon', 'Afternoon'),
                       ('evening', 'Evening'))
+    BARN_OPTIONS = (('0', 'Not Required'),
+                    ('1', 'Repair'),
+                    ('2', 'Warehouse'),
+                    ('3', 'One pickup - Multiple Deliveries'),
+                    ('4', 'Multiple pickups - One Delivery'),)
 
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, blank=True, null=True)
     from_name = models.CharField(max_length=1000)
@@ -64,6 +69,7 @@ class Shipping(models.Model):
     notes = models.TextField(max_length=4000, blank=True, null=True)
     delivery_requested_date = models.DateField(blank=True, null=True)
     pickup_requested_date = models.DateField(blank=True, null=True)
+    must_go_to_barn = models.CharField(max_length=10, choices=BARN_OPTIONS, blank=True, null=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
@@ -189,6 +195,7 @@ class Quote(models.Model):
                 status=init_status,
                 delivery_requested_date=self.delivery_requested_date,
                 pickup_requested_date=self.pickup_requested_date,
+                must_go_to_barn=self.must_go_to_barn,
                 notes=self.notes,
             )
             shipping.save()

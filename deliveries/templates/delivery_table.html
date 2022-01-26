@@ -1,4 +1,5 @@
-            <table class="table table-bordered table-striped">
+{% load date_functions %}
+            <table class="table table-bordered table-striped table-sm">
                 <thead>
                     <tr>
                         <td>Select</td>
@@ -10,7 +11,7 @@
                 </thead>
                 <tbody>
                 {% for delivery in deliveries %}
-                    <tr>
+                    <tr {% if delivery.1.create_datetime|days_from >= 7 %}style="background: red"{% elif delivery.1.create_datetime|days_from >= 3 %}style="background: yellow"{% endif %}>
                         <td><input type="checkbox" name="deliveries" value="{{ delivery.1.id }}" id="id_deliveries_{{ forloop.counter0 }}"></td>
                         <td>{{ delivery.1.id }}</td>
                         <td>{{ delivery.1.to_address }}</td>

@@ -6,8 +6,7 @@ from bespokeShipping.models import Shipping
 
 # Create your models here.
 class Delivery(models.Model):
-    shipping = models.OneToOneField(Shipping, on_delete=models.CASCADE,
-                                    limit_choices_to={'status__name__in': ('Order Received', 'Picked Up')})
+    shipping = models.ForeignKey(Shipping, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     sequence = models.IntegerField(default=0)
     scheduled_date = models.DateField()

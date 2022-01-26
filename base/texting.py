@@ -23,7 +23,7 @@ def quote_notification_text(quote):
             Item to be picked up from
             {quote.from_address}
             {item_count} {item_count_text} to be shipped.
-
+            
             QUOTE
             Please visit your personalized quote.
 

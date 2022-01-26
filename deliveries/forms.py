@@ -4,11 +4,11 @@ from django.contrib.auth.models import User
 
 
 class DeliverySelectionForm(forms.Form):
-    deliveries = forms.ModelMultipleChoiceField(queryset=Shipping.objects.all(), widget=forms.CheckboxSelectMultiple)
+    deliveries = forms.ModelMultipleChoiceField(queryset=Shipping.objects.all(), widget=forms.CheckboxSelectMultiple, blank=True)
 
 
 class PickupSelectionForm(forms.Form):
-    pickups = forms.ModelMultipleChoiceField(queryset=Shipping.objects.all(), widget=forms.CheckboxSelectMultiple)
+    pickups = forms.ModelMultipleChoiceField(queryset=Shipping.objects.all(), widget=forms.CheckboxSelectMultiple, blank=True)
 
 
 class DateDriverForm(forms.Form):
