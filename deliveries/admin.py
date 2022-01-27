@@ -8,4 +8,3 @@ from .models import Delivery
 class DeliveryAdmin(admin.ModelAdmin):
     list_display = ['user', 'scheduled_date', 'shipping', 'sequence', 'blocked', 'pickup', 'complete']
 
-

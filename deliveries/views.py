@@ -78,20 +78,21 @@ class CreateAssignmentsView(LoginRequiredMixin, View):
         delivery_form.fields['deliveries'].queryset = self.delivery_query_set
         pickup_form.fields['pickups'].queryset = self.pickup_query_set
 
-        logger.info(delivery_form.is_valid())
-        logger.info(pickup_form.is_valid())
         if delivery_form.is_valid() and pickup_form.is_valid() and date_driver_form.is_valid():
             pickup_assignment = request.POST.getlist('deliveries')
             delivery_assignment = request.POST.getlist('pickups')
-            pickup_assignment_ids = []
-            delivery_assignment_ids = []
-            for pa in pickup_assignment:
-                pickup_assignment_ids.append(int(pa))
-            for da in delivery_assignment:
-                delivery_assignment_ids.append(int(da))
+            assignments = []  # list of tuples (shipping, delivery, pickup, sequence)
+            existing_assignments = Delivery.objects.filter(scheduled_date=request.POST['delivery_date'],
+                                                           user__username=request.POST['driver'])
 
-            request.session['pickup_assignment_ids'] = pickup_assignment_ids
-            request.session['delivery_assignment_ids'] = delivery_assignment_ids
+            for pa in pickup_assignment:
+                assignments.append((pa, None, True, None))
+            for da in delivery_assignment:
+                assignments.append((da, None, False, None))
+            for ea in existing_assignments:
+                assignments.append((ea.shipping.id, ea.id, ea.pickup, ea.sequence))
+
+            request.session['assignments'] = assignments
             request.session['assignment_date'] = request.POST['delivery_date']
             request.session['assignment_driver'] = request.POST['driver']
             return redirect(reverse('deliveries:assignments-associate'))
@@ -117,127 +118,67 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
     form = ShippingAssociateForm
 
     def get(self, request, *args, **kwargs):
-        pickup_assignments = request.session.get('pickup_assignment_ids')
-        delivery_assignments = request.session.get('delivery_assignment_ids')
+        assignments = request.session.get('assignments')
         assignment_date = request.session.get('assignment_date')
         assignment_driver = request.session.get('assignment_driver')
-        existing_assignments = Delivery.objects.filter(user__username=assignment_driver, scheduled_date=assignment_date)
 
-        total_len = 0
-        if pickup_assignments:
-            total_len += len(pickup_assignments)
-        if delivery_assignments:
-            total_len += len(delivery_assignments)
-        if existing_assignments:
-            total_len += len(existing_assignments)
-
-        forms = formset_factory(ShippingAssociateForm, extra=total_len)
+        forms = formset_factory(ShippingAssociateForm, extra=len(assignments))
         formset = forms()
-        pickup_assignments_result = Shipping.objects.filter(id__in=pickup_assignments)
-        delivery_assignments_result = Shipping.objects.filter(id__in=delivery_assignments)
 
         formset_context = []
         for i, form in enumerate(formset):
-            if i <= len(pickup_assignments_result) - 1:
-                form.fields['shipping'].queryset = Shipping.objects.filter(id=pickup_assignments_result[i].id)
-                formset_context.append([form, pickup_assignments_result[i], None, 'Pickup'])
-            elif i <= len(pickup_assignments_result) + len(delivery_assignments_result) - 1:
-                i_context = i - len(pickup_assignments_result)
-                form.fields['shipping'].queryset = Shipping.objects.filter(id=delivery_assignments_result[i_context].id)
-                formset_context.append([form, delivery_assignments_result[i_context], None, 'Delivery'])
-            else:
-                i_context = i - len(pickup_assignments_result) - len(delivery_assignments_result)
-                form.fields['shipping'].queryset = Shipping.objects.filter(id=existing_assignments[i_context].shipping_id)
-                if existing_assignments[i_context].pickup:
-                    formset_context.append([form, existing_assignments[i_context].shipping, existing_assignments[i_context].sequence, 'Pickup'])
-                else:
-                    formset_context.append([form, existing_assignments[i_context].shipping, existing_assignments[i_context].sequence, 'Delivery'])
-
+            # assignments is a list of tuples (shipping, delivery, pickup, sequence)
+            assignments[i][0] = Shipping.objects.get(id=assignments[i][0])
+            formset_context.append([form, assignments[i]])
+        logger.info(assignments)
         return render(request, self.assignment_template, {'forms': formset_context, 'assignment_date': assignment_date,
                                                           'assignment_driver': assignment_driver,
-                                                          'form_count': total_len})
+                                                          'form_count': len(assignments)})
 
     def post(self, request, *args, **kwargs):
-        pickup_assignments = request.session.get('pickup_assignment_ids')
-        delivery_assignments = request.session.get('delivery_assignment_ids')
+        assignments = request.session.get('assignments')
         assignment_date = request.session.get('assignment_date')
         assignment_driver = request.session.get('assignment_driver')
-        existing_assignments = Delivery.objects.filter(user__username=assignment_driver, scheduled_date=assignment_date)
 
-        total_len = 0
-        if pickup_assignments:
-            total_len += len(pickup_assignments)
-        if delivery_assignments:
-            total_len += len(delivery_assignments)
-        if existing_assignments:
-            total_len += len(existing_assignments)
+        ShippingAssociateFormset = formset_factory(ShippingAssociateForm, extra=len(assignments))
 
-        ShippingAssociateFormset = formset_factory(ShippingAssociateForm, extra=total_len)
-
-        shipping_formset = ShippingAssociateFormset(request.POST)
-        if shipping_formset.is_valid():
-            for form in shipping_formset:
-                shipping = form.cleaned_data['shipping']
+        formset = ShippingAssociateFormset(request.POST)
+        logger.info(formset.is_valid())
+        if formset.is_valid():
+            associated_shippings = []
+            for i, form in enumerate(formset):
                 sequence = form.cleaned_data['sequence']
                 user = User.objects.get(username=assignment_driver)
 
-                is_assignment = existing_assignments.filter(user=user, shipping=shipping, scheduled_date=assignment_date)
-
-                if is_assignment.exists():
-                    delivery = is_assignment.first()
-                    pickup = delivery.pickup
+                # assignments is a list of tuples (shipping, delivery, pickup, sequence)
+                if assignments[i][1]:  # if a delivery exists then update the delivery
+                    # delivery exists should update the existing delivery
+                    delivery = Delivery.objects.get(id=assignments[i][1])
                     delivery.sequence = sequence
-                    delivery.pickup = pickup
                     delivery.save()
-                else:
-                    pickup = True
-                    if shipping.id in pickup_assignments:
-                        if shipping.id in delivery_assignments:
-                            if Delivery.objects.filter(user=user, scheduled_date=assignment_date,
-                                                       pickup=True).exists():
-                                pickup = False
-                    else:
-                        pickup = False
-
+                else: # if a delivery does not exist then create a new delivery
                     delivery = Delivery.objects.create(
                         user=user,
                         scheduled_date=assignment_date,
                         sequence=sequence,
-                        shipping=Shipping.objects.get(pk=shipping.id),
-                        pickup=pickup,
+                        shipping=Shipping.objects.get(pk=assignments[i][0]),
+                        pickup=assignments[i][2],
                         blocked=False
                     )
                     delivery.save()
+
+                request.session['assignments'] = None
             return redirect(reverse('deliveries:assignments-create'))
 
-        pickup_assignments_result = Shipping.objects.filter(id__in=pickup_assignments)
-        delivery_assignments_result = Shipping.objects.filter(id__in=delivery_assignments)
-
         formset_context = []
-        for i, form in enumerate(shipping_formset):
-            if i <= len(pickup_assignments_result) - 1:
-                form.fields['shipping'].queryset = Shipping.objects.filter(id=pickup_assignments_result[i].id)
-                formset_context.append([form, pickup_assignments_result[i], None, 'Pickup'])
-            elif i <= len(pickup_assignments_result) + len(delivery_assignments_result) - 1:
-                i_context = i - len(pickup_assignments_result)
-                form.fields['shipping'].queryset = Shipping.objects.filter(id=delivery_assignments_result[i_context].id)
-                formset_context.append([form, delivery_assignments_result[i_context], None, 'Delivery'])
-            else:
-                i_context = i - len(pickup_assignments_result) - len(delivery_assignments_result)
-                form.fields['shipping'].queryset = Shipping.objects.filter(
-                    id=existing_assignments[i_context].shipping_id)
-                if existing_assignments[i_context].pickup:
-                    formset_context.append(
-                        [form, existing_assignments[i_context].shipping, existing_assignments[i_context].sequence,
-                         'Pickup'])
-                else:
-                    formset_context.append(
-                        [form, existing_assignments[i_context].shipping, existing_assignments[i_context].sequence,
-                         'Delivery'])
+        for i, form in enumerate(formset):
+            # assignments is a list of tuples (shipping, delivery, pickup, sequence)
+            assignments[i][0] = Shipping.objects.get(id=assignments[i][0])
+            formset_context.append([form, assignments[i]])
 
         return render(request, self.assignment_template, {'forms': formset_context, 'assignment_date': assignment_date,
                                                           'assignment_driver': assignment_driver,
-                                                          'form_count': total_len})
+                                                          'form_count': len(assignments)})
 
 
 def block_assignment(request, delivery_id):

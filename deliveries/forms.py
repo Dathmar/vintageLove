@@ -20,7 +20,6 @@ class DateDriverForm(forms.Form):
 
 
 class ShippingAssociateForm(forms.Form):
-    shipping = forms.ModelChoiceField(queryset=Shipping.objects.all(), widget=forms.Select, empty_label=None)
     sequence = forms.IntegerField(label='Sequence', min_value=1, max_value=100)
 
 

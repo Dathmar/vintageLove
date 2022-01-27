@@ -5,11 +5,13 @@
 
 {% block content %}
     <div class="container body-padding">
-        <table class="table table-hover">
+        <table class="table table-hover table-bordered table-striped table-sm">
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Status (pickup/delivery)</th>
+                    <th scope="col">Shipment</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Contact</th>
                     <th scope="col">From</th>
                     <th scope="col">To</th>
                     <th scope="col">Item(s)</th>
@@ -20,22 +22,39 @@
             <tbody>
                 {% for delivery in deliveries %}
                     <tr>
-                        <th scope="row">{{ forloop.counter }}</th>
+                        <th scope="row">{{ delivery.sequence }}</th>
+                        <td>{{ delivery.shipping_id }}</td>
                         {% if delivery.shipping.status.name == 'Order Recieved' and delivery.shipping.must_go_to_barn == '0' %}
                         <td>Pickup</td>
+                        <td>
+                            <p>{{ delivery.shipping.from_name }}</p>
+                            <p>{{ delivery.shipping.from_phone }}</p>
+                        </td>
                         <td>{{ delivery.shipping.from_address }}</td>
                         <td>{{ delivery.shipping.to_address }}</td></td>
                         {% elif delivery.shipping.status.name == 'Order Recieved' and delivery.shipping.must_go_to_barn != '0' %}
                         <td>Pickup</td>
+                        <td>
+                            <p>{{ delivery.shipping.from_name }}</p>
+                            <p>{{ delivery.shipping.from_phone }}</p>
+                        </td>
                         <td>{{ delivery.shipping.from_address }}</td>
                         <td>Barn</td></td>
                         {% elif  delivery.shipping.status.name != 'Order Recieved' and delivery.shipping.must_go_to_barn == '0' %}
                         <td>Delivery</td>
+                        <td>
+                            <p>{{ delivery.shipping.to_name }}</p>
+                            <p>{{ delivery.shipping.to_phone }}</p>
+                        </td>
                         <td>{{ delivery.shipping.from_address }}</td></td>
                         <td>{{ delivery.shipping.to_address }}</td>
                         {% else %}
                         <td>Delivery</td>
-                        <td>Barn</td></td>
+                        <td>
+                            <p>{{ delivery.shipping.to_name }}</p>
+                            <p>{{ delivery.shipping.to_phone }}</p>
+                        </td>
+                        <td>Barn</td>
                         <td>{{ delivery.shipping.to_address }}</td>
                         {% endif %}
                         <td>{{ delivery.shipping.description }}</td>
