@@ -78,7 +78,7 @@ class PayQuote(View):
                 quote.paid = True
                 quote.save()
                 init_status = ShippingStatus.objects.get(name='Order Received')
-                if not quote.approved:
+                if not quote.shipping:
                     shipping = Shipping.objects.create(
                         seller=quote.seller,
                         from_name=quote.from_name,
@@ -104,7 +104,8 @@ class PayQuote(View):
 
                         status=init_status,
                         notes=quote.notes,
-                        requested_date=quote.requested_date,
+                        pickup_requested_date=quote.pickup_requested_date,
+                        delivery_requested_date=quote.delivery_requested_date,
                         must_go_to_barn=quote.must_go_to_barn,
 
                         insurance=quote.insurance,
@@ -125,8 +126,9 @@ class PayQuote(View):
         }
 
         if payment_result:
-            context |= {'payment_errors': payment_result.errors}
+            context |= {'payment_errors': payment_result}
 
+        request.session['idempotency_shipping_key'] = str(uuid.uuid4())
         return render(request, self.pay_template, context)
 
 

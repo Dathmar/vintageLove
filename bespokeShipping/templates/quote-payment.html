@@ -42,11 +42,13 @@
             </div>
         </div>
         {% if payment_errors %}
+            {% for error in payment_errors %}
         <div class="row pt-3">
             <div class="col">
-                {{ payment_errors }}
+                {{ error }}
             </div>
         </div>
+            {% endfor %}
         {% endif %}
         <div class="row pt-3">
             <div class="col text-center">
