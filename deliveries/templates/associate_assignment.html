@@ -39,14 +39,18 @@
 
                 <tr>
                     <td>{{ form.0.shipping }}</td>
+                    {% if form.2 %}
+                    <td><input type="number" name="{{ form.0.sequence.html_name }}" min="1" max="100" id="{{ form.0.sequence.id_for_label }}" value="{{ form.2 }}"></td>
+                    {% else %}
                     <td>{{ form.0.sequence }}</td>
-                    {% if form.2 == 'Pickup' %}
-                    <td>{{ form.2 }}</td>
+                    {% endif %}
+                    {% if form.3 == 'Pickup' %}
+                    <td>{{ form.3 }}</td>
                     <td>{{ form.1.to_address }}</td>
                     <td>{{ form.1.notes }}</td>
                     <td>{{ form.1.pickup_requested_date }}</td>
                     {% else %}
-                    <td>{{ form.2 }}</td>
+                    <td>{{ form.3 }}</td>
                     <td>{{ form.1.to_address }}</td>
                     <td>{{ form.1.notes }}</td>
                     <td>{{ form.1.delivery_requested_date }}</td>

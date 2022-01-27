@@ -121,11 +121,16 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
         delivery_assignments = request.session.get('delivery_assignment_ids')
         assignment_date = request.session.get('assignment_date')
         assignment_driver = request.session.get('assignment_driver')
+        existing_assignments = Delivery.objects.filter(user__username=assignment_driver, scheduled_date=assignment_date)
+
         total_len = 0
         if pickup_assignments:
             total_len += len(pickup_assignments)
         if delivery_assignments:
             total_len += len(delivery_assignments)
+        if existing_assignments:
+            total_len += len(existing_assignments)
+
         forms = formset_factory(ShippingAssociateForm, extra=total_len)
         formset = forms()
         pickup_assignments_result = Shipping.objects.filter(id__in=pickup_assignments)
@@ -135,10 +140,18 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
         for i, form in enumerate(formset):
             if i <= len(pickup_assignments_result) - 1:
                 form.fields['shipping'].queryset = Shipping.objects.filter(id=pickup_assignments_result[i].id)
-                formset_context.append([form, pickup_assignments_result[i], 'Pickup'])
+                formset_context.append([form, pickup_assignments_result[i], None, 'Pickup'])
+            elif i <= len(pickup_assignments_result) + len(delivery_assignments_result) - 1:
+                i_context = i - len(pickup_assignments_result)
+                form.fields['shipping'].queryset = Shipping.objects.filter(id=delivery_assignments_result[i_context].id)
+                formset_context.append([form, delivery_assignments_result[i_context], None, 'Delivery'])
             else:
-                form.fields['shipping'].queryset = Shipping.objects.filter(id=delivery_assignments_result[i - len(pickup_assignments_result)].id)
-                formset_context.append([form, delivery_assignments_result[i - len(pickup_assignments_result)], 'Delivery'])
+                i_context = i - len(pickup_assignments_result) - len(delivery_assignments_result)
+                form.fields['shipping'].queryset = Shipping.objects.filter(id=existing_assignments[i_context].shipping_id)
+                if existing_assignments[i_context].pickup:
+                    formset_context.append([form, existing_assignments[i_context].shipping, existing_assignments[i_context].sequence, 'Pickup'])
+                else:
+                    formset_context.append([form, existing_assignments[i_context].shipping, existing_assignments[i_context].sequence, 'Delivery'])
 
         return render(request, self.assignment_template, {'forms': formset_context, 'assignment_date': assignment_date,
                                                           'assignment_driver': assignment_driver,
@@ -149,11 +162,15 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
         delivery_assignments = request.session.get('delivery_assignment_ids')
         assignment_date = request.session.get('assignment_date')
         assignment_driver = request.session.get('assignment_driver')
+        existing_assignments = Delivery.objects.filter(user__username=assignment_driver, scheduled_date=assignment_date)
+
         total_len = 0
         if pickup_assignments:
             total_len += len(pickup_assignments)
         if delivery_assignments:
             total_len += len(delivery_assignments)
+        if existing_assignments:
+            total_len += len(existing_assignments)
 
         ShippingAssociateFormset = formset_factory(ShippingAssociateForm, extra=total_len)
 
@@ -164,24 +181,33 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
                 sequence = form.cleaned_data['sequence']
                 user = User.objects.get(username=assignment_driver)
 
-                pickup = True
-                if shipping.id in pickup_assignments:
-                    if shipping.id in delivery_assignments:
-                        if Delivery.objects.filter(user=user, scheduled_date=assignment_date,
-                                                   pickup=True).exists():
-                            pickup = False
-                else:
-                    pickup = False
+                is_assignment = existing_assignments.filter(user=user, shipping=shipping, scheduled_date=assignment_date)
 
-                delivery = Delivery.objects.create(
-                    user=user,
-                    scheduled_date=assignment_date,
-                    sequence=sequence,
-                    shipping=Shipping.objects.get(pk=shipping.id),
-                    pickup=pickup,
-                    blocked=False
-                )
-                delivery.save()
+                if is_assignment.exists():
+                    delivery = is_assignment.first()
+                    pickup = delivery.pickup
+                    delivery.sequence = sequence
+                    delivery.pickup = pickup
+                    delivery.save()
+                else:
+                    pickup = True
+                    if shipping.id in pickup_assignments:
+                        if shipping.id in delivery_assignments:
+                            if Delivery.objects.filter(user=user, scheduled_date=assignment_date,
+                                                       pickup=True).exists():
+                                pickup = False
+                    else:
+                        pickup = False
+
+                    delivery = Delivery.objects.create(
+                        user=user,
+                        scheduled_date=assignment_date,
+                        sequence=sequence,
+                        shipping=Shipping.objects.get(pk=shipping.id),
+                        pickup=pickup,
+                        blocked=False
+                    )
+                    delivery.save()
             return redirect(reverse('deliveries:assignments-create'))
 
         pickup_assignments_result = Shipping.objects.filter(id__in=pickup_assignments)
@@ -191,12 +217,23 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
         for i, form in enumerate(shipping_formset):
             if i <= len(pickup_assignments_result) - 1:
                 form.fields['shipping'].queryset = Shipping.objects.filter(id=pickup_assignments_result[i].id)
-                formset_context.append([form, pickup_assignments_result[i], 'Pickup'])
+                formset_context.append([form, pickup_assignments_result[i], None, 'Pickup'])
+            elif i <= len(pickup_assignments_result) + len(delivery_assignments_result) - 1:
+                i_context = i - len(pickup_assignments_result)
+                form.fields['shipping'].queryset = Shipping.objects.filter(id=delivery_assignments_result[i_context].id)
+                formset_context.append([form, delivery_assignments_result[i_context], None, 'Delivery'])
             else:
+                i_context = i - len(pickup_assignments_result) - len(delivery_assignments_result)
                 form.fields['shipping'].queryset = Shipping.objects.filter(
-                    id=delivery_assignments_result[i - len(pickup_assignments_result)].id)
-                formset_context.append(
-                    [form, delivery_assignments_result[i - len(pickup_assignments_result)], 'Delivery'])
+                    id=existing_assignments[i_context].shipping_id)
+                if existing_assignments[i_context].pickup:
+                    formset_context.append(
+                        [form, existing_assignments[i_context].shipping, existing_assignments[i_context].sequence,
+                         'Pickup'])
+                else:
+                    formset_context.append(
+                        [form, existing_assignments[i_context].shipping, existing_assignments[i_context].sequence,
+                         'Delivery'])
 
         return render(request, self.assignment_template, {'forms': formset_context, 'assignment_date': assignment_date,
                                                           'assignment_driver': assignment_driver,
