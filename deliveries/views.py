@@ -6,12 +6,13 @@ from django.db.models import Q
 from django.template.loader import render_to_string
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 
 from pytz import timezone as tz
 from datetime import datetime
 from .models import Delivery
 from .forms import DeliverySelectionForm, PickupSelectionForm, ShippingAssociateForm, DateDriverForm
-from bespokeShipping.models import Shipping
+from bespokeShipping.models import Shipping, ShippingStatus
 import logging
 
 logger = logging.getLogger('app_api')
@@ -22,7 +23,7 @@ logger = logging.getLogger('app_api')
 def my_assignments(request):
     deliveries = Delivery.objects.filter(user=request.user,
                                          scheduled_date=
-                                         tz('UTC').localize(datetime.now().today()))
+                                         tz('UTC').localize(datetime.now().today())).order_by('sequence')
     return render(request, 'deliveries.html', {'deliveries': deliveries})
 
 
@@ -37,10 +38,10 @@ class CreateAssignmentsView(LoginRequiredMixin, View):
     date_driver_form = DateDriverForm
     delivery_query_set = Shipping.objects.filter(
         Q(status__name__in=['Barn', 'Pickup Complete']) | Q(status__name='Order Received', must_go_to_barn=0)).exclude(
-        id__in=Delivery.objects.filter(scheduled_date__gte=datetime.today()).values_list('shipping_id'))
+        id__in=Delivery.objects.filter(scheduled_date__gte=datetime.today(), blocked=False).values_list('shipping_id'))
     pickup_query_set = Shipping.objects.filter(
         status__name='Order Received').exclude(
-        id__in=Delivery.objects.filter(scheduled_date__gte=datetime.today()).values_list('shipping_id'))
+        id__in=Delivery.objects.filter(scheduled_date__gte=datetime.today(), blocked=False).values_list('shipping_id'))
 
     def get_deliver_pickups(self, form_type='delivery'):
         if form_type == 'delivery':
@@ -161,11 +162,24 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
             for form in shipping_formset:
                 shipping = form.cleaned_data['shipping']
                 sequence = form.cleaned_data['sequence']
+                user = User.objects.get(username=assignment_driver)
+
+                pickup = True
+                if shipping.id in pickup_assignments:
+                    if shipping.id in delivery_assignments:
+                        if Delivery.objects.filter(user=user, scheduled_date=assignment_date,
+                                                   pickup=True).exists():
+                            pickup = False
+                else:
+                    pickup = False
+
                 delivery = Delivery.objects.create(
-                    user=User.objects.get(username=assignment_driver),
+                    user=user,
                     scheduled_date=assignment_date,
                     sequence=sequence,
-                    shipping=Shipping.objects.get(pk=shipping.id)
+                    shipping=Shipping.objects.get(pk=shipping.id),
+                    pickup=pickup,
+                    blocked=False
                 )
                 delivery.save()
             return redirect(reverse('deliveries:assignments-create'))
@@ -187,3 +201,42 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
         return render(request, self.assignment_template, {'forms': formset_context, 'assignment_date': assignment_date,
                                                           'assignment_driver': assignment_driver,
                                                           'form_count': total_len})
+
+
+def block_assignment(request, delivery_id):
+    try:
+        delivery = Delivery.objects.get(pk=delivery_id)
+        delivery.blocked = True
+        delivery.save()
+        return JsonResponse({'new_url': reverse('deliveries:unblock-assignment', kwargs={'delivery_id': delivery_id}),
+                             'new_label': 'Unblock'}, status=200)
+    except:
+        return JsonResponse({'success': False}, status=400)
+
+
+def unblock_assignment(request, delivery_id):
+    try:
+        delivery = Delivery.objects.get(pk=delivery_id)
+        delivery.blocked = False
+        delivery.save()
+        return JsonResponse({'new_url': reverse('deliveries:block-assignment', kwargs={'delivery_id': delivery_id}),
+                             'new_label': 'Block'}, status=200)
+    except:
+        return JsonResponse({'success': False}, status=400)
+
+
+def complete_assignment(request, delivery_id):
+    try:
+        delivery = Delivery.objects.get(pk=delivery_id)
+        shipping = delivery.shipping
+        if shipping.status.name == 'Order Received':
+            shipping.status = ShippingStatus.objects.get(name='Pickup Complete')
+        else:
+            shipping.status = ShippingStatus.objects.get(name='Delivery Complete')
+        delivery.complete = True
+        delivery.save()
+        shipping.save()
+        return JsonResponse({'success': True}, status=200)
+    except:
+        return JsonResponse({'success': False}, status=400)
+
