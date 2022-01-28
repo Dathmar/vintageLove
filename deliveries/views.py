@@ -10,8 +10,9 @@ from django.http import JsonResponse
 
 from pytz import timezone as tz
 from datetime import datetime
-from .models import Delivery
-from .forms import DeliverySelectionForm, PickupSelectionForm, ShippingAssociateForm, DateDriverForm
+from .models import Delivery, EquipmentStatus, Equipment
+from .forms import DeliverySelectionForm, PickupSelectionForm, ShippingAssociateForm, DateDriverForm, \
+    EquipmentStatusForm
 from bespokeShipping.models import Shipping, ShippingStatus
 import logging
 
@@ -21,10 +22,51 @@ logger = logging.getLogger('app_api')
 # Create your views here.
 @login_required(login_url='/accounts/login/?next=/deliveries/')
 def my_assignments(request):
+    morning_status = EquipmentStatus.objects.filter(user=request.user, timeperiod='morning',
+                                                    schedule_date=tz('UTC').localize(datetime.now().today()))
+
+    if not morning_status:
+        return redirect('deliveries:equipment-status', tod='morning')
+
     deliveries = Delivery.objects.filter(user=request.user,
                                          scheduled_date=
                                          tz('UTC').localize(datetime.now().today())).order_by('sequence')
+
+    if deliveries.filter(Q(complete=True) | Q(blocked=True)).count() != deliveries.count():
+        return render(request, 'deliveries.html', {'deliveries': deliveries})
+
+    evening_status = EquipmentStatus.objects.filter(timeperiod='evening', user=request.user,
+                                                    schedule_date=tz('UTC').localize(datetime.now().today()))
+    if not evening_status:
+        return redirect('deliveries:equipment-status', tod='evening')
+
     return render(request, 'deliveries.html', {'deliveries': deliveries})
+
+
+class EquipmentStatusView(LoginRequiredMixin, View):
+    equipment_status_form = EquipmentStatusForm
+    template = 'equipment_status.html'
+
+    def get(self, request, *args, **kwargs):
+        tod = kwargs.get('tod').casefold()
+        form = self.equipment_status_form()
+
+        return render(request, self.template, {'form': form, 'tod': tod})
+
+    def post(self, request, *args, **kwargs):
+        tod = kwargs.get('tod').casefold()
+        form = self.equipment_status_form(request.POST, request.FILES)
+
+        if form.is_valid():
+            equipment_status = form.save(commit=False)
+            equipment_status.user = request.user
+            equipment_status.timeperiod = tod
+            equipment_status.schedule_date = tz('UTC').localize(datetime.now().today())
+            equipment_status.save()
+
+            return redirect('deliveries:my-assignments')
+
+        return render(request, self.template, {'form': form, 'tod': tod})
 
 
 class CreateAssignmentsView(LoginRequiredMixin, View):
@@ -156,7 +198,7 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
                     delivery = Delivery.objects.get(id=assignments[i][1])
                     delivery.sequence = sequence
                     delivery.save()
-                else: # if a delivery does not exist then create a new delivery
+                else:  # if a delivery does not exist then create a new delivery
                     delivery = Delivery.objects.create(
                         user=user,
                         scheduled_date=assignment_date,

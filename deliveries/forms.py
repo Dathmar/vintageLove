@@ -1,5 +1,6 @@
 from django import forms
 from bespokeShipping.models import Shipping
+from .models import EquipmentStatus
 from django.contrib.auth.models import User
 
 
@@ -21,5 +22,16 @@ class DateDriverForm(forms.Form):
 
 class ShippingAssociateForm(forms.Form):
     sequence = forms.IntegerField(label='Sequence', min_value=1, max_value=100)
+
+
+class EquipmentStatusForm(forms.ModelForm):
+    class Meta:
+        model = EquipmentStatus
+        fields = ['mileage', 'fuel_level', 'equipment_video']
+        widgets = {
+            'mileage': forms.NumberInput(attrs={'type': 'number', 'class': 'form-control'}),
+            'fuel_level': forms.RadioSelect(attrs={'class': 'form-check'}),
+            'equipment_video': forms.FileInput(attrs={'class': 'form-control'}),
+        }
 
 

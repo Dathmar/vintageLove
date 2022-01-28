@@ -1,7 +1,11 @@
 from django.db import models
 from django.conf import settings
 
+from datetime import datetime
 from bespokeShipping.models import Shipping
+
+import logging
+logger = logging.getLogger('app_api')
 
 
 # Create your models here.
@@ -24,3 +28,55 @@ class Delivery(models.Model):
     class Meta:
         verbose_name = 'Delivery'
         verbose_name_plural = 'Deliveries'
+
+
+class Equipment(models.Model):
+    name = models.CharField(max_length=255)
+    make = models.CharField(max_length=255)
+    model = models.CharField(max_length=255)
+    year = models.IntegerField()
+    color = models.CharField(max_length=255)
+    license_plate = models.CharField(max_length=255)
+    purchase_date = models.DateField()
+
+    create_datetime = models.DateTimeField('date created', auto_now_add=True)
+    update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+    def __str__(self):
+        return f'{self.name} - {self.make} - {self.model} - {self.year}'
+
+
+def equipment_video_path(instance, filename):
+    date = instance.schedule_date.strftime('%Y/%m/%d')
+    return f'equipment_video/{instance.user.username}/{date}/{instance.timeperiod}/{filename}'
+
+
+class EquipmentStatus(models.Model):
+    time_options = (('morning', 'Morning'),
+                    ('evening', 'Evening'),)
+    fuel_level_options = (('low', 'Low'),
+                          ('quarter', '1/4'),
+                          ('half', '1/2'),
+                          ('three_quarter', '3/4'),
+                          ('full', 'Full'),)
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    timeperiod = models.CharField(max_length=10, choices=time_options)
+    schedule_date = models.DateField()
+
+    # should add later when we start using actual usernames vs the equipment name.
+    # equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
+    mileage = models.FloatField(default=0)
+    fuel_level = models.CharField(max_length=20, choices=fuel_level_options, blank=False, default='Unspecified')
+    equipment_video = models.FileField(upload_to=equipment_video_path)
+
+    create_datetime = models.DateTimeField('date created', auto_now_add=True)
+    update_datetime = models.DateTimeField('date updated', auto_now=True)
+
+    def __str__(self):
+        return f'{self.user.username} - {self.timeperiod} - {self.schedule_date}'
+
+    class Meta:
+        verbose_name = 'Daily Equipment Status'
+        verbose_name_plural = 'Daily Equipment Statuses'
+
