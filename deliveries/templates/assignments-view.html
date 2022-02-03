@@ -1,20 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block page_title %}Global Vintage Love | My Deliveries{% endblock %}
+{% block page_title %}Global Vintage Love | Assignments View{% endblock %}
 
 {% block content %}
     <div class="container body-padding">
         <div class="row">
             <div class="col">
-                <h1>My Deliveries</h1>
-                <p>Date: {{ date }}</p>
+                <label for="id_start_date">Start Date</label>
+                <input type="date" id="id_start_date" name="start_date" class="form-control" onchange="load_deliveries(this)" placeholder="Start Date">
+                <label for="id_end_date">End Date</label>
+                <input type="date" id="id_end_date" name="end_date" class="form-control" onchange="load_deliveries(this)" placeholder="End Date">
             </div>
         </div>
         <table class="table table-hover table-bordered table-striped table-sm">
             <thead>
                 <tr>
                     <th scope="col">#</th>
+                    <th scope="col">User</th>
                     <th scope="col">Shipment</th>
                     <th scope="col">Status</th>
                     <th scope="col">Contact</th>
@@ -22,15 +25,13 @@
                     <th scope="col">To</th>
                     <th scope="col">Item(s)</th>
                     <th scope="col">Timeframe</th>
-                    {% if not show_buttons %}
-                    <th scope="col">Action</th>
-                    {% endif %}
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="delivery-table">
                 {% for delivery in deliveries %}
                     <tr>
                         <th scope="row">{{ delivery.sequence }}</th>
+                        <td>{{ delivery.user.username }}</td>
                         <td>{{ delivery.shipping_id }}</td>
                         {% if delivery.shipping.status.name == 'Order Recieved' and delivery.shipping.must_go_to_barn == '0' %}
                         <td>Pickup</td>
@@ -67,18 +68,6 @@
                         {% endif %}
                         <td>{{ delivery.shipping.description }}</td>
                         <td>{{ delivery.shipping.order_window }}</td>
-                        {% if not show_buttons %}
-                        <td>
-                        {% if delivery.complete %}
-                            <p>Complete</p>
-                        {% elif delivery.blocked %}
-                            <p>Non-Complete</p>
-                        {% else %}
-                            <button id="complete-{{ delivery.id }}" value="{% url 'deliveries:complete-assignment' delivery.id %}" class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-1" style="background: #0f5132; width: 10rem;" onclick="process_delivery(this)">Complete</button>
-                            <button id="block-{{ delivery.id }}" value="{% url 'deliveries:block-assignment' delivery.id %}" class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-1" style="background: #6a1a21; width: 10rem;" onclick="process_delivery(this)">Non-Complete</button>
-                        {% endif %}
-                        </td>
-                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>
@@ -88,6 +77,6 @@
 
 {% endblock %}
 {% block end_body %}
-    <script src="{% get_static_prefix %}js/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/delivery_functions.js' %}"></script>
 {% endblock %}

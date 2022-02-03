@@ -9,11 +9,12 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 
 from pytz import timezone as tz
-from datetime import datetime
+from datetime import datetime, timedelta
 from .models import Delivery, EquipmentStatus, Equipment
 from .forms import DeliverySelectionForm, PickupSelectionForm, ShippingAssociateForm, DateDriverForm, \
     EquipmentStatusForm
 from bespokeShipping.models import Shipping, ShippingStatus
+import json
 import logging
 
 logger = logging.getLogger('app_api')
@@ -22,25 +23,67 @@ logger = logging.getLogger('app_api')
 # Create your views here.
 @login_required(login_url='/accounts/login/?next=/deliveries/')
 def my_assignments(request):
+    date_today = tz('UTC').localize(datetime.now().today())
+
     morning_status = EquipmentStatus.objects.filter(user=request.user, timeperiod='morning',
-                                                    schedule_date=tz('UTC').localize(datetime.now().today()))
+                                                    schedule_date=date_today)
 
     if not morning_status:
         return redirect('deliveries:equipment-status', tod='morning')
 
     deliveries = Delivery.objects.filter(user=request.user,
-                                         scheduled_date=
-                                         tz('UTC').localize(datetime.now().today())).order_by('sequence')
+                                         scheduled_date=date_today).order_by('sequence')
 
     if deliveries.filter(Q(complete=True) | Q(blocked=True)).count() != deliveries.count():
-        return render(request, 'deliveries.html', {'deliveries': deliveries})
+        return render(request, 'deliveries.html', {'deliveries': deliveries, 'date': date_today.strftime('%m/%d/%Y'),
+                                                   'show_buttons': False})
 
     evening_status = EquipmentStatus.objects.filter(timeperiod='evening', user=request.user,
-                                                    schedule_date=tz('UTC').localize(datetime.now().today()))
+                                                    schedule_date=date_today)
     if not evening_status:
         return redirect('deliveries:equipment-status', tod='evening')
+    date_tomorrow = date_today + timedelta(days=1)
+    deliveries = Delivery.objects.filter(user=request.user,
+                                         scheduled_date=date_tomorrow).order_by('sequence')
+    return render(request, 'deliveries.html', {'deliveries': deliveries, 'date': date_tomorrow.strftime('%m/%d/%Y'),
+                                               'show_buttons': True})
 
-    return render(request, 'deliveries.html', {'deliveries': deliveries})
+
+def my_deliveries_tomorrow(request):
+    date_today = tz('UTC').localize(datetime.now().today())
+    date_tomorrow = date_today + timedelta(days=1)
+    deliveries = Delivery.objects.filter(user=request.user,
+                                         scheduled_date=date_tomorrow).order_by('sequence')
+    return render(request, 'deliveries.html', {'deliveries': deliveries, 'date': date_tomorrow.strftime('%m/%d/%Y'),
+                                               'show_buttons': True})
+
+
+def assignments_view(request):
+    date_today = tz('UTC').localize(datetime.now().today())
+    deliveries = Delivery.objects.filter(scheduled_date=date_today).order_by('sequence')
+    return render(request, 'assignments-view.html', {'deliveries': deliveries})
+
+
+def get_delivery_table(request):
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+
+    start_date = tz('UTC').localize(datetime.strptime(start_date, '%Y-%m-%d'))
+    end_date = tz('UTC').localize(datetime.strptime(end_date, '%Y-%m-%d'))
+
+    if end_date < start_date:
+        tmp = start_date
+        start_date = end_date
+        end_date = tmp
+
+    logger.info('start_date: {}'.format(start_date))
+    logger.info('end_date: {}'.format(end_date))
+
+    if start_date and end_date:
+        deliveries = Delivery.objects.filter(scheduled_date__range=[start_date, end_date]).order_by('id')
+        t = render_to_string('delivery-table.html', {'deliveries': deliveries})
+        return JsonResponse({'table_html': t}, status=200)
+    return JsonResponse({'error': 'No date range provided'}, status=400)
 
 
 class EquipmentStatusView(LoginRequiredMixin, View):
@@ -121,8 +164,8 @@ class CreateAssignmentsView(LoginRequiredMixin, View):
         pickup_form.fields['pickups'].queryset = self.pickup_query_set
 
         if delivery_form.is_valid() and pickup_form.is_valid() and date_driver_form.is_valid():
-            pickup_assignment = request.POST.getlist('deliveries')
-            delivery_assignment = request.POST.getlist('pickups')
+            pickup_assignment = request.POST.getlist('pickups')
+            delivery_assignment = request.POST.getlist('deliveries')
             assignments = []  # list of tuples (shipping, delivery, pickup, sequence)
             existing_assignments = Delivery.objects.filter(scheduled_date=request.POST['delivery_date'],
                                                            user__username=request.POST['driver'])
