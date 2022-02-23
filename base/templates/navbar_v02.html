@@ -1,0 +1,100 @@
+    {% load static %}
+    {% load is_user_seller %}
+    <nav class="navbar">
+        <div class="container orange-font d-none d-md-block">
+            <div class="d-flex flex-row justify-content-center align-items-center">
+                <div style="visibility: hidden; margin-right: auto;" class="pr-4p" >
+                    <span>Login</span>
+                </div>
+                <div class="pr-4p">
+                    <a class="orange-href" href="{% url 'products:all-products' %}">Shop</a>
+                </div>
+                <div class="pr-4p">
+                    <span class="orange-font">/</span>
+                </div>
+                <div class="pr-8p ">
+                    <a class="orange-href" href="{% url 'bespoke-shipping:create' %}">Ship</a>
+                </div>
+                <div>
+                    <a class="navbar-brand p-0 m-0" href="{% url 'store:index' %}">
+                        <img src="{% static 'img/Globe.png' %}" width="150" height="150" class="d-inline-block align-top" alt="">
+                    </a>
+                </div>
+                <div class="pl-8p">
+                    <a class="orange-href" href="{% url 'store:storage' %}">Store</a>
+                </div>
+                <div class="pl-4p">
+                    <span class="orange-font">/</span>
+                </div>
+
+                {% if user|is_seller %}
+                <li class="nav-item dropdown pl-4p list-unstyled"><a class="dropdown-toggle orange-href" aria-expanded="false" data-bs-toggle="dropdown" href="#">Account</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item dropdown-item-blue" href="{% url 'seller:product-list' %}">My Products</a>
+                        <a class="dropdown-item dropdown-item-blue" href="{% url 'seller:add-product' %}">Add Product</a>
+                        <a class="dropdown-item dropdown-item-blue" href="{% url 'products:qr-grid' %}">Product QR Grid</a>
+                        <a class="dropdown-item dropdown-item-blue" href="{% url 'bespoke-shipping:qr-grid' %}">Seller QR  Grid</a>
+                    </div>
+                </li>
+                {% else %}
+                <div class="pl-4p">
+                    <a class="orange-href" href="{% url 'store:join_movement' %}">Subscribe</a>
+                </div>
+                {% endif %}
+                {% if user.is_authenticated %}
+                <div class="pl-4p" style="margin-left: auto">
+                    <a class="orange-href" href="{% url 'logout' %}">
+                        Logout
+                    </a>
+                </div>
+                {% else %}
+                <div class="pl-4p" style="margin-left: auto">
+                    <a class="orange-href" href="{% url 'login' %}">
+                        Login
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="container orange-font d-block d-md-none">
+            <div class="d-flex flex-row justify-content-evenly align-items-center">
+                <i class="icon ion-android-menu" onclick="menu_toggle()"></i>
+                <div>
+                    <a class="navbar-brand p-0 m-0" href="{% url 'store:index' %}">
+                        <img src="{% static 'img/Globe.png' %}" width="150" height="150" class="d-inline-block align-top" alt="">
+                    </a>
+                </div>
+                {% if user.is_authenticated %}
+                <div>
+                    <a class="orange-href" href="{% url 'logout' %}">
+                        Logout
+                    </a>
+                </div>
+                {% else %}
+                <div>
+                    <a class="orange-href" href="{% url 'login' %}">
+                        Login
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <div id="popup-menu" class="d-none d-md-none">
+                <a class="orange-href" href="{% url 'products:all-products' %}">Shop</a><br>
+                <a class="orange-href" href="{% url 'bespoke-shipping:create' %}">Ship</a><br>
+                <a class="orange-href" href="{% url 'store:storage' %}">Store</a>
+                {% if user|is_seller %}
+                <li class="nav-item dropdown pl-4p list-unstyled"><a class="dropdown-toggle orange-href" aria-expanded="false" data-bs-toggle="dropdown" href="#">Account</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item dropdown-item-blue" href="{% url 'seller:product-list' %}">My Products</a>
+                        <a class="dropdown-item dropdown-item-blue" href="{% url 'seller:add-product' %}">Add Product</a>
+                        <a class="dropdown-item dropdown-item-blue" href="{% url 'products:qr-grid' %}">Product QR Grid</a>
+                        <a class="dropdown-item dropdown-item-blue" href="{% url 'bespoke-shipping:qr-grid' %}">Seller QR  Grid</a>
+                    </div>
+                </li>
+                {% else %}
+                <a class="orange-href" href="{% url 'store:join_movement' %}">Subscribe</a>
+                {% endif %}
+            </div>
+        </div>
+
+    </nav>

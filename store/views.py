@@ -40,6 +40,14 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+def storage(request):
+    return render(request, 'store-page.html')
+
+
+def test(request):
+    return render(request, 'index_v02.html')
+
+
 def our_purpose(request):
     return render(request, 'our-purpose.html')
 

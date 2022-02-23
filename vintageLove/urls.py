@@ -36,4 +36,5 @@ urlpatterns = [
     path('ship/', include('bespokeShipping.urls', namespace='bespoke-shipping')),
     path('seller/', include('seller.urls', namespace='seller')),
     path('deliveries/', include('deliveries.urls', namespace='deliveries')),
+    path('api/', include('api.urls', namespace='api')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -24,7 +24,7 @@ async function process_delivery(elem) {
 function load_deliveries() {
     let start_date = $('#id_start_date').val();
     let end_date = $('#id_end_date').val();
-    let url = '/deliveries/get-delivery-table/';
+    let url = '/api/v1/get-delivery-table/';
 
     $.ajax({
         url: url,

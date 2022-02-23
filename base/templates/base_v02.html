@@ -23,25 +23,27 @@
     <meta name="theme-color" content="#ffffff">
     <!-- End Favicon stuff -->
 
-    <link rel="stylesheet" href="{% get_static_prefix %}bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% get_static_prefix %}css/PowellAntique.css">
-    <link rel="stylesheet" href="{% get_static_prefix %}fonts/ionicons.min.css">
-    <link rel="stylesheet" href="{% static 'css/nav-bar.css' %}">
-    <link rel="stylesheet" href="{% get_static_prefix %}css/Navigation-with-Button.css">
-    <link rel="stylesheet" href="{% get_static_prefix %}css/Social-Icons.css">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/PowellAntique.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/nav-bar-v2.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Navigation-with-Button.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Social-Icons.css' %}">
+
+    <script src="{% static 'js/menu-functions.js' %}"></script>
     {% include 'gtm.html' %}
     {% block extra_header %}{% endblock %}
 </head>
 
 <body style="overflow-x: hidden;">
 
-    {% include 'navbar.html' %}
+    {% include 'navbar_v02.html' %}
     {% block content %}
 
     {% endblock %}
+    {% if hide_subscribe != True %}
     <section id="nav-footer" class="blue-background">
         <div class="container">
-            {% if hide_subscribe != True %}
             <div class="row">
                 <div class="offset-3 col-md-3 pt-5 pb-5">
                     <span class="white-font" style="font-variant: titling-caps;">Our Company</span><br/><br/>
@@ -57,9 +59,10 @@
                     <span id="result" class="d-none white-font ps-3"></span>
                 </div>
             </div>
-            {% endif %}
+
         </div>
     </section>
+    {% endif %}
     <section class="text-center vintage-font orange-background">
         <div class="social-icons">
             <a href="https://www.facebook.com/Global-Vintage-Love-109096961408500" target="_blank"><i class="icon ion-social-facebook"></i></a>

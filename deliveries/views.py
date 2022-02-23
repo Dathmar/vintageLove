@@ -3,7 +3,6 @@ from django.forms import formset_factory
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.db.models import Q
-from django.template.loader import render_to_string
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.http import JsonResponse
@@ -62,28 +61,6 @@ def assignments_view(request):
     date_today = tz('UTC').localize(datetime.now().today())
     deliveries = Delivery.objects.filter(scheduled_date=date_today).order_by('sequence')
     return render(request, 'assignments-view.html', {'deliveries': deliveries})
-
-
-def get_delivery_table(request):
-    start_date = request.GET.get('start_date', None)
-    end_date = request.GET.get('end_date', None)
-
-    start_date = tz('UTC').localize(datetime.strptime(start_date, '%Y-%m-%d'))
-    end_date = tz('UTC').localize(datetime.strptime(end_date, '%Y-%m-%d'))
-
-    if end_date < start_date:
-        tmp = start_date
-        start_date = end_date
-        end_date = tmp
-
-    logger.info('start_date: {}'.format(start_date))
-    logger.info('end_date: {}'.format(end_date))
-
-    if start_date and end_date:
-        deliveries = Delivery.objects.filter(scheduled_date__range=[start_date, end_date]).order_by('id')
-        t = render_to_string('delivery-table.html', {'deliveries': deliveries})
-        return JsonResponse({'table_html': t}, status=200)
-    return JsonResponse({'error': 'No date range provided'}, status=400)
 
 
 class EquipmentStatusView(LoginRequiredMixin, View):

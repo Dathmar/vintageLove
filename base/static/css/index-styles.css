@@ -1,0 +1,43 @@
+.bg-wrapper {
+    overflow: hidden;
+    position: relative;
+}
+
+.bg-img {
+    opacity: 0.1;
+    position: absolute;
+    overflow: hidden;
+    left: -100%;         /* anchor the image corners outside the viewable area (increase for large images) */
+	right: -100%;
+	top: -100%;
+	bottom: -100%;
+    width: auto;
+    margin: auto;
+    object-fit: cover;
+    -webkit-filter: grayscale(50%);
+    filter: grayscale(50%);
+    height: 480px;
+}
+
+.cntnt-ovrly {
+    position: relative;
+    align-items: center;
+    height: 480px;
+    padding-top: 10px;
+}
+
+.horizontal-line {
+    width: 80%;
+    text-align: center;
+    border-bottom: 3px solid #D4AF37;
+    line-height: 0.1em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.horizontal-line span {
+    font-family: 'Maldins';
+    font-size: 2.5rem;
+    background:#fff;
+    padding:0 40px;
+}

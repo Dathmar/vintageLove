@@ -14,7 +14,44 @@
 
 @font-face {
 	font-family: 'Sackers';
-	src: url(../fonts/SackersGothicStd-Light.otf);
+	src: url(../fonts/SACKERS/SackersGothicStd-Medium.otf) format('opentype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Sackers';
+	src: url(../fonts/SACKERS/SackersGothicStd-Light.otf) format('opentype');
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Sackers';
+	src: url(../fonts/SACKERS/SackersGothicStd-Heavy.otf) format('opentype');
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Maldins';
+	src: url(../fonts/maldins/MaldinsFREE.otf) format('opentype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'La Luxes Script';
+	src: url(../fonts/LALUXESDUO/Webfont/LaLuxesScript.woff2) format('woff2');
+	src: url(../fonts/LALUXESDUO/Webfont/LaLuxesScript.woff) format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'La Luxes Serif';
+	src: url(../fonts/LALUXESDUO/Webfont/LaLuxesSerif.woff2) format('woff2');
+	src: url(../fonts/LALUXESDUO/Webfont/LaLuxesSerif.woff) format('woff');
 	font-weight: normal;
 	font-style: normal;
 }

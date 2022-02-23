@@ -1,0 +1,40 @@
+{% load static %}
+{% load is_user_seller %}
+    <nav class="navbar navbar-light navbar-expand-lg navigation-clean-button">
+        <div class="container-fluid">
+            <div class="text-center d-lg-none" style="width: 100%">
+                <button data-bs-toggle="collapse" class="navbar-toggler custom-toggler" data-bs-target="#navcol-1">
+                    <span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <a class="navbar-brand d-none d-sm-block" href="{% url 'store:index' %}">
+                <img src="{% get_static_prefix %}img/logo.png" style="width: 102px;">
+            </a>
+            <a class="navbar-brand text-wrap vintage-font text-center" href="{% url 'store:index' %}">GLOBAL VINTAGE LOVE</a>
+            <div class="collapse navbar-collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'products:all-products' %}">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'bespoke-shipping:create' %}">Ship</a></li>
+                    {% if user.is_authenticated %}
+                    {% if user|is_seller %}
+                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">Account</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item dropdown-item-blue" href="{% url 'seller:product-list' %}">My Products</a>
+                            <a class="dropdown-item dropdown-item-blue" href="{% url 'seller:add-product' %}">Add Product</a>
+                            <a class="dropdown-item dropdown-item-blue" href="{% url 'products:qr-grid' %}">Product QR Grid</a>
+                            <a class="dropdown-item dropdown-item-blue" href="{% url 'bespoke-shipping:qr-grid' %}">Seller QR  Grid</a>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'store:join_movement' %}">Join</a></li>
+                    {% endif %}
+                    <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'store:join_movement' %}">Join</a></li>
+                    <li class="nav-item"><a class="nav-link" style="color: #D4AF37 !important;" href="{% url 'login' %}">Log In</a></li>
+                    {% endif %}
+                </ul>
+
+            </div>
+        </div>
+    </nav>

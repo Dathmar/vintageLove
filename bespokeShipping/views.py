@@ -69,6 +69,10 @@ class PayQuote(View):
         if not quote.paid:
             charge_cost = quote.cost * 100
             idempotency_key = request.session.get('idempotency_shipping_key')
+            if not idempotency_key:
+                idempotency_key = str(uuid.uuid4())
+                request.session['idempotency_shipping_key'] = idempotency_key
+
             nonce = request.session.get('nonce')
 
             payment_result = submit_payment(charge_cost, nonce, idempotency_key)

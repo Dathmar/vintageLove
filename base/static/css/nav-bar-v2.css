@@ -1,0 +1,52 @@
+.orange-href {
+  color: #D4AF37 !important;
+  text-decoration: none !important;
+  list-style-type: none !important;
+}
+
+.orange-href:hover {
+  color: #D4AF37 !important;
+  text-decoration: none !important;
+  list-style-type: none !important;
+}
+
+@media (min-width: 768px) {
+  .pr-4p {
+    padding-right: 2%;
+  }
+  .pr-8p {
+    padding-right: 4%;
+  }
+  .pl-4p {
+    padding-left: 2%;
+  }
+  .pl-8p {
+    padding-left: 4%;
+  }
+}
+
+@media (min-width: 992px) {
+  .pr-4p {
+    padding-right: 4%;
+  }
+  .pr-8p {
+    padding-right: 8%;
+  }
+  .pl-4p {
+    padding-left: 4%;
+  }
+  .pl-8p {
+    padding-left: 8%;
+  }
+}
+
+.navbar i {
+  font-size: 40px;
+  display: inline-block;
+  color: #0A486A;
+  margin: 0 10px;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  line-height: 60px;
+}

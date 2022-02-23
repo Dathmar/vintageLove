@@ -12,7 +12,6 @@
                 <div class="col-sm-12 col-md-6 orange-background text-center" style="position: relative; height: 600px">
                     <form method="post" class="vertical-center">
                         {% csrf_token %}
-                        {{ form_valid }}
                         {% if join_form_errors %}
                             {% for error in join_form.errors %}
                                 <div class="alert alert-danger">
