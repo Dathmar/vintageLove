@@ -13,6 +13,7 @@ logger = logging.getLogger('app_api')
 
 class ShippingStatus(models.Model):
     name = models.CharField(max_length=1000, unique=True)
+    display_sequence = models.IntegerField(default=0)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
@@ -22,6 +23,7 @@ class ShippingStatus(models.Model):
 
     class Meta:
         verbose_name_plural = 'Shipping Statuses'
+        ordering = ['display_sequence']
 
 
 # Create your models here.
@@ -32,10 +34,12 @@ class Shipping(models.Model):
                     ('set', 'Sets'))
     location_choices = (('door', 'To Door'),
                         ('placement', 'In home placement'))
-    window_choices = (('morning', 'Morning'),
-                      ('mid-day', 'Mid-day'),
-                      ('afternoon', 'Afternoon'),
-                      ('evening', 'Evening'))
+    window_choices = (('0', '8am-10am'),
+                      ('1', '10am-12pm'),
+                      ('2', '12pm-2pm'),
+                      ('3', '2pm-4pm'),
+                      ('4', '4pm-6pm'),
+                      ('5', '6pm-8pm'),)
     BARN_OPTIONS = (('0', 'Not Required'),
                     ('1', 'Repair'),
                     ('2', 'Warehouse'),
