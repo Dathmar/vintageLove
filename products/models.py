@@ -3,10 +3,17 @@ from .qr_generation import generate_qr_code
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.shortcuts import reverse
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.conf import settings
 
 import uuid
+import os
 
-from .image_generation import gen_resize
+from .image_generation import gen_resize, rotate_image
+import logging
+
+logger = logging.getLogger('app_api')
 
 
 class ProductStatus(models.Model):
@@ -79,7 +86,6 @@ class Seller(models.Model):
                              'media/bespoke-shipping/' + str(self.slug) + '_qr.png')
         else:
             super(Seller, self).save()
-
 
     def get_qr_url(self):
         return '/media/bespoke-shipping/' + str(self.slug) + '_qr.png'
@@ -164,11 +170,18 @@ class ProductCategory(models.Model):
         verbose_name_plural = 'Product Categories'
 
 
+def product_image_upload(instance, filename):
+    if instance.image_size == 0:
+        return f'product_images/original/{filename}'
+    return f'product_images/thumbnail/{filename}'
+
+
 class ProductImage(models.Model):
-    image_size_choices = ((1, 'Small'), (2, 'Large'))
+    image_size_choices = ((0, 'original'), (1, 'thumbnail'))
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='product_images', height_field='image_height', width_field='image_width')
+    image_size = models.IntegerField(choices=image_size_choices, default=0)
+    image = models.ImageField(upload_to=product_image_upload, height_field='image_height', width_field='image_width')
     sequence = models.IntegerField()
 
     image_height = models.IntegerField(blank=True, null=True)
@@ -178,26 +191,41 @@ class ProductImage(models.Model):
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
     def save(self, *args, **kwargs):
-        if ProductImage.objects.filter(id=self.id).exists():
-            super(ProductImage, self).save()
-        else:
-            super(ProductImage, self).save()
-
+        super(ProductImage, self).save()
+        if self.image_size == 0:
             height_max = 500
             width_max = 400
-
             new_img = gen_resize(self.image.path, (height_max, width_max))
-            new_img.save(self.image.path)
+            new_img_path = os.path.join('product_images/thumbnail/',
+                                        os.path.basename(self.image.path))
+            new_img.save(os.path.join(settings.MEDIA_ROOT, new_img_path))
 
-            self.image_height = new_img.height
-            self.image_width = new_img.width
-            super(ProductImage, self).save()
+            if not ProductImage.objects.filter(product=self.product,
+                                               image_size=1,
+                                               image__iendswith=os.path.basename(self.image.path)).exists():
+                logger.info(f'creating thumbnail image for {self.image.path}')
+                new_product_image = ProductImage.objects.create(
+                    product=self.product,
+                    image_size=1,
+                    image=new_img_path,
+                    sequence=self.sequence,
+                )
+
+                new_product_image.save()
 
     def __str__(self):
         return 'product ' + self.product.title + ' - image ' + str(self.sequence)
 
     def __repr__(self):
         return self.image.url
+
+
+@receiver(post_save, sender=ProductImage, dispatch_uid="update_product_image")
+def update_image(sender, instance, **kwargs):
+    if instance.image:
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        fullpath = BASE_DIR + instance.image.url
+        rotate_image(fullpath)
 
 
 class Attribute(models.Model):

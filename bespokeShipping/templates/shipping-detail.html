@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="body-padding">
+        <div class="container">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Shippment ID</th>
+                        <td>{{ shipping.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Desciption</th>
+                        <td>{{ shipping.description }}</td>
+                    </tr>
+                    <tr>
+                        <th>Number of Items</th>
+                        <td>{{ shipping.item_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Pickup</th>
+                        <td>{{ shipping.from_address }}</td>
+                    </tr>
+                    <tr>
+                        <th>Storage</th>
+                        <td>{{ shipping.get_must_go_to_barn_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>Delivery</th>
+                        <td>{{ shipping.to_address }}</td>
+                    </tr>
+                    <tr>
+                        <th>Notes</th>
+                        <td>{{ shipping.notes }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>{{ shipping.status }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-primary blue-button rounded-3 mb-5 mt-2" value="Print" onclick="window.print();">Print</button>
+        </div>
+
+    </section>
+{% endblock %}

@@ -6,6 +6,96 @@ from mailchimp_transactional.api_client import ApiClientError
 shipping_create_template_id = '13384681'
 
 
+def send_quote_paid_notification(quote):
+    subject = f'Quote Paid {quote.from_name}'
+
+    if settings.ENVIRONMENT == 'localhost':
+        subject = f'!!TESTING!! - {subject}'
+
+    if '123 test ln' in quote.to_address.casefold():
+        subject = f'!!TESTING!! - {subject}'
+
+    body = f'''
+            A quote was paid
+
+            Details:
+            Small items:
+            Quantity: {quote.small_quantity}
+            Description: {quote.small_description}
+            Medium items:
+            Quantity: {quote.medium_quantity}
+            Description: {quote.medium_description}
+            Large items:
+            Quantity: {quote.large_quantity}
+            Description: {quote.large_description}
+            Set items:
+            Quantity: {quote.set_quantity}
+            Description: {quote.set_description}
+
+            Shipping Origin
+            Name: {quote.from_name}
+            E-mail: {quote.from_email}
+            Phone: {quote.from_phone}
+            Address:
+            {quote.from_address}
+
+            Shipping Destination
+            Name: {quote.to_name}
+            E-mail: {quote.to_email}
+            Phone: {quote.to_phone}
+            Address:
+            {quote.to_address}
+
+            '''
+
+    html_body = f"""
+                        <!DOCTYPE html>
+                        <html>
+                            <head>
+                            </head>
+                            <body>
+                                <p>A quote was paid</p>
+                                <p></p>
+                                <p>Details:</p>
+                                <p>Small items:</p>
+                                <p>Quantity: {quote.small_quantity}</p>
+                                <p>Description: {quote.small_description}</p>
+                                <p>Medium items:</p>
+                                <p>Quantity: {quote.medium_quantity}</p>
+                                <p>Description: {quote.medium_description}</p>
+                                <p>Large items:</p>
+                                <p>Quantity: {quote.large_quantity}</p>
+                                <p>Description: {quote.large_description}</p>
+                                <p>Set items:</p>
+                                <p>Quantity: {quote.set_quantity}</p>
+                                <p>Description: {quote.set_description}</p>
+                                <p>Shipping Origin</p>
+                                <p>Name: {quote.from_name}</p>
+                                <p>E-mail: {quote.from_email}</p>
+                                <p>Phone: {quote.from_phone}</p>
+                                <p>Address:</p>
+                                <p>{quote.from_address}</p>
+                                <p></p>
+                                <p>Shipping Destination</p>
+                                <p>Name: {quote.to_name}</p>
+                                <p>E-mail: {quote.to_email}</p>
+                                <p>Phone: {quote.to_phone}</p>
+                                <p>Address:</p>
+                                <p>{quote.to_address}</p>
+                            </body>
+                        </html>
+                        """
+
+    EmailThread(
+        subject=subject,
+        message=body,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient=settings.EMAIL_HOST_USER,
+        fail_silently=False,
+        html_message=html_body
+    ).start()
+
+
 def send_ship_status_email(ShippingOrder, to_status):
     if to_status == 'created':
         ship_create_email(ShippingOrder)

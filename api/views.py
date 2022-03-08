@@ -4,6 +4,8 @@ from django.template.loader import render_to_string
 
 from deliveries.models import Delivery
 
+from datetime import datetime
+
 import logging
 
 logger = logging.getLogger('app_api')
@@ -14,8 +16,8 @@ def get_delivery_table(request):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
 
-    start_date = timezone.strptime(start_date, '%Y-%m-%d')
-    end_date = timezone.strptime(end_date, '%Y-%m-%d')
+    start_date = datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.strptime(end_date, '%Y-%m-%d')
 
     if end_date < start_date:
         tmp = start_date

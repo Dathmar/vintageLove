@@ -37,4 +37,5 @@ urlpatterns = [
     path('seller/', include('seller.urls', namespace='seller')),
     path('deliveries/', include('deliveries.urls', namespace='deliveries')),
     path('api/', include('api.urls', namespace='api')),
+    path('meta/', include('base.urls', namespace='base')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

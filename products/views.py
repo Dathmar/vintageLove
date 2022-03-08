@@ -29,7 +29,7 @@ def product_w_slug(request, product_slug):
         similar_products_values.append(
             {
                 'url': similar_product.get_absolute_url(),
-                'image_url': similar_product.productimage_set.get(sequence=1).image.url
+                'image_url': similar_product.productimage_set.get(sequence=1, image_size=1).image.url
             }
         )
 
@@ -41,7 +41,7 @@ def product_w_slug(request, product_slug):
 def get_product_context(request, product_identifier):
     product = get_object_or_404(Product, slug=product_identifier)
 
-    product_images = ProductImage.objects.filter(product_id=product.pk).order_by('sequence')
+    product_images = ProductImage.objects.filter(product_id=product.pk, image_size=1).order_by('sequence')
 
     is_seller = False
     if request.user.is_authenticated:
@@ -108,8 +108,13 @@ def send_internal_user_sold_email(product):
     ).start()
 
 
-def product_image(request, product_id, sequence):
-    image = get_object_or_404(ProductImage, product_id=product_id, sequence=sequence)
+def product_image(request, product_id, sequence, size):
+    if size.casefold() == 'thumbnail':
+        size = 1
+    else:
+        size = 0
+
+    image = get_object_or_404(ProductImage, product_id=product_id, sequence=sequence, image_size=size)
 
     context = {
         'image': image,
@@ -193,7 +198,7 @@ def product_list(request, category_slug=None):
     for product in products:
         images = []
         url = reverse('products:product-slug', kwargs={'product_slug': product['slug']})
-        product_images = ProductImage.objects.filter(product__id=product['id']).order_by('sequence')
+        product_images = ProductImage.objects.filter(product__id=product['id'], image_size=1).order_by('sequence')
         for product_image in product_images:
             images.append(product_image)
 
@@ -231,7 +236,7 @@ def product_list_stage(request, stage):
     for product in products:
         images = []
         url = reverse('products:product-slug', kwargs={'product_slug': product['slug']})
-        product_images = ProductImage.objects.filter(product__id=product['id']).order_by('sequence')
+        product_images = ProductImage.objects.filter(product__id=product['id'], image_size=1).order_by('sequence')
         for product_image in product_images:
             images.append(product_image)
 

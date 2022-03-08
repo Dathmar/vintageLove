@@ -4,7 +4,7 @@ from . import views
 app_name = 'products'
 urlpatterns = [
 
-    path('images/<uuid:product_id>/<int:sequence>/', views.product_image),
+    path('images/<uuid:product_id>/<int:sequence>/<str:size>', views.product_image, name='product_image'),
     path('qr/', views.product_qr_list, name='product-qr-list'),
     path('qr/<uuid:product_id>/', views.product_qr, name='product-qr'),
     path('categroy/<slug:category_slug>/', views.product_list, name='all-products'),

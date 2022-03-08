@@ -17,6 +17,7 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
+                    <th scope="col">Delivery Date</th>
                     <th scope="col">User</th>
                     <th scope="col">Shipment</th>
                     <th scope="col">Status</th>
@@ -31,6 +32,7 @@
                 {% for delivery in deliveries %}
                     <tr>
                         <th scope="row">{{ delivery.sequence }}</th>
+                        <td>{{ delivery.scheduled_date }}</td>
                         <td>{{ delivery.user.username }}</td>
                         <td>{{ delivery.shipping_id }}</td>
                         {% if delivery.shipping.status.name == 'Order Recieved' and delivery.shipping.must_go_to_barn == '0' %}
@@ -43,6 +45,7 @@
                         <td>{{ delivery.shipping.to_address }}</td></td>
                         {% elif delivery.shipping.status.name == 'Order Recieved' and delivery.shipping.must_go_to_barn != '0' %}
                         <td>Pickup</td>
+                        <td>{{ delivery.scheduled_date }}</td>
                         <td>
                             <p>{{ delivery.shipping.from_name }}</p>
                             <p>{{ delivery.shipping.from_phone }}</p>
@@ -51,6 +54,7 @@
                         <td>Barn</td></td>
                         {% elif  delivery.shipping.status.name != 'Order Recieved' and delivery.shipping.must_go_to_barn == '0' %}
                         <td>Delivery</td>
+                        <td>{{ delivery.scheduled_date }}</td>
                         <td>
                             <p>{{ delivery.shipping.to_name }}</p>
                             <p>{{ delivery.shipping.to_phone }}</p>
@@ -71,7 +75,6 @@
                     </tr>
                 {% endfor %}
             </tbody>
-
         </table>
     </div>
 

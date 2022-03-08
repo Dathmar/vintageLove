@@ -13,5 +13,4 @@ urlpatterns = [
     path('assignments/create/', views.CreateAssignmentsView.as_view(), name='assignments-create'),
     path('assignments/associate/', views.AssociateAssignmentsView.as_view(), name='assignments-associate'),
     path('equipment-status/<str:tod>/', views.EquipmentStatusView.as_view(), name='equipment-status'),
-    path('get-delivery-table/', views.get_delivery_table, name='get-delivery-table'),
 ]

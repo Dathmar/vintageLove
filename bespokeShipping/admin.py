@@ -14,7 +14,7 @@ class QuoteAdmin(admin.ModelAdmin):
 
 @admin.register(Shipping)
 class ShippingAdmin(admin.ModelAdmin):
-    list_display = ['to_name', 'to_email', 'to_phone', 'from_name', 'from_email', 'status', 'order_window',
+    list_display = ['id', 'to_name', 'to_email', 'to_phone', 'from_name', 'from_email', 'status', 'order_window',
                     'create_datetime']
     list_filter = ['status', 'order_window']
     search_fields = ['to_name', 'to_email', 'to_phone', 'from_name', 'from_email']

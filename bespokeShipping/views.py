@@ -13,6 +13,7 @@ from .models import ShippingStatus, Quote, Shipping
 from products.models import UserSeller, Seller
 from orders.views import submit_payment
 
+from base.Emailing import send_quote_paid_notification
 from base.texting import quote_notification_text
 
 import logging
@@ -20,8 +21,14 @@ logger = logging.getLogger('app_api')
 
 
 def quote_context(request):
+
     sellers = Seller.objects.all()
     return render(request, 'quote-context.html', {'sellers': sellers})
+
+
+def shipping_detail(request, shipping_id):
+    shipping = get_object_or_404(Shipping, id=shipping_id)
+    return render(request, 'shipping-detail.html', {'shipping': shipping})
 
 
 def is_valid_uuid(uuid_string, version=4):
@@ -81,6 +88,7 @@ class PayQuote(View):
             if payment_result == 'pass':
                 quote.paid = True
                 quote.save()
+                send_quote_paid_notification(quote)
                 init_status = ShippingStatus.objects.get(name='Order Received')
                 if not quote.shipping:
                     shipping = Shipping.objects.create(

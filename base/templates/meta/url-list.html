@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <section class="body-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <ul>
+                        {% for url in urls %}
+                            <li><a href="{{ url }}">{{ url }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
