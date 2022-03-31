@@ -14,6 +14,9 @@ from decimal import Decimal
 
 from square.client import Client
 
+import logging
+logger = logging.getLogger('app_api')
+
 
 # Create your views here.
 def order_create(request, product_id):
@@ -31,7 +34,9 @@ def order_create(request, product_id):
 
                 payment_result = submit_payment(order_cost_info['order_cost'] * 100, request.session['nonce'],
                                                 request.session['idempotency_key'])
+
                 request.session['idempotency_key'] = False
+                request.session['nonce'] = False
 
                 if payment_result == 'pass':
                     order = form.save()
@@ -55,6 +60,7 @@ def order_create(request, product_id):
 
     if not request.session.get('idempotency_key'):
         request.session['idempotency_key'] = str(uuid.uuid4())
+        request.session['nonce'] = False
 
     data = {
         'form': form,
@@ -186,22 +192,28 @@ def get_tax(state):
 
 def order_nonce(request):
     if request.method == 'POST':
-        request.session['nonce'] = json.loads(request.body)['nonce']
+        logger.info('order_nonce Received nonce')
+        nonce = json.loads(request.body)['nonce']
+        request.session['nonce'] = nonce
+        logger.info(f'order_nonce set nonce to {nonce}')
         return HttpResponse('ok')
 
+    logger.info('Get nonce request not allowed')
     return HttpResponseNotAllowed(['POST', ])
 
 
 def submit_payment(payment_amount, nonce, idempotency_key):
     # process the payment
     body = {
-        'source_id': nonce,
+        'source_id': str(nonce),
         'idempotency_key': f'{str(idempotency_key)}',
         'amount_money': {
             'amount': int(payment_amount),
             'currency': 'USD'
         }
     }
+
+    logger.info(f'submitting payment with this info {body}')
 
     client = Client(
         access_token=settings.SQUARE_ACCESS_TOKEN,
@@ -212,8 +224,10 @@ def submit_payment(payment_amount, nonce, idempotency_key):
     result = payments_api.create_payment(body)
 
     if result.is_success():
+        logger.info('Payment successful')
         return 'pass'
     elif result.is_error():
+        logger.info('Payment failed')
         payment_errors = []
         for error in result.errors:
             payment_errors.append(error['detail'])

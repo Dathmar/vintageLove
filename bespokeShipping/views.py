@@ -6,29 +6,39 @@ from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponse
 from django.views import View
+from django.contrib.auth.models import User
 
-from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm, DeliveryLevelQuote, InsuranceFormQuote, \
-    ShippingNotes
+from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm, DeliveryLevelQuote, \
+    InsuranceFormQuote, ShippingNotes
 from .models import ShippingStatus, Quote, Shipping
 from products.models import UserSeller, Seller
 from orders.views import submit_payment
+from deliveries.models import Delivery
 
 from base.Emailing import send_quote_paid_notification
-from base.texting import quote_notification_text
+
 
 import logging
 logger = logging.getLogger('app_api')
 
 
 def quote_context(request):
-
     sellers = Seller.objects.all()
     return render(request, 'quote-context.html', {'sellers': sellers})
 
 
 def shipping_detail(request, shipping_id):
     shipping = get_object_or_404(Shipping, id=shipping_id)
-    return render(request, 'shipping-detail.html', {'shipping': shipping})
+    drivers = User.objects.filter(groups__name='Driver').values_list('username', 'username')
+    existing_pickup = Delivery.objects.filter(shipping=shipping, pickup=True).first()
+    existing_delivery = Delivery.objects.filter(shipping=shipping, pickup=False).first()
+    context = {
+        'shipping': shipping,
+        'drivers': drivers,
+        'existing_pickup': existing_pickup,
+        'existing_delivery': existing_delivery,
+    }
+    return render(request, 'shipping-detail.html', context)
 
 
 def is_valid_uuid(uuid_string, version=4):
@@ -45,25 +55,29 @@ class PayQuote(View):
 
     def get(self, request, *args, **kwargs):
         encoding_id = kwargs.get('encoding')
-
+        logger.info(f'PayQuote GET encoding_id: {encoding_id}')
         request.session['idempotency_shipping_key'] = str(uuid.uuid4())
+        request.session['nonce'] = False
+
         if is_valid_uuid(encoding_id):
             quote = get_object_or_404(Quote, pk=encoding_id)
         else:
             quote = get_object_or_404(Quote, encoding=encoding_id)
 
         if quote.paid:
+            logger.info(f'{encoding_id} PayQuote quote already paid: {quote}')
             return render(request, self.complete_template, {'quote': quote})
         context = {
             'quote': quote,
             'hide_subscribe': True,
             'square_js_url': settings.SQUARE_JS_URL,
         }
+        logger.info(f'{encoding_id} PayQuote context: {context}')
         return render(request, 'quote-payment.html', context)
 
     def post(self, request, *args, **kwargs):
         encoding_id = kwargs.get('encoding')
-
+        logger.info(f'{encoding_id} PayQuote POST encoding_id: {encoding_id}')
         if is_valid_uuid(encoding_id):
             quote = get_object_or_404(Quote, pk=encoding_id)
         else:
@@ -71,9 +85,11 @@ class PayQuote(View):
 
         payment_result = None
         if quote.paid:
+            logger.info(f'{encoding_id} PayQuote quote already paid: {quote}')
             return render(request, self.complete_template, {'quote': quote})
 
         if not quote.paid:
+            logger.info(f'{encoding_id} PayQuote quote not paid: {quote}')
             charge_cost = quote.cost * 100
             idempotency_key = request.session.get('idempotency_shipping_key')
             if not idempotency_key:
@@ -82,12 +98,19 @@ class PayQuote(View):
 
             nonce = request.session.get('nonce')
 
+            logger.info(f'{encoding_id} PayQuote nonce: {nonce}')
+            logger.info(f'{encoding_id} PayQuote idempotency_key: {idempotency_key}')
+
             payment_result = submit_payment(charge_cost, nonce, idempotency_key)
             request.session['idempotency_shipping_key'] = False
+            request.session['nonce'] = False
+
+            logger.info(f'{encoding_id} PayQuote payment_result: {str(payment_result)}')
 
             if payment_result == 'pass':
                 quote.paid = True
                 quote.save()
+                logger.info(f'{encoding_id} PayQuote marked quote paid: {quote}')
                 send_quote_paid_notification(quote)
                 init_status = ShippingStatus.objects.get(name='Order Received')
                 if not quote.shipping:
@@ -134,13 +157,14 @@ class PayQuote(View):
             'quote': quote,
             'hide_subscribe': True,
             'square_js_url': settings.SQUARE_JS_URL,
-
         }
 
         if payment_result:
+            logger.info(f'{encoding_id} PayQuote payment errors: {str(payment_result)}')
             context |= {'payment_errors': payment_result}
 
         request.session['idempotency_shipping_key'] = str(uuid.uuid4())
+        request.session['nonce'] = False
         return render(request, self.pay_template, context)
 
 
@@ -747,3 +771,4 @@ def qr_grid(request):
     sellers = Seller.objects.all()
 
     return render(request, 'seller-qr-grid.html', {'sellers': sellers})
+

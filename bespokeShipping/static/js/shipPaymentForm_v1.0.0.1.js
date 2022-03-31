@@ -1,10 +1,6 @@
 function $(x) { return document.getElementById(x)}
 
 let paymentForm;
-const tax_percent_elemt = $('tax_percent')
-const tax_amount_elemt = $('tax_amount')
-const order_cost_elemt = $('order_cost')
-const shipping_amount_elemt = $('shipping_amount')
 
 function fetchSquareAppId() {
     let sq_id = fetch('/orders/square-app-id/').then(
@@ -24,6 +20,16 @@ async function setSquareAppID() {
             // Initialize the credit card placeholders
             card: {
                 elementId: 'sq-card',
+                inputStyle: {
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    padding: '16px',
+                    autoFillColor: '#0A486A',
+                    color: '#0A486A',
+                    placeholderColor: '#0A486A',
+                    backgroundColor: '#FFFFFF',
+                    cardIconColor: '#A5A5A5',
+                },
             },
             // SqPaymentForm callback functions
             callbacks: {
@@ -31,7 +37,7 @@ async function setSquareAppID() {
                 * callback function: cardNonceResponseReceived
                 * Triggered when: SqPaymentForm completes a card nonce request
                 */
-                cardNonceResponseReceived: function (errors, nonce, cardData) {
+                cardNonceResponseReceived: async function (errors, nonce, cardData) {
                     if (errors) {
                         // Log errors from nonce generation to the browser developer console.
                         console.error('Encountered errors:');
@@ -42,7 +48,7 @@ async function setSquareAppID() {
                         return;
                     }
 
-                    nce(nonce);
+                    await putNonce(nonce);
                     document.forms[0].submit();
                     return;
                 }
@@ -51,7 +57,6 @@ async function setSquareAppID() {
     paymentForm.build();
 }
 
-setSquareAppID();
 
  // onGetCardNonce is triggered when the "Pay $1.00" button is clicked
 async function onGetCardNonce(event) {
@@ -59,33 +64,11 @@ async function onGetCardNonce(event) {
     event.preventDefault();
 
     // Request a nonce from the SqPaymentForm object
-    paymentForm.requestCardNonce();
+    await paymentForm.requestCardNonce();
 }
 
-
-function fetchCost() {
-    let state = $('id_state').value
-    let cst = fetch('/orders/order-cost/', {
-        method: 'POST',
-        headers: {"X-Requested-With": "XMLHttpRequest", "X-CSRFToken": getCookie("csrftoken")},
-        body: JSON.stringify({'product_id': product_id, 'state': state })
-    }).then(response => {
-        return response.json()
-    })
-    return cst
-}
-
-async function getCost() {
-    let cost_info = await fetchCost()
-
-    tax_percent_elemt.innerText = "Tax @ " + cost_info.tax_percent + "%"
-    shipping_amount_elemt.innerText = "$" + cost_info.shipping_amount
-    tax_amount_elemt.innerText = "$" + cost_info.tax_amount
-    order_cost_elemt.innerText = "$" + cost_info.order_cost
-}
-
-function nce(nonce) {
-    fetch('/orders/order-nonce/', {
+async function putNonce(nonce) {
+    await fetch('/orders/order-nonce/', {
         method: 'POST',
         headers: {"X-Requested-With": "XMLHttpRequest", "X-CSRFToken": getCookie("csrftoken")},
         body: JSON.stringify({'nonce': nonce})
