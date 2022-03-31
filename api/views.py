@@ -1,17 +1,90 @@
 from django.utils import timezone
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from django.views.decorators.http import require_GET, require_POST
+from django.contrib.auth.decorators import login_required
 
 from deliveries.models import Delivery
+from bespokeShipping.models import Shipping
+from django.contrib.auth.models import User
 
 from datetime import datetime
 
+import json
 import logging
 
 logger = logging.getLogger('app_api')
 
 
-# Create your views here.
+@login_required
+@require_POST
+def create_assignment(request):
+    body = json.loads(request.body)
+    shipping_id = body.get('shipping_id', None)
+    scheduled_date = body.get('scheduled_date', None)
+    driver = body.get('driver', None)
+    pickup = body.get('pickup', None)
+
+    user = User.objects.get(username=driver)
+    shipping = Shipping.objects.get(id=shipping_id)
+
+    try:
+        delivery_count = Delivery.objects.filter(
+            shipping=shipping,
+            scheduled_date=scheduled_date,
+            user=user
+        ).count()
+        delivery = Delivery.objects.create(
+            shipping=shipping,
+            scheduled_date=scheduled_date,
+            user=user,
+            pickup=pickup,
+            sequence=delivery_count + 1
+        )
+        delivery.save()
+
+        return JsonResponse({'assignment': delivery.id}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_POST
+def update_assignment(request, delivery_id):
+    body = json.loads(request.body)
+
+    scheduled_date = body.get('scheduled_date')
+    driver = body.get('driver')
+    pickup = body.get('pickup')
+
+    user = User.objects.get(username=driver)
+    scheduled_date = datetime.strptime(scheduled_date, '%Y-%m-%d')
+
+    logger.info(scheduled_date)
+    logger.info(user)
+
+    try:
+        delivery = Delivery.objects.get(id=delivery_id)
+        shipping = delivery.shipping
+
+        delivery_count = Delivery.objects.filter(
+            shipping=shipping,
+            scheduled_date=scheduled_date,
+            user=user
+        ).count()
+
+        delivery.scheduled_date = scheduled_date.date()
+        delivery.user = user
+        delivery.pickup = pickup
+        delivery.sequence = delivery_count + 1
+        delivery.save()
+
+        return JsonResponse({'assignment': delivery.id}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@require_GET
 def get_delivery_table(request):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
@@ -23,9 +96,6 @@ def get_delivery_table(request):
         tmp = start_date
         start_date = end_date
         end_date = tmp
-
-    logger.info('start_date: {}'.format(start_date))
-    logger.info('end_date: {}'.format(end_date))
 
     if start_date and end_date:
         deliveries = Delivery.objects.filter(scheduled_date__range=[start_date, end_date]).order_by('id')
