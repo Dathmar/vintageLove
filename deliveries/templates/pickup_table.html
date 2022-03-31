@@ -16,7 +16,7 @@
                 {% for pickup in pickups %}
                     <tr {% if pickup.1.create_datetime|days_from >= 3 %}style="background: red"{% elif pickup.1.create_datetime|days_from >= 2 %}style="background: yellow"{% endif %}>
                         <td><input type="checkbox" name="pickups" value="{{ pickup.1.id }}" id="id_pickups_{{ forloop.counter0 }}"></td>
-                        <td>{{ pickup.1.id }}</td>
+                        <td><a href="{% url 'bespokeShipping:ship-detail' pickup.1.id %}">{{ pickup.1.id }}</a></td>
                         <td>{{ pickup.1.create_datetime }}</td>
                         <td>{{ pickup.1.from_name }}</td>
                         <td>{{ pickup.1.from_address }}</td>

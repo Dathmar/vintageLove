@@ -3,44 +3,104 @@
 {% block content %}
     <section class="body-padding">
         <div class="container">
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <th>Shippment ID</th>
-                        <td>{{ shipping.id }}</td>
-                    </tr>
-                    <tr>
-                        <th>Desciption</th>
-                        <td>{{ shipping.description }}</td>
-                    </tr>
-                    <tr>
-                        <th>Number of Items</th>
-                        <td>{{ shipping.item_count }}</td>
-                    </tr>
-                    <tr>
-                        <th>Pickup</th>
-                        <td>{{ shipping.from_address }}</td>
-                    </tr>
-                    <tr>
-                        <th>Storage</th>
-                        <td>{{ shipping.get_must_go_to_barn_display }}</td>
-                    </tr>
-                    <tr>
-                        <th>Delivery</th>
-                        <td>{{ shipping.to_address }}</td>
-                    </tr>
-                    <tr>
-                        <th>Notes</th>
-                        <td>{{ shipping.notes }}</td>
-                    </tr>
-                    <tr>
-                        <th>Status</th>
-                        <td>{{ shipping.status }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="row">
+                <div class="col-2">
+                    Shippment ID
+                </div>
+                <div id="shipping_id" value="{{ shipping.id }}" class="col-4">
+                    {{ shipping.id }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    Desciption
+                </div>
+                <div class="col-4">
+                    {{ shipping.description }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    Number of Items
+                </div>
+                <div class="col-4">
+                    {{ shipping.item_count }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    Pickup
+                </div>
+                <div class="col-4">
+                    {{ shipping.from_address }}
+                </div>
+                <div class="col-2">
+                    <select id="id_pickup_driver" onchange="pickup_change()" class="form-select-sm" aria-label="Driver Select" {% if existing_pickup.complete or existing_pickup.blocked %}disabled{% endif %}>
+                        <option {% if not existing_pickup %}selected{% endif %}>Driver</option>
+                        {% for driver in drivers %}
+                            <option {% if existing_pickup.user.username == driver.1  %}selected{% endif %} value="{{ driver.0 }}">{{ driver.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-2">
+                    <input type="date" onchange="pickup_change()" id="id_pickup_date" class="form-control form-control-sm"{% if existing_pickup %} value="{{ existing_pickup.scheduled_date|date:"Y-m-d" }}"{% endif %}{% if existing_pickup.complete or existing_pickup.blocked %} disabled{% endif %}>
+                </div>
+                <div id="pickup_id" class="d-none" value="{{ existing_pickup.id }}">
+                    {{ existing_pickup.id }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    Storage
+                </div>
+                <div class="col-4">
+                    {{ shipping.get_must_go_to_barn_display }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    Delivery
+                </div>
+                <div class="col-4">
+                    {{ shipping.to_address }}
+                </div>
+                <div class="col-2">
+                    <select id="id_delivery_driver" onchange="delivery_change()" class="form-select-sm" aria-label="Driver Select" {% if existing_delivery.complete or existing_delivery.blocked %}disabled{% endif %}>
+                        <option {% if not existing_delivery %}selected{% endif %}>Driver</option>
+                        {% for driver in drivers %}
+                            <option {% if existing_delivery.user.username == driver.1 %}selected{% endif %} value="{{ driver.0 }}">{{ driver.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-2">
+                    <input type="date" onchange="delivery_change()" id="id_delivery_date" class="form-control form-control-sm"{% if existing_delivery %} value="{{ existing_delivery.scheduled_date|date:"Y-m-d" }}"{% endif %}{% if existing_delivery.complete or existing_delivery.blocked %} disabled{% endif %}>
+                </div>
+                <div id="delivery_id" class="d-none" value="{{ existing_delivery.id }}">
+                    {{ existing_delivery.id }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    Notes
+                </div>
+                <div class="col-4">
+                    {{ shipping.notes }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    Status
+                </div>
+                <div class="col-4">
+                    {{ shipping.status }}
+                </div>
+            </div>
             <button class="btn btn-primary blue-button rounded-3 mb-5 mt-2" value="Print" onclick="window.print();">Print</button>
         </div>
 
     </section>
+{% endblock %}
+{% block end_body %}
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'js/assignment-functions.js' %}"></script>
 {% endblock %}
