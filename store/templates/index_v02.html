@@ -7,11 +7,29 @@
 {% endblock %}
 
 {% block content %}
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                    <img src="{% static 'img/GVL Logo Lockup.png' %}" width="150px" height="151px">
+                    <p>GVL Full logo dynamic resize</p>
+                </div>
+                <div class="col-4">
+                    <img src="{% static 'img/GVL_logo-v2.svg' %}" width="150px" height="151px">
+                    <p>GVL SVG</p>
+                </div>
+                <div class="col-4">
+                    <img src="{% static 'img/GVL_logo_sm.png' %}" width="150px" height="150px">
+                    <p>GVL Small logo</p>
+                </div>
+            </div>
+        </div>
+    </section>
     <section id="hero-section-new">
         <div class="row" style="margin-left: 0; margin-right: 0; padding-top:10em;">
             <div class="col-12 d-block text-center">
                 <div class="row"><div>
-                        <h1 class="blue-font" style="font-family: 'La Luxes Serif'; font-variant-ligatures: none;" alt="Global Vintage Love">GLOBAL VINTAGE LOVE</h1>
+                        <h1 class="blue-font" style="font-family: 'Montserrat';" alt="Global Vintage Love">GLOBAL VINTAGE LOVE</h1>
                         <h2 class="orange-font" style="font-family: 'Maldins'; font-size: xx-large;">unlocking the world of vintage</h2>
                     </div>
                 </div>
@@ -19,7 +37,7 @@
                     <img class="bg-img" src="{% static 'img/Hero Background.jpg' %}">
                     <div class="cntnt-ovrly">
                         <p class="mx-auto blue-font" style="min-width: 300px; width: 40%;">We believe in the sustainable value of vintage & Antiques to create a sense of place, history and romance.</p>
-                        <a href="{% url 'store:our-purpose' %}" class="btn btn-primary blue-w-orange-button rounded-3 mt-4" style="width: 12rem; font-family: 'La Luxes Serif'; font-variant-ligatures: none;" type="button">Our Story</a>
+                        <a href="{% url 'store:our-purpose' %}" class="btn btn-primary blue-w-orange-button rounded-3 mt-4" style="width: 12rem; font-family: 'Montserrat';" type="button">Our Story</a>
                     </div>
                 </div>
 
@@ -37,12 +55,12 @@
                 <div>
                     <img src="{% static 'img/Market.png' %}" height="100px" alt=""><br/>
                     <div style="height: 60px; margin: auto;">
-                        <span class="orange-font" style="height: 60px; font-weight: bold; font-size: larger; font-family: 'La Luxes Serif'; font-variant-ligatures: none;">Global Market</span><br/>
+                        <span class="orange-font" style="height: 60px; font-weight: bold; font-size: larger; font-family: 'Montserrat';">Global Market</span><br/>
                     </div>
                     <div style="height: 100px; margin: auto; max-width: 300px;">
                         <span style="font-size: smaller;">Connection you to a global wholesale and retail network, shop, buy, ship</span>
                     </div>
-                    <a href="{% url 'products:all-products' %}" class="btn btn-primary blue-w-orange-button rounded-3 mt-4" style="width: 12rem; font-family: 'La Luxes Serif'; font-variant-ligatures: none;" type="button">Shop Now</a>
+                    <a href="{% url 'products:all-products' %}" class="btn btn-primary blue-w-orange-button rounded-3 mt-4" style="width: 12rem; font-family: 'Montserrat';" type="button">Shop Now</a>
                 </div>
                 <div class="d-none d-lg-block">
                     <img src="{% static 'img/Arrow.png' %}" style="transform: rotate(-100deg) scaleY(-1); opacity: .5;" height="150px" alt="">
@@ -50,12 +68,12 @@
                 <div>
                     <img src="{% static 'img/Ship.png' %}" height="100px" alt=""><br/>
                     <div style="height: 60px; margin: auto;">
-                        <span class="orange-font" style="height: 60px; font-weight: bold; font-size: larger; font-family: 'La Luxes Serif'; font-variant-ligatures: none;">White Glove Shipping</span><br/>
+                        <span class="orange-font" style="height: 60px; font-weight: bold; font-size: larger; font-family: 'Montserrat';">White Glove Shipping</span><br/>
                     </div>
                     <div style="height: 100px; margin: auto; max-width: 300px;">
                         <span style="font-size: smaller;">White glove delivery services from shopfront to front door, in 1-10 days</span>
                     </div>
-                    <a href="{% url 'bespoke-shipping:create' %}" class="btn btn-primary blue-w-orange-button rounded-3 mt-4" style="width: 12rem; font-family: 'La Luxes Serif'; font-variant-ligatures: none;" type="button">Instant Quote</a>
+                    <a href="{% url 'bespoke-shipping:create' %}" class="btn btn-primary blue-w-orange-button rounded-3 mt-4" style="width: 12rem; font-family: 'Montserrat';" type="button">Instant Quote</a>
                 </div>
                 <div class="d-none d-lg-block">
                     <img src="{% static 'img/Arrow.png' %}" style="transform: rotate(100deg) translateX(20px); opacity: .5;" height="150px" alt="">
@@ -63,14 +81,25 @@
                 <div>
                     <img src="{% static 'img/Designer.png' %}" height="100px" alt=""><br/>
                     <div style="height: 60px; margin: auto;">
-                        <span class="orange-font" style="height: 60px; font-weight: bold; font-size: larger; font-family: 'La Luxes Serif'; font-variant-ligatures: none;">Designer Resources</span><br/>
+                        <span class="orange-font" style="height: 60px; font-weight: bold; font-size: larger; font-family: 'Montserrat';">Designer Resources</span><br/>
                     </div>
                     <div style="height: 100px; margin: auto; max-width: 300px;">
                         <span style="font-size: smaller;">Logistical support for interior designers, receiving, inspecting and warehousing</span>
                     </div>
-                    <a href="{% url 'store:join_movement' %}" class="btn btn-primary blue-w-orange-button rounded-3 mt-4" style="width: 12rem; font-family: 'La Luxes Serif'; font-variant-ligatures: none;" type="button">Free Account</a>
+                    <a href="{% url 'store:join_movement' %}" class="btn btn-primary blue-w-orange-button rounded-3 mt-4" style="width: 12rem; font-family: 'Montserrat';" type="button">Free Account</a>
                 </div>
             </div>
         </div>
     </section>
+    <section id="recent-finds">
+        <div class="text-center">
+            <h1 class="pt-4 vintage-font">Recent Finds</h1>
+        </div>
+
+        {% include 'product-list-cards.html' %}
+        <div class="text-center pb-5">
+            <a href="{% url 'products:all-products' %}" class="btn btn-primary vintage-button blue-button rounded-3">See All Products</a>
+        </div>
+    </section>
+
 {% endblock %}
