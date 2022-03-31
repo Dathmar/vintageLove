@@ -17,6 +17,7 @@ def index(request):
 
     product_lst = Product.objects.filter(status__available_to_sell=True,
                                          productimage__sequence=1,
+                                         productimage__image_size=1,
                                          pk__in=HomepageProducts.objects.all().order_by('sequence').values('product_id')
                                          )
     product_lst = product_lst[:12]
@@ -27,7 +28,7 @@ def index(request):
     for product in products:
         images = []
         url = reverse('products:product-slug', kwargs={'product_slug': product['slug']})
-        product_images = ProductImage.objects.filter(product__id=product['id']).order_by('sequence')
+        product_images = ProductImage.objects.filter(product__id=product['id'], image_size=1).order_by('sequence')
         for product_image in product_images:
             images.append(product_image)
 
@@ -45,7 +46,30 @@ def storage(request):
 
 
 def test(request):
-    return render(request, 'index_v02.html')
+    product_lst = Product.objects.filter(status__available_to_sell=True,
+                                         productimage__sequence=1,
+                                         productimage__image_size=1,
+                                         pk__in=HomepageProducts.objects.all().order_by('sequence').values('product_id')
+                                         )
+    product_lst = product_lst[:12]
+
+    products = product_lst.values('id', 'title', 'retail_price',
+                                  'wholesale_price', 'status__display_wholesale', 'slug')
+
+    for product in products:
+        images = []
+        url = reverse('products:product-slug', kwargs={'product_slug': product['slug']})
+        product_images = ProductImage.objects.filter(product__id=product['id'], image_size=1).order_by('sequence')
+        for product_image in product_images:
+            images.append(product_image)
+
+        product.update({'images': images, 'url': url})
+
+    context = {
+        'products': products,
+    }
+
+    return render(request, 'index_v02.html', context)
 
 
 def our_purpose(request):

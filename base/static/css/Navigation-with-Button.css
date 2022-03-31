@@ -14,6 +14,14 @@ font-maldins {
   font-family: 'Maldins' !important;
 }
 
+font-montserrat {
+  font-family: 'Montserrat' !important;
+}
+
+font-colus {
+  font-family: 'Colus' !important;
+}
+
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #0A486A;
