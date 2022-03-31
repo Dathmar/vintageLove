@@ -34,8 +34,8 @@
                         <th scope="row">{{ delivery.sequence }}</th>
                         <td>{{ delivery.scheduled_date }}</td>
                         <td>{{ delivery.user.username }}</td>
-                        <td>{{ delivery.shipping_id }}</td>
-                        {% if delivery.shipping.status.name == 'Order Recieved' and delivery.shipping.must_go_to_barn == '0' %}
+                        <td><a href="{% url 'bespokeShipping:ship-detail' delivery.shipping_id %}">{{ delivery.shipping_id }}</a></td>
+                        {% if delivery.pickup and delivery.shipping.must_go_to_barn == '0' %}
                         <td>Pickup</td>
                         <td>
                             <p>{{ delivery.shipping.from_name }}</p>
@@ -43,7 +43,7 @@
                         </td>
                         <td>{{ delivery.shipping.from_address }}</td>
                         <td>{{ delivery.shipping.to_address }}</td></td>
-                        {% elif delivery.shipping.status.name == 'Order Recieved' and delivery.shipping.must_go_to_barn != '0' %}
+                        {% elif delivery.pickup and delivery.shipping.must_go_to_barn != '0' %}
                         <td>Pickup</td>
                         <td>{{ delivery.scheduled_date }}</td>
                         <td>
@@ -52,7 +52,7 @@
                         </td>
                         <td>{{ delivery.shipping.from_address }}</td>
                         <td>Barn</td></td>
-                        {% elif  delivery.shipping.status.name != 'Order Recieved' and delivery.shipping.must_go_to_barn == '0' %}
+                        {% elif not delivery.pickup and delivery.shipping.must_go_to_barn == '0' %}
                         <td>Delivery</td>
                         <td>{{ delivery.scheduled_date }}</td>
                         <td>

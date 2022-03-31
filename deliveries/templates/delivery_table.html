@@ -13,7 +13,7 @@
                 {% for delivery in deliveries %}
                     <tr {% if delivery.1.create_datetime|days_from >= 7 %}style="background: red"{% elif delivery.1.create_datetime|days_from >= 3 %}style="background: yellow"{% endif %}>
                         <td><input type="checkbox" name="deliveries" value="{{ delivery.1.id }}" id="id_deliveries_{{ forloop.counter0 }}"></td>
-                        <td>{{ delivery.1.id }}</td>
+                        <td><a href="{% url 'bespokeShipping:ship-detail' delivery.1.id %}">{{ delivery.1.id }}</a></td>
                         <td>{{ delivery.1.to_address }}</td>
                         {% if delivery.1.notes %}
                             <td>{{ delivery.1.notes }}</td>
