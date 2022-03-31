@@ -13,21 +13,19 @@ if not hasattr(django, 'apps'):
     django.setup()
 
 from django.conf import settings
-from products.image_generation import gen_resize
+from products.image_generation import gen_resize, rotate_image
 from products.models import ProductImage
 
-def do_resize():
+
+def do_resize_and_model_create():
     for pImage in ProductImage.objects.filter(image_size=0):
         media_dir = settings.MEDIA_ROOT
         image_path = os.path.join(media_dir, pImage.image.name)
-        img = Image.open(image_path)
         new_img = gen_resize(image_path, (500, 400))
 
         new_img_path = os.path.join('product_images/thumbnail/',
                                     os.path.basename(pImage.image.path))
         new_img.save(os.path.join(settings.MEDIA_ROOT, new_img_path))
-
-        new_img.save(image_path, img.format)
 
         new_image = ProductImage.objects.create(
             product=pImage.product,
@@ -35,6 +33,18 @@ def do_resize():
             image=new_img_path,
             sequence=pImage.sequence,
         )
+        new_image.save()
+
+
+def do_resize():
+    original_path = r'C:\Users\kaild\OneDrive\Desktop\original'
+    thumbnail_path = r'C:\Users\kaild\OneDrive\Desktop\thumbnail'
+    for file in os.listdir(original_path):
+        print(file)
+        image_path = os.path.join(original_path, file)
+        new_img = gen_resize(image_path, (500, 400))
+        new_img.save(os.path.join(thumbnail_path, file))
+
 
 def do_resequence():
     product_dup_images = []
@@ -65,5 +75,13 @@ def do_resequence():
             img_count += 1
 
 
+def do_rotate():
+    import os
+    path_of_the_directory = r'C:\Users\kaild\PycharmProjects\vintageLove\media\product_images\original'
+    for files in os.listdir(path_of_the_directory):
+        file_path = os.path.join(path_of_the_directory, files)
+        rotate_image(file_path)
+
+
 if __name__ == "__main__":
-    do_resequence()
+    do_resize()

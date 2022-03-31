@@ -5,6 +5,7 @@ import logging
 
 logger = logging.getLogger('app_api')
 
+
 def rotate_image(img_path):
     with Image.open(img_path) as im:
         img = im.copy()
@@ -15,6 +16,8 @@ def rotate_image(img_path):
         if piexif.ImageIFD.Orientation in exif_dict["0th"]:
             orientation = exif_dict["0th"].pop(piexif.ImageIFD.Orientation)
             exif_bytes = piexif.dump(exif_dict)
+            print(img_path)
+            print(orientation)
             if orientation == 2:
                 img = img.transpose(Image.FLIP_LEFT_RIGHT)
             elif orientation == 3:

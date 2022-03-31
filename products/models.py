@@ -225,7 +225,11 @@ def update_image(sender, instance, **kwargs):
     if instance.image:
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         fullpath = BASE_DIR + instance.image.url
-        rotate_image(fullpath)
+        try:
+            rotate_image(fullpath)
+        except Exception as e:
+            logger.info(f'error rotating image {fullpath}')
+            logger.info(e)
 
 
 class Attribute(models.Model):
