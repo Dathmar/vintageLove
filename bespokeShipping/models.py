@@ -7,6 +7,7 @@ import uuid
 import base62
 from random import getrandbits
 import logging
+from django.apps import apps
 
 logger = logging.getLogger('app_api')
 
@@ -34,12 +35,6 @@ class Shipping(models.Model):
                     ('set', 'Sets'))
     location_choices = (('door', 'To Door'),
                         ('placement', 'In home placement'))
-    window_choices = (('0', '8am-10am'),
-                      ('1', '10am-12pm'),
-                      ('2', '12pm-2pm'),
-                      ('3', '2pm-4pm'),
-                      ('4', '4pm-6pm'),
-                      ('5', '6pm-8pm'),)
     BARN_OPTIONS = (('0', 'Not Required'),
                     ('1', 'Repair'),
                     ('2', 'Warehouse'),
@@ -69,7 +64,6 @@ class Shipping(models.Model):
     distance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     status = models.ForeignKey(ShippingStatus, on_delete=models.CASCADE, blank=True, null=True)
-    order_window = models.CharField(max_length=10, choices=window_choices, blank=True, null=True)
     notes = models.TextField(max_length=4000, blank=True, null=True)
     delivery_requested_date = models.DateField(blank=True, null=True)
     pickup_requested_date = models.DateField(blank=True, null=True)
@@ -103,9 +97,28 @@ class Shipping(models.Model):
             last_status = Shipping.objects.get(id=self.id).status
             if last_status != self.status:
                 to_status = self.status.name
-                send_ship_status_email(self, to_status=to_status)
+                if to_status == 'Pickup Scheduled':
+                    delivery = self.get_active_pickup()
+                    if not delivery:
+                        raise ValueError('No active pickup found for this shipping')
+                elif to_status == 'Out for Delivery':
+                    delivery = self.get_active_delivery()
+                    if not delivery:
+                        raise ValueError('No active delivery found for this shipping')
+                else:
+                    delivery = None
+                send_ship_status_email(self, to_status=to_status, Delivery=delivery)
 
         super(Shipping, self).save()
+
+    def get_active_pickup(self):
+        pickup = apps.get_model('deliveries', 'Delivery')
+        return pickup.objects.filter(shipping=self, pickup=True, blocked=False, complete=False).first()
+
+    def get_active_delivery(self):
+        delivery = apps.get_model('deliveries', 'Delivery')
+        return delivery.objects.filter(shipping=self, pickup=False, blocked=False, complete=False).first()
+
 
     def __str__(self):
         return f'{self.id}'
@@ -256,4 +269,3 @@ class ShippingFile(models.Model):
 
     class Meta:
         ordering = ['-shipping__create_datetime']
-

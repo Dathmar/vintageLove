@@ -24,6 +24,7 @@ def create_assignment(request):
     scheduled_date = body.get('scheduled_date', None)
     driver = body.get('driver', None)
     pickup = body.get('pickup', None)
+    scheduled_time = body.get('scheduled_time', None)
 
     user = User.objects.get(username=driver)
     shipping = Shipping.objects.get(id=shipping_id)
@@ -39,6 +40,7 @@ def create_assignment(request):
             scheduled_date=scheduled_date,
             user=user,
             pickup=pickup,
+            tod=scheduled_time,
             sequence=delivery_count + 1
         )
         delivery.save()
@@ -56,6 +58,7 @@ def update_assignment(request, delivery_id):
     scheduled_date = body.get('scheduled_date')
     driver = body.get('driver')
     pickup = body.get('pickup')
+    scheduled_time = body.get('scheduled_time')
 
     user = User.objects.get(username=driver)
     scheduled_date = datetime.strptime(scheduled_date, '%Y-%m-%d')
@@ -76,6 +79,7 @@ def update_assignment(request, delivery_id):
         delivery.scheduled_date = scheduled_date.date()
         delivery.user = user
         delivery.pickup = pickup
+        delivery.tod = scheduled_time
         delivery.sequence = delivery_count + 1
         delivery.save()
 

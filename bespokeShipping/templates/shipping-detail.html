@@ -45,6 +45,14 @@
                 <div class="col-2">
                     <input type="date" onchange="pickup_change()" id="id_pickup_date" class="form-control form-control-sm"{% if existing_pickup %} value="{{ existing_pickup.scheduled_date|date:"Y-m-d" }}"{% endif %}{% if existing_pickup.complete or existing_pickup.blocked %} disabled{% endif %}>
                 </div>
+                <div class="col-2">
+                    <select id="id_pickup_tod" onchange="pickup_change()" class="form-select-sm" aria-label="TOD Select" {% if existing_pickup.complete or existing_pickup.blocked %}disabled{% endif %}>
+                        <option {% if not existing_pickup %}selected{% endif %}>TOD</option>
+                        {% for tod in tods %}
+                            <option {% if existing_pickup.tod == tod.0 %}selected{% endif %} value="{{ tod.0 }}">{{ tod.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <div id="pickup_id" class="d-none" value="{{ existing_pickup.id }}">
                     {{ existing_pickup.id }}
                 </div>
@@ -74,6 +82,14 @@
                 </div>
                 <div class="col-2">
                     <input type="date" onchange="delivery_change()" id="id_delivery_date" class="form-control form-control-sm"{% if existing_delivery %} value="{{ existing_delivery.scheduled_date|date:"Y-m-d" }}"{% endif %}{% if existing_delivery.complete or existing_delivery.blocked %} disabled{% endif %}>
+                </div>
+                <div class="col-2">
+                    <select id="id_delivery_tod" onchange="delivery_change()" class="form-select-sm" aria-label="TOD Select" {% if existing_delivery.complete or existing_delivery.blocked %}disabled{% endif %}>
+                        <option {% if not existing_delivery %}selected{% endif %}>TOD</option>
+                        {% for tod in tods %}
+                            <option {% if existing_delivery.tod == tod.0 %}selected{% endif %} value="{{ tod.0 }}">{{ tod.1 }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div id="delivery_id" class="d-none" value="{{ existing_delivery.id }}">
                     {{ existing_delivery.id }}

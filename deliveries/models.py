@@ -10,6 +10,13 @@ logger = logging.getLogger('app_api')
 
 # Create your models here.
 class Delivery(models.Model):
+    window_choices = (('0', '8am-10am'),
+                      ('1', '10am-12pm'),
+                      ('2', '12pm-2pm'),
+                      ('3', '2pm-4pm'),
+                      ('4', '4pm-6pm'),
+                      ('5', '6pm-8pm'),)
+
     shipping = models.ForeignKey(Shipping, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     sequence = models.IntegerField(default=0)
@@ -18,6 +25,7 @@ class Delivery(models.Model):
     blocked = models.BooleanField(default=False)
     block_reason = models.CharField(max_length=255, default='', blank=True, null=True)
     complete = models.BooleanField(default=False)
+    tod = models.CharField(max_length=1, choices=window_choices, null=True, blank=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)

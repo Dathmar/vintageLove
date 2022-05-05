@@ -7,19 +7,22 @@ let delivery_id = delivery_elem.attr('value');
 function delivery_change() {
     let driver = $('#id_delivery_driver').val();
     let scheduled_date = $('#id_delivery_date').val();
+    let scheduled_time = $('#id_delivery_tod').val();
 
-    post_assignment(delivery_id, driver, scheduled_date, false);
+    post_assignment(delivery_id, driver, scheduled_date, scheduled_time, false);
 }
 
 function pickup_change() {
     let driver = $('#id_pickup_driver').val();
     let scheduled_date = $('#id_pickup_date').val();
+    let scheduled_time = $('#id_pickup_tod').val();
 
-    post_assignment(pickup_id, driver, scheduled_date, true);
+    post_assignment(pickup_id, driver, scheduled_date, scheduled_time, true);
 }
 
-function post_assignment(id, driver, scheduled_date, pickup) {
-    if (new Date(scheduled_date) instanceof Date && !isNaN(new Date(scheduled_date)) && driver != '' && driver!='Driver') {
+function post_assignment(id, driver, scheduled_date, scheduled_time, pickup) {
+    if (new Date(scheduled_date) instanceof Date && !isNaN(new Date(scheduled_date)) && driver != '' && driver!='Driver'
+        && scheduled_time != '' && scheduled_time != 'TOD') {
         let url;
         let body;
         if (id != '') {
@@ -29,6 +32,7 @@ function post_assignment(id, driver, scheduled_date, pickup) {
                 'shipping_id': shippingID,
                 'driver': driver,
                 'scheduled_date': scheduled_date,
+                'scheduled_time': scheduled_time,
                 'pickup': pickup
             };
         } else {
@@ -37,6 +41,7 @@ function post_assignment(id, driver, scheduled_date, pickup) {
                 'shipping_id': shippingID,
                 'driver': driver,
                 'scheduled_date': scheduled_date,
+                'scheduled_time': scheduled_time,
                 'pickup': pickup
             };
         }

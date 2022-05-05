@@ -96,13 +96,15 @@ def send_quote_paid_notification(quote):
     ).start()
 
 
-def send_ship_status_email(ShippingOrder, to_status):
+def send_ship_status_email(ShippingOrder, to_status, Delivery):
     if to_status == 'created':
         ship_create_email(ShippingOrder)
+    elif to_status == 'Pickup Scheduled':
+        ship_pickup_scheduled_email(ShippingOrder, Delivery)
     elif to_status == 'Pickup Complete':
         ship_picked_up_email(ShippingOrder)
     elif to_status == 'Out for Delivery':
-        ship_out_email(ShippingOrder)
+        ship_out_email(ShippingOrder, Delivery)
     elif to_status == 'Delivery Complete':
         ship_delivered_email(ShippingOrder)
 
@@ -179,6 +181,25 @@ def ship_create_email(ShippingOrder):
     ).start()
 
 
+def ship_pickup_scheduled_email(ShippingOrder, Delivery):
+    items = items_details(ShippingOrder)
+
+    global_merge_vars = {
+        'items': items,
+        'from_name': ShippingOrder.from_name,
+        'from_address': ShippingOrder.from_address,
+        'to_name': ShippingOrder.to_name,
+        'order_window': Delivery.get_tod_display(),
+        'pickup_date': Delivery.scheduled_date.strftime("%m-%d-%Y"),
+    }
+
+    EmailTemplateThread(
+        template="Shipping Order - Pickup Scheduled",
+        recipient=ShippingOrder.from_email,
+        global_merge_vars_dict=global_merge_vars,
+    ).start()
+
+
 def ship_picked_up_email(ShippingOrder):
     global_merge_vars = {
         'from_name': ShippingOrder.from_name,
@@ -233,14 +254,14 @@ def ship_delivered_email(ShippingOrder):
     ).start()
 
 
-def ship_out_email(ShippingOrder):
+def ship_out_email(ShippingOrder, Delivery):
     items = items_details(ShippingOrder)
     insurance = insurance_details(ShippingOrder)
     ship_location = ship_location_details(ShippingOrder)
 
     global_merge_vars = {
         'items': items,
-        'order_window': ShippingOrder.order_window,
+        'order_window': Delivery.get_tod_display(),
         'to_address': ShippingOrder.to_address,
         'placement': ship_location,
         'insurance': insurance,
