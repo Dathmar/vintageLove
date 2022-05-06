@@ -96,7 +96,7 @@ def send_quote_paid_notification(quote):
     ).start()
 
 
-def send_ship_status_email(ShippingOrder, to_status, Delivery):
+def send_ship_status_email(ShippingOrder, to_status, Delivery=None):
     if to_status == 'created':
         ship_create_email(ShippingOrder)
     elif to_status == 'Pickup Scheduled':
