@@ -9,11 +9,11 @@ from django.http import JsonResponse
 
 from pytz import timezone as tz
 from datetime import datetime, timedelta
-from .models import Delivery, EquipmentStatus, Equipment
+from .models import Delivery, EquipmentStatus
 from .forms import DeliverySelectionForm, PickupSelectionForm, ShippingAssociateForm, DateDriverForm, \
     EquipmentStatusForm
 from bespokeShipping.models import Shipping, ShippingStatus
-import json
+
 import logging
 
 logger = logging.getLogger('app_api')

@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_list_or_404, get_object_or_404, redirect
+from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.html import mark_safe
 from django.forms import formset_factory

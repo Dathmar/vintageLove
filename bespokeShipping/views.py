@@ -4,7 +4,7 @@ import uuid
 
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
-from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponse
+from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views import View
 from django.contrib.auth.models import User
 
