@@ -190,29 +190,6 @@ class ProductImage(models.Model):
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
-    def save(self, *args, **kwargs):
-        super(ProductImage, self).save()
-        if self.image_size == 0:
-            height_max = 500
-            width_max = 400
-            new_img = gen_resize(self.image.path, (height_max, width_max))
-            new_img_path = os.path.join('product_images/thumbnail/',
-                                        os.path.basename(self.image.path))
-            new_img.save(os.path.join(settings.MEDIA_ROOT, new_img_path))
-
-            if not ProductImage.objects.filter(product=self.product,
-                                               image_size=1,
-                                               image__iendswith=os.path.basename(self.image.path)).exists():
-                logger.info(f'creating thumbnail image for {self.image.path}')
-                new_product_image = ProductImage.objects.create(
-                    product=self.product,
-                    image_size=1,
-                    image=new_img_path,
-                    sequence=self.sequence,
-                )
-
-                new_product_image.save()
-
     def __str__(self):
         return 'product ' + self.product.title + ' - image ' + str(self.sequence)
 
@@ -227,6 +204,26 @@ def update_image(sender, instance, **kwargs):
         fullpath = BASE_DIR + instance.image.url
         try:
             rotate_image(fullpath)
+            if instance.image_size == 0:
+                height_max = 500
+                width_max = 400
+                new_img = gen_resize(instance.image.path, (height_max, width_max))
+                new_img_path = os.path.join('product_images/thumbnail/',
+                                            os.path.basename(instance.image.path))
+                new_img.save(os.path.join(settings.MEDIA_ROOT, new_img_path))
+
+                if not ProductImage.objects.filter(product=instance.product,
+                                                   image_size=1,
+                                                   image__iendswith=os.path.basename(instance.image.path)).exists():
+                    logger.info(f'creating thumbnail image for {instance.image.path}')
+                    new_product_image = ProductImage.objects.create(
+                        product=instance.product,
+                        image_size=1,
+                        image=new_img_path,
+                        sequence=instance.sequence,
+                    )
+
+                    new_product_image.save()
         except Exception as e:
             logger.info(f'error rotating image {fullpath}')
             logger.info(e)
