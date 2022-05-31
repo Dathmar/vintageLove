@@ -154,6 +154,7 @@ def get_shipping_amount(state):
 def square_app_id(request):
     data = {
         'square_app_id': settings.SQUARE_APP_ID,
+        'square_location_id': settings.SQUARE_LOCATION_ID,
     }
     return JsonResponse(data, safe=False)
 

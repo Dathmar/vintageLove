@@ -37,7 +37,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input class="btn btn-primary blue-button rounded-3 mb-5 mt-2" type="submit" value="Place Order" onclick="onGetCardNonce(event)">
+                        <input class="btn btn-primary blue-button rounded-3 mb-5 mt-2" type="submit" value="Place Order" id="card-button">
                         {% endif %}
                     </form>
                 </div>
@@ -88,6 +88,6 @@
             </div>
         </div>
     </div>
-    <script src="{% get_static_prefix %}js/paymentForm_v1.0.0.1.js"></script>
+    <script src="{% get_static_prefix %}js/paymentForm_v1.1.0.0.js"></script>
 
 {% endblock %}

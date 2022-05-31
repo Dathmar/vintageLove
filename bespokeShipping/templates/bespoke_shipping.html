@@ -221,7 +221,7 @@
                     </div>
                     <div class="row text-center">
                         <div class="col text-center">
-                            <input disabled class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" id="form-submit" style="max-width: 10em;" type="submit" value="Place Order" onclick="onGetCardNonce(event)">
+                            <input disabled class="btn btn-primary blue-w-orange-button rounded-3 mt-1 mb-3" id="card-button" style="max-width: 10em;" type="submit" value="Place Order">
                         </div>
                     </div>
                 </div>
@@ -231,8 +231,8 @@
 </section>
 {% endblock %}
 {% block end_body %}
-    <script src="{% get_static_prefix %}js/shipPaymentForm_v1.0.0.1.js"></script>
+    <script src="{% get_static_prefix %}js/paymentForm_v1.1.0.0.js"></script>
     <script src="{% get_static_prefix %}js/jquery-3.6.0.min.js"></script>
-    <script src="{% get_static_prefix %}js/ship-tabs.js"></script>
+    <script src="{% get_static_prefix %}js/ship-tabs_V1.0.0.0.js"></script>
     <script src="{% get_static_prefix %}js/live-chat.js"></script>
 {% endblock %}

@@ -42,7 +42,6 @@ tabEl.on('shown.bs.tab', function (event) {
         let card = document.createElement('div')
         card.id = 'sq-card'
         form_container.append(card)
-        setSquareAppID();
     }
 })
 
@@ -179,7 +178,6 @@ function delay(time) {
 }
 
 async function calculate_cost() {
-
     from_address = get_from_address();
 
     if(ship_error === null && to_address.length > 0 && from_address.length > 0) {
@@ -200,10 +198,10 @@ async function calculate_cost() {
         console.log(ship_cost);
         if(ship_cost.supported_state === false) {
             cost_elem.text('Sorry, we do not ship to your state.');
-            $('#form-submit').prop('disabled', true);
+            $('#card-button').prop('disabled', true);
         } else {
             cost_elem.text('Your shipping cost is $' + ship_cost.cost);
-            $('#form-submit').prop('disabled', false);
+            $('#card-button').prop('disabled', false);
         }
         let distance = parseFloat(ship_cost.distance);
 
@@ -220,7 +218,7 @@ async function calculate_cost() {
         cost_elem.show();
     } else {
         $('#cost').text('Cannot Calculate Shipping Costs');
-        $('#form-submit').prop('disabled', true);
+        $('#card-button').prop('disabled', true);
         loading_elem.hide()
     }
 }
