@@ -9,7 +9,7 @@ from django.views import View
 from django.contrib.auth.models import User
 
 from .forms import SizeForm, ShipToForm, DeliveryLevel, FromForm, InsuranceForm, DeliveryLevelQuote, \
-    InsuranceFormQuote, ShippingNotes
+    InsuranceFormQuote, ShippingNotes, QuoteCostOverride
 from .models import ShippingStatus, Quote, Shipping
 from products.models import UserSeller, Seller
 from orders.views import submit_payment
@@ -182,6 +182,7 @@ class CreateQuoteView(View):
     insurance_form = InsuranceFormQuote
     from_form = FromForm
     shipping_notes = ShippingNotes
+    quote_cost_override = QuoteCostOverride
 
     create_template = 'create-quote.html'
     complete_template = 'complete-quote.html'
@@ -192,6 +193,7 @@ class CreateQuoteView(View):
         delivery_level = self.delivery_level
         insurance_form = self.insurance_form
         shipping_notes = self.shipping_notes
+        quote_cost_override = self.quote_cost_override
 
         seller = seller_context(request.user, seller_slug)
 
@@ -207,6 +209,7 @@ class CreateQuoteView(View):
             'insurance_form': insurance_form,
             'from_form': from_form,
             'shipping_notes': shipping_notes,
+            'quote_cost_override': quote_cost_override,
             'seller': seller,
             'hide_subscribe': True,
         }
@@ -218,6 +221,7 @@ class CreateQuoteView(View):
         delivery_level = self.delivery_level(request.POST)
         insurance_form = self.insurance_form(request.POST)
         shipping_notes = self.shipping_notes(request.POST)
+        quote_cost_override = self.quote_cost_override(request.POST)
 
         seller = seller_context(request.user, seller_slug)
 
@@ -281,8 +285,14 @@ class CreateQuoteView(View):
             shipping_level = delivery_level.cleaned_data['level']
             insurance_level = insurance_form.cleaned_data['insure_level']
 
-            cost, distance, supported_state = calculate_shipping_cost(ship_sizes, from_address,
-                                                                      ship_to_address, shipping_level, insurance_level)
+            cost, distance, supported_state = calculate_shipping_cost(
+                    ship_sizes, from_address, ship_to_address, shipping_level, insurance_level)
+
+            if quote_cost_override.is_valid():
+                override_cost = quote_cost_override.cleaned_data['override_cost']
+
+            if override_cost:
+                cost = override_cost
 
             note = shipping_notes.cleaned_data['notes']
             delivery_requested_date = shipping_notes.cleaned_data['delivery_requested_date']
@@ -333,6 +343,8 @@ class CreateQuoteView(View):
                 'delivery_level': delivery_level,
                 'insurance_form': insurance_form,
                 'from_form': from_form,
+                'shipping_notes': shipping_notes,
+                'quote_cost_override': quote_cost_override,
                 'seller': seller,
                 'hide_subscribe': True,
             }
