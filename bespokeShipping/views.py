@@ -333,8 +333,12 @@ class CreateQuoteView(View):
                 paid=False,
             )
             quote.save()
-
-            return render(request, 'complete-quote.html', {'quote': quote})
+            change_url = f'/admin/bespokeShipping/quote/{quote.id}/change/'
+            return render(request, 'complete-quote.html',
+                          {
+                              'quote': quote,
+                              'change_url': change_url,
+                          })
 
         else:
             context = {

@@ -8,6 +8,10 @@
             <h1>Quote Created</h1>
             <p>An e-mail has been sent to {{ quote.to_email }}</p>
             <p><a href="{% url 'bespoke-shipping:pay-quote' quote.encoding %}">globalvintagelove.com{% url 'bespoke-shipping:pay-quote' quote.encoding %}</a></p>
+            <br>
+            <p>Quote Price: {{ quote.cost }}</p>
+            <br>
+            <p>Edit the quote <a href="{{ change_url }}">here</a> </p>
         </div>
     </div>
 </div>
