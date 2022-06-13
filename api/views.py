@@ -5,7 +5,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
 
 from deliveries.models import Delivery
-from bespokeShipping.models import Shipping
+from bespokeShipping.models import Shipping, Quote
 from django.contrib.auth.models import User
 
 from datetime import datetime
@@ -106,3 +106,15 @@ def get_delivery_table(request):
         t = render_to_string('delivery-table.html', {'deliveries': deliveries})
         return JsonResponse({'table_html': t}, status=200)
     return JsonResponse({'error': 'No date range provided'}, status=400)
+
+
+@login_required
+@require_POST
+def approve_quote(request, quote_id):
+    try:
+        quote = Quote.objects.get(id=quote_id)
+        quote.approved = True
+        quote.save()
+        return JsonResponse({'quote': quote.id}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
