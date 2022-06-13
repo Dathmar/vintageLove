@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block extra_header %}
+<script type="text/javascript" src="{% static 'js/quote-approval.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <div class="row">
@@ -12,6 +16,12 @@
             <p>Quote Price: {{ quote.cost }}</p>
             <br>
             <p>Edit the quote <a href="{{ change_url }}">here</a> </p>
+            <br>
+            {% if quote.approved %}
+            <button id="approve-button" type="button" class="btn btn-primary disabled pb-5" onclick="approve_quote('{{ quote.id }}')">Approved</button>
+            {% else %}
+            <button id="approve-button" type="button" class="btn btn-primary pb-5" onclick="approve_quote('{{ quote.id }}')">Approve Quote</button>
+            {% endif %}
         </div>
     </div>
 </div>
