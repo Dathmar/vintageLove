@@ -28,4 +28,5 @@ class ShippingAdmin(admin.ModelAdmin):
 class ShippingStatusAdmin(admin.ModelAdmin):
     list_display = ['name']
 
+
 admin.site.register(ShippingFileType)
