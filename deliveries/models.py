@@ -15,7 +15,9 @@ class Delivery(models.Model):
                       ('2', '12pm-2pm'),
                       ('3', '2pm-4pm'),
                       ('4', '4pm-6pm'),
-                      ('5', '6pm-8pm'),)
+                      ('5', '6pm-8pm'),
+                      ('98', 'Anytime'),
+                      ('99', 'TBD'))
 
     shipping = models.ForeignKey(Shipping, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -25,7 +27,7 @@ class Delivery(models.Model):
     blocked = models.BooleanField(default=False)
     block_reason = models.CharField(max_length=255, default='', blank=True, null=True)
     complete = models.BooleanField(default=False)
-    tod = models.CharField(max_length=1, choices=window_choices, null=True, blank=True)
+    tod = models.CharField(max_length=2, choices=window_choices, null=True, blank=True)
 
     create_datetime = models.DateTimeField('date created', auto_now_add=True)
     update_datetime = models.DateTimeField('date updated', auto_now=True)
