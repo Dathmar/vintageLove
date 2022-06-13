@@ -30,12 +30,9 @@ def quote_context(request):
 def shipping_detail(request, shipping_id):
     shipping = get_object_or_404(Shipping, id=shipping_id)
     drivers = User.objects.filter(groups__name='Driver').values_list('username', 'username')
-    tods = (('0', '8am-10am'),
-            ('1', '10am-12pm'),
-            ('2', '12pm-2pm'),
-            ('3', '2pm-4pm'),
-            ('4', '4pm-6pm'),
-            ('5', '6pm-8pm'),)
+
+    tods = Delivery.window_choices
+
     existing_pickup = Delivery.objects.filter(shipping=shipping, pickup=True).first()
     existing_delivery = Delivery.objects.filter(shipping=shipping, pickup=False).first()
     context = {
