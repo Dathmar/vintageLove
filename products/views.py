@@ -6,6 +6,8 @@ from .merged_attributes import get_attribute_list
 from django.db.models import Max, Min
 from django.db.models import Q
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
 from base.Emailing import EmailThread
 
@@ -122,16 +124,24 @@ def product_image(request, product_id, sequence, size):
     return render(request, 'product_image.html', context)
 
 
+@login_required
 def product_qr(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
-    context = {
-        'product': product,
-    }
-    return render(request, 'product-qr.html', context)
+
+    if product.seller in UserSeller.objects.filter(user=request.user).values_list('seller', flat=True):
+        context = {
+            'product': product,
+        }
+        return render(request, 'product-qr.html', context)
+
+    return Http404()
 
 
+@login_required
 def product_qr_list(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(
+        seller__in=UserSeller.objects.filter(user=request.user).values_list('seller', flat=True)
+    )
     context = {
         'products': products,
     }
@@ -139,8 +149,12 @@ def product_qr_list(request):
     return render(request, 'product-qr-list.html', context)
 
 
+@login_required
 def product_qr_grid(request):
-    products = Product.objects.filter().order_by('-create_datetime')
+
+    products = Product.objects.filter(
+        seller__in=UserSeller.objects.filter(user=request.user).values_list('seller', flat=True)
+    ).order_by('-create_datetime')
     context = {
         'products': products,
     }
