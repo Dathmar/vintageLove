@@ -80,7 +80,7 @@
                 </div>
             </div>
         </div>
-        <div id="product details" class="row grey-background" style="font-size: smaller; padding-top: 3em; padding-bottom: 3em;">
+        <div id="product details" class="row grey-background" style="padding-top: 3em; padding-bottom: 3em;">
             <div class="offset-1 col-md-5">
                 <div class="row">
                     <h4 style="font-weight: bold;">About</h4>
@@ -97,10 +97,10 @@
                     <div class="row">
                         <div class="col-12 col-sm-5">
                             <h5>Dimensions</h5>
-                            <p>Width: {{ product.dimension_width|intword }} in.</p>
-                            <p>Height: {{ product.dimension_height|intword }} in.</p>
-                            <p>Length: {{ product.dimension_length|intword }} in.</p>
-                            <p>Weight: {{ product.dimension_weight|intword }} lbs.</p>
+                            <p>Width: {{ product.dimension_width.normalize }} in.</p>
+                            <p>Height: {{ product.dimension_height.normalize}} in.</p>
+                            <p>Length: {{ product.dimension_length.normalize }} in.</p>
+                            <p>Weight: {{ product.dimension_weight.normalize }} lbs.</p>
                         </div>
                         <div class="col-12 col-sm-5">
                             {% for attribute, attr_values in product.attributes.items %}
