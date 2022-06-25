@@ -57,7 +57,7 @@
                 <div>
                     <h2>{{ product.title }}</h2>
                     <h5 class="pb-3">
-                        {% if product.status.disply_wholesale %}
+                        {% if product.status.display_wholesale %}
                             <strike>${{ product.retail_price|intword|intcomma }}</strike> <span style="color: #cc4639">${{ product.wholesale_price|intword|intcomma }}</span>
                         {% else %}
                             ${{ product.retail_price|intword|intcomma }}

@@ -28,7 +28,7 @@
                             <div class="card-body">
                                 <p class="card-title" style="height: 4em; font-weight: bold;">{{ product.title }}</p>
                                 <p style="margin-bottom: 1rem" class="card-text">
-                                    {% if product.status__disply_wholesale %}
+                                    {% if product.status__display_wholesale %}
                                         <strike>${{ product.retail_price|intword|intcomma }}</strike> <span style="color: #cc4639">${{ product.wholesale_price|intword|intcomma }}</span>
                                     {% else %}
                                         ${{ product.retail_price|intword|intcomma }}
