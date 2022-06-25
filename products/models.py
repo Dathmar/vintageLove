@@ -95,6 +95,8 @@ class UserSeller(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT)
 
+    # think about adding automated user seller creation based on new group (auto-user seller)
+
     def __str__(self):
         return f'User {self.user.first_name} {self.user.last_name} -- Seller {self.seller.name}'
 
