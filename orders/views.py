@@ -30,7 +30,13 @@ def order_create(request, product_id):
         if form.is_valid():
             if order_item.status != sold_status:
                 state = form.cleaned_data['state']
-                order_cost_info = get_order_cost_info(state, order_item.retail_price)
+
+                if order_item.status.display_wholesale:
+                    order_price = order_item.wholesale_price
+                else:
+                    order_price = order_item.retail_price
+
+                order_cost_info = get_order_cost_info(state, order_price)
 
                 payment_result = submit_payment(order_cost_info['order_cost'] * 100, request.session['nonce'],
                                                 request.session['idempotency_key'])
@@ -43,7 +49,7 @@ def order_create(request, product_id):
                     order.paid = True
                     order.save()
 
-                    OrderItem.objects.create(order=order, product=order_item, price=order_item.retail_price, quantity=1)
+                    OrderItem.objects.create(order=order, product=order_item, price=order_price, quantity=1)
 
                     order_item.status = ProductStatus.objects.filter(name='Sold').first()
                     order_item.update_datetime = datetime.now()
@@ -174,7 +180,11 @@ def order_cost(request):
         else:
             state = body['state']
             tax_value = get_tax(state)
-            cost = product.retail_price
+
+            if product.status.display_wholesale:
+                cost = product.wholesale_price
+            else:
+                cost = product.retail_price
 
             data = get_order_cost_info(state, cost)
 

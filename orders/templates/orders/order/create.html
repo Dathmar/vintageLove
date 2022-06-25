@@ -58,7 +58,11 @@
                                 <th scope="row">1</th>
                                 <td>{{ product }}</td>
                                 {% if product.status.name != 'Sold' %}
-                                <td>${{ product.retail_price }}</td>
+                                    {% if product.status.display_wholesale %}
+                                        <td>${{ product.wholesale_price }}</td>
+                                    {% else %}
+                                        <td>${{ product.retail_price }}</td>
+                                    {% endif %}
                                 {% else %}
                                 <td>No longer available</td>
                                 {% endif %}
@@ -77,7 +81,11 @@
                                 <th scope="row"></th>
                                 <td><strong>Total</strong></td>
                                 {% if product.status.name != 'Sold' %}
-                                <td id="order_cost">${{ product.retail_price }}</td>
+                                    {% if product.status.display_wholesale %}
+                                        <td id="order_cost">${{ product.wholesale_price }}</td>
+                                    {% else %}
+                                        <td id="order_cost">${{ product.retail_price }}</td>
+                                    {% endif %}
                                 {% else %}
                                 <td id="order_cost">Not Available</td>
                                 {% endif %}
