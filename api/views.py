@@ -13,7 +13,8 @@ from datetime import datetime
 import json
 import logging
 
-logger = logging.getLogger('app_api')
+app_logger = logging.getLogger('app_api')
+payment_logger = logging.getLogger('payments')
 
 
 @login_required
@@ -63,8 +64,8 @@ def update_assignment(request, delivery_id):
     user = User.objects.get(username=driver)
     scheduled_date = datetime.strptime(scheduled_date, '%Y-%m-%d')
 
-    logger.info(scheduled_date)
-    logger.info(user)
+    app_logger.info(scheduled_date)
+    app_logger.info(user)
 
     try:
         delivery = Delivery.objects.get(id=delivery_id)

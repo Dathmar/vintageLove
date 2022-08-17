@@ -15,7 +15,8 @@ from decimal import Decimal
 from square.client import Client
 
 import logging
-logger = logging.getLogger('app_api')
+
+payment_logger = logging.getLogger('payments')
 
 
 # Create your views here.
@@ -203,13 +204,13 @@ def get_tax(state):
 
 def order_nonce(request):
     if request.method == 'POST':
-        logger.info('order_nonce Received nonce')
+        payment_logger.info('order_nonce Received nonce')
         nonce = json.loads(request.body)['nonce']
         request.session['nonce'] = nonce
-        logger.info(f'order_nonce set nonce to {nonce}')
+        payment_logger.info(f'order_nonce set nonce to {nonce}')
         return HttpResponse('ok')
 
-    logger.info('Get nonce request not allowed')
+    payment_logger.info('Get nonce request not allowed')
     return HttpResponseNotAllowed(['POST', ])
 
 
@@ -224,7 +225,7 @@ def submit_payment(payment_amount, nonce, idempotency_key):
         }
     }
 
-    logger.info(f'submitting payment with this info {body}')
+    payment_logger.info(f'submitting payment with this info {body}')
 
     client = Client(
         access_token=settings.SQUARE_ACCESS_TOKEN,
@@ -235,10 +236,10 @@ def submit_payment(payment_amount, nonce, idempotency_key):
     result = payments_api.create_payment(body)
 
     if result.is_success():
-        logger.info('Payment successful')
+        payment_logger.info('Payment successful')
         return 'pass'
     elif result.is_error():
-        logger.info('Payment failed')
+        payment_logger.info('Payment failed')
         payment_errors = []
         for error in result.errors:
             payment_errors.append(error['detail'])

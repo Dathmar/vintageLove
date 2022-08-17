@@ -19,7 +19,9 @@ from base.Emailing import send_quote_paid_notification
 
 
 import logging
-logger = logging.getLogger('app_api')
+payments_logger = logging.getLogger('payments')
+app_logger = logging.getLogger('app_api')
+
 
 
 def quote_context(request):
@@ -59,7 +61,7 @@ class PayQuote(View):
 
     def get(self, request, *args, **kwargs):
         encoding_id = kwargs.get('encoding')
-        logger.info(f'PayQuote GET encoding_id: {encoding_id}')
+        payments_logger.info(f'{encoding_id} PayQuote GET encoding_id: {encoding_id}')
         request.session['idempotency_shipping_key'] = str(uuid.uuid4())
         request.session['nonce'] = False
 
@@ -69,19 +71,19 @@ class PayQuote(View):
             quote = get_object_or_404(Quote, encoding=encoding_id)
 
         if quote.paid:
-            logger.info(f'{encoding_id} PayQuote quote already paid: {quote}')
+            payments_logger.info(f'{encoding_id} PayQuote quote already paid: {quote}')
             return render(request, self.complete_template, {'quote': quote})
         context = {
             'quote': quote,
             'hide_subscribe': True,
             'square_js_url': settings.SQUARE_JS_URL,
         }
-        logger.info(f'{encoding_id} PayQuote context: {context}')
+        payments_logger.info(f'{encoding_id} PayQuote context: {context}')
         return render(request, 'quote-payment.html', context)
 
     def post(self, request, *args, **kwargs):
         encoding_id = kwargs.get('encoding')
-        logger.info(f'{encoding_id} PayQuote POST encoding_id: {encoding_id}')
+        payments_logger.info(f'{encoding_id} PayQuote POST encoding_id: {encoding_id}')
         if is_valid_uuid(encoding_id):
             quote = get_object_or_404(Quote, pk=encoding_id)
         else:
@@ -89,11 +91,11 @@ class PayQuote(View):
 
         payment_result = None
         if quote.paid:
-            logger.info(f'{encoding_id} PayQuote quote already paid: {quote}')
+            payments_logger.info(f'{encoding_id} PayQuote quote already paid: {quote}')
             return render(request, self.complete_template, {'quote': quote})
 
         if not quote.paid:
-            logger.info(f'{encoding_id} PayQuote quote not paid: {quote}')
+            payments_logger.info(f'{encoding_id} PayQuote quote not paid: {quote}')
             charge_cost = quote.cost * 100
             idempotency_key = request.session.get('idempotency_shipping_key')
             if not idempotency_key:
@@ -102,19 +104,19 @@ class PayQuote(View):
 
             nonce = request.session.get('nonce')
 
-            logger.info(f'{encoding_id} PayQuote nonce: {nonce}')
-            logger.info(f'{encoding_id} PayQuote idempotency_key: {idempotency_key}')
+            payments_logger.info(f'{encoding_id} PayQuote nonce: {nonce}')
+            payments_logger.info(f'{encoding_id} PayQuote idempotency_key: {idempotency_key}')
 
             payment_result = submit_payment(charge_cost, nonce, idempotency_key)
             request.session['idempotency_shipping_key'] = False
             request.session['nonce'] = False
 
-            logger.info(f'{encoding_id} PayQuote payment_result: {str(payment_result)}')
+            payments_logger.info(f'{encoding_id} PayQuote payment_result: {str(payment_result)}')
 
             if payment_result == 'pass':
                 quote.paid = True
                 quote.save()
-                logger.info(f'{encoding_id} PayQuote marked quote paid: {quote}')
+                payments_logger.info(f'{encoding_id} PayQuote marked quote paid: {quote}')
                 send_quote_paid_notification(quote)
                 init_status = ShippingStatus.objects.get(name='Order Received')
                 if not quote.shipping:
@@ -164,7 +166,7 @@ class PayQuote(View):
         }
 
         if payment_result:
-            logger.info(f'{encoding_id} PayQuote payment errors: {str(payment_result)}')
+            payments_logger.info(f'{encoding_id} PayQuote payment errors: {str(payment_result)}')
             context |= {'payment_errors': payment_result}
 
         request.session['idempotency_shipping_key'] = str(uuid.uuid4())
@@ -560,7 +562,7 @@ def create(request, seller_slug=None):
                 return render(request, 'bespoke_shipping_complete.html', {'shipping': shipping})
             else:
 
-                logger.error(f'Payment failed for shipping: {str(payment_result)} - {ship_to_first_name} {ship_to_last_name} - {ship_to_phone} - {ship_to_email}')
+                app_logger.error(f'Payment failed for shipping: {str(payment_result)} - {ship_to_first_name} {ship_to_last_name} - {ship_to_phone} - {ship_to_email}')
                 context = {
                     'size_form_errors': size_form.errors,
                     'size_form': size_form,
@@ -585,16 +587,16 @@ def create(request, seller_slug=None):
             ship_to_phone = ship_to_form.cleaned_data['phone']
 
             if size_form.errors:
-                logger.error(f'Size form errors: {str(size_form.errors)} - {ship_to_first_name} {ship_to_last_name} '
+                app_logger.error(f'Size form errors: {str(size_form.errors)} - {ship_to_first_name} {ship_to_last_name} '
                              f'- {ship_to_phone} - {ship_to_email}')
             if ship_to_form.errors:
-                logger.error(f'Ship to form errors: {str(ship_to_form.errors)} - {ship_to_first_name} '
+                app_logger.error(f'Ship to form errors: {str(ship_to_form.errors)} - {ship_to_first_name} '
                              f'{ship_to_last_name} - {ship_to_phone} - {ship_to_email}')
             if delivery_level.errors:
-                logger.error(f'Delivery level errors: {str(delivery_level.errors)} - '
+                app_logger.error(f'Delivery level errors: {str(delivery_level.errors)} - '
                              f'{ship_to_first_name} {ship_to_last_name} - {ship_to_phone} - {ship_to_email}')
             if insurance_form.errors:
-                logger.error(f'Insurance form errors: {str(insurance_form.errors)} - '
+                app_logger.error(f'Insurance form errors: {str(insurance_form.errors)} - '
                              f'{ship_to_first_name} {ship_to_last_name} - {ship_to_phone} - {ship_to_email}')
 
             context = {
@@ -775,7 +777,7 @@ def calculate_distance(from_address, to_address):
 
         return distance['rows'][0]['elements'][0]['distance']['text'], to_state, from_state
     except Exception as e:
-        logger.error(f'error during distance calculation {e}')
+        app_logger.error(f'error during distance calculation {e}')
         raise e
 
 
