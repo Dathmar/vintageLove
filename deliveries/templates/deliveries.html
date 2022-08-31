@@ -22,6 +22,7 @@
                     <th scope="col">To</th>
                     <th scope="col">Item(s)</th>
                     <th scope="col">Timeframe</th>
+                    <th scope="col">Notes</th>
                     {% if not show_buttons %}
                     <th scope="col">Action</th>
                     {% endif %}
@@ -67,6 +68,7 @@
                         {% endif %}
                         <td>{{ delivery.shipping.description }}</td>
                         <td>{{ delivery.shipping.order_window }}</td>
+                        <td>{{ delivery.shipping.notes }}</td>
                         {% if not show_buttons %}
                         <td>
                         {% if delivery.complete %}
