@@ -364,6 +364,69 @@ def send_internal_shipping_notification(shipping):
     ).start()
 
 
+def send_internal_blocked_delivery(delivery):
+    if delivery.pickup:
+        subject = f'Blocked Pickup For Shipping ID {delivery.shipping.id}'
+
+    if settings.ENVIRONMENT == 'localhost':
+        subject = f'!!TESTING!! - {subject}'
+
+    if '123 test ln' in delivery.shipping.to_address.casefold():
+        subject = f'!!TESTING!! - {subject}'
+
+    body = f'''
+        A delivery or pickup has been blocked.
+        
+        Pickup: {delivery.pickup}
+        Shipping ID: {delivery.shipping.id}
+        Shipping Origin
+        Name: {delivery.shipping.from_name}
+        E-mail: {delivery.shipping.from_email}
+        Phone: {delivery.shipping.from_phone}
+        Address:
+        {delivery.shipping.from_address}
+        
+        Shipping Destination
+        Name: {delivery.shipping.to_name}
+        E-mail: {delivery.shipping.to_email}
+        Phone: {delivery.shipping.to_phone}
+        '''
+
+    html_body = f"""
+                    <!DOCTYPE html>
+                    <html>
+                        <head>
+                        </head>
+                        <body>
+                            <p>A delivery or pickup has been blocked.</p>
+                            <br/>
+                            <p>Pickup: {delivery.pickup}</p>
+                            <p>Shipping ID: {delivery.shipping.id}</p>
+                            <p>Shipping Origin</p>
+                            <p>Name: {delivery.shipping.from_name}</p>
+                            <p>E-mail: {delivery.shipping.from_email}</p>
+                            <p>Phone: {delivery.shipping.from_phone}</p>
+                            <p>Address:</p>
+                            <p>{delivery.shipping.from_address}</p>
+                            <br/>
+                            <p>Shipping Destination</p>
+                            <p>Name: {delivery.shipping.to_name}</p>
+                            <p>E-mail: {delivery.shipping.to_email}</p>
+                            <p>Phone: {delivery.shipping.to_phone}</p>
+                        </body>
+                    </html>
+                    """
+
+    EmailThread(
+        subject=subject,
+        message=body,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient='alynne@globalvintagelove.com',
+        fail_silently=False,
+        html_message=html_body
+    ).start()
+
+
 class EmailTemplateThread(threading.Thread):
     def __init__(self, template, recipient, global_merge_vars_dict):
         self.template = template

@@ -14,6 +14,8 @@ from .forms import DeliverySelectionForm, PickupSelectionForm, ShippingAssociate
     EquipmentStatusForm
 from bespokeShipping.models import Shipping, ShippingStatus
 
+from base.Emailing import send_internal_blocked_delivery
+
 import logging
 
 logger = logging.getLogger('app_api')
@@ -24,28 +26,28 @@ logger = logging.getLogger('app_api')
 def my_assignments(request):
     date_today = tz('UTC').localize(datetime.now().today())
 
-    morning_status = EquipmentStatus.objects.filter(user=request.user, timeperiod='morning',
-                                                    schedule_date=date_today)
-
-    if not morning_status:
-        return redirect('deliveries:equipment-status', tod='morning')
-
     deliveries = Delivery.objects.filter(user=request.user,
                                          scheduled_date=date_today).order_by('sequence')
+    remaining_deliveries = deliveries.filter(Q(complete=True) | Q(blocked=True)).count() - deliveries.count()
 
-    if deliveries.filter(Q(complete=True) | Q(blocked=True)).count() != deliveries.count():
-        return render(request, 'deliveries.html', {'deliveries': deliveries, 'date': date_today.strftime('%m/%d/%Y'),
-                                                   'show_buttons': False})
+    if remaining_deliveries != 0:
+        morning_status = EquipmentStatus.objects.filter(user=request.user, timeperiod='morning',
+                                                        schedule_date=date_today)
 
-    evening_status = EquipmentStatus.objects.filter(timeperiod='evening', user=request.user,
-                                                    schedule_date=date_today)
-    if not evening_status:
-        return redirect('deliveries:equipment-status', tod='evening')
-    date_tomorrow = date_today + timedelta(days=1)
-    deliveries = Delivery.objects.filter(user=request.user,
-                                         scheduled_date=date_tomorrow).order_by('sequence')
-    return render(request, 'deliveries.html', {'deliveries': deliveries, 'date': date_tomorrow.strftime('%m/%d/%Y'),
-                                               'show_buttons': True})
+        if not morning_status:
+            return redirect('deliveries:equipment-status', tod='morning')
+        else:
+            return render(request, 'deliveries.html',
+                          {'deliveries': deliveries, 'date': date_today.strftime('%m/%d/%Y'),
+                           'show_buttons': False})
+
+    if remaining_deliveries != 0:
+        evening_status = EquipmentStatus.objects.filter(timeperiod='evening', user=request.user,
+                                                        schedule_date=date_today)
+        if not evening_status:
+            return redirect('deliveries:equipment-status', tod='evening')
+
+    return my_deliveries_tomorrow(request)
 
 
 def my_deliveries_tomorrow(request):
@@ -248,6 +250,9 @@ def block_assignment(request, delivery_id):
         delivery = Delivery.objects.get(pk=delivery_id)
         delivery.blocked = True
         delivery.save()
+
+        send_internal_blocked_delivery(delivery)
+
         return JsonResponse({'new_url': reverse('deliveries:unblock-assignment', kwargs={'delivery_id': delivery_id}),
                              'new_label': 'Unblock'}, status=200)
     except:
