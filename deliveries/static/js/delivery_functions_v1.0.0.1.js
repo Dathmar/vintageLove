@@ -7,7 +7,6 @@ async function process_delivery(elem) {
             'csrfmiddlewaretoken': getCookie('csrftoken')
         },
         success: function(data) {
-            resolve(data);
             let par = elem.closest('td');
             if (data.new_url != null) {
                 par.innerHTML = '<p>Non-Complete</p>';
