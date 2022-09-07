@@ -41,11 +41,11 @@ def my_assignments(request):
                           {'deliveries': deliveries, 'date': date_today.strftime('%m/%d/%Y'),
                            'show_buttons': False})
 
-    if remaining_deliveries != 0:
-        evening_status = EquipmentStatus.objects.filter(timeperiod='evening', user=request.user,
-                                                        schedule_date=date_today)
-        if not evening_status:
-            return redirect('deliveries:equipment-status', tod='evening')
+
+    evening_status = EquipmentStatus.objects.filter(timeperiod='evening', user=request.user,
+                                                    schedule_date=date_today)
+    if not evening_status:
+        return redirect('deliveries:equipment-status', tod='evening')
 
     return my_deliveries_tomorrow(request)
 
