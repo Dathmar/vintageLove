@@ -42,7 +42,7 @@
                             <p>{{ delivery.shipping.from_phone }}</p>
                         </td>
                         <td>{{ delivery.shipping.from_address }}</td>
-                        <td>{{ delivery.shipping.to_address }}</td></td>
+                        <td>{{ delivery.shipping.to_address }}</td>
                         {% elif delivery.pickup and delivery.shipping.must_go_to_barn != '0' %}
                         <td>Pickup</td>
                         <td>{{ delivery.scheduled_date }}</td>
@@ -51,7 +51,7 @@
                             <p>{{ delivery.shipping.from_phone }}</p>
                         </td>
                         <td>{{ delivery.shipping.from_address }}</td>
-                        <td>Barn</td></td>
+                        <td>Barn</td>
                         {% elif not delivery.pickup and delivery.shipping.must_go_to_barn == '0' %}
                         <td>Delivery</td>
                         <td>{{ delivery.scheduled_date }}</td>
@@ -59,7 +59,7 @@
                             <p>{{ delivery.shipping.to_name }}</p>
                             <p>{{ delivery.shipping.to_phone }}</p>
                         </td>
-                        <td>{{ delivery.shipping.from_address }}</td></td>
+                        <td>{{ delivery.shipping.from_address }}</td>
                         <td>{{ delivery.shipping.to_address }}</td>
                         {% else %}
                         <td>Delivery</td>
