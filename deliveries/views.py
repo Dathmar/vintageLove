@@ -18,7 +18,7 @@ from base.Emailing import send_internal_blocked_delivery
 
 import logging
 
-logger = logging.getLogger('app_api')
+logger = logging.getLogger('deliveries')
 
 
 # Create your views here.
@@ -30,13 +30,17 @@ def my_assignments(request):
                                          scheduled_date=date_today).order_by('sequence')
     remaining_deliveries = deliveries.filter(Q(complete=True) | Q(blocked=True)).count() - deliveries.count()
 
+    logger.info(f'User {request.user} | Delivery count - {len(deliveries)} | remaining deliveries - {remaining_deliveries}')
+
     if remaining_deliveries != 0:
         morning_status = EquipmentStatus.objects.filter(user=request.user, timeperiod='morning',
                                                         schedule_date=date_today)
 
         if not morning_status:
+            logger.info(f'User {request.user} | rendering morning status')
             return redirect('deliveries:equipment-status', tod='morning')
         else:
+            logger.info(f'User {request.user} | rendering deliveries')
             return render(request, 'deliveries.html',
                           {'deliveries': deliveries, 'date': date_today.strftime('%m/%d/%Y'),
                            'show_buttons': False})
@@ -45,8 +49,10 @@ def my_assignments(request):
     evening_status = EquipmentStatus.objects.filter(timeperiod='evening', user=request.user,
                                                     schedule_date=date_today)
     if not evening_status:
+        logger.info(f'User {request.user} | rendering evening status')
         return redirect('deliveries:equipment-status', tod='evening')
 
+    logger.info(f'User {request.user} | rendering tomorrow')
     return my_deliveries_tomorrow(request)
 
 
@@ -251,11 +257,15 @@ def block_assignment(request, delivery_id):
         delivery.blocked = True
         delivery.save()
 
+        logger.info(f'User {request.user} | blocking delivery {delivery} | shipping {delivery.shipping}')
+
         send_internal_blocked_delivery(delivery)
 
         return JsonResponse({'new_url': reverse('deliveries:unblock-assignment', kwargs={'delivery_id': delivery_id}),
                              'new_label': 'Unblock'}, status=200)
-    except:
+    except Exception as e:
+        logger.info(f'User {request.user} | error blocking delivery {delivery}')
+        logger.info(f'error is {e}')
         return JsonResponse({'success': False}, status=400)
 
 
@@ -264,9 +274,15 @@ def unblock_assignment(request, delivery_id):
         delivery = Delivery.objects.get(pk=delivery_id)
         delivery.blocked = False
         delivery.save()
+
+        logger.info(f'User {request.user} | unblocking delivery {delivery} | shipping {delivery.shipping}'
+                    f' | status - {delivery.shipping.status}')
+
         return JsonResponse({'new_url': reverse('deliveries:block-assignment', kwargs={'delivery_id': delivery_id}),
                              'new_label': 'Block'}, status=200)
-    except:
+    except Exception as e:
+        logger.info(f'User {request.user} | error unblocking delivery {delivery}')
+        logger.info(f'error is {e}')
         return JsonResponse({'success': False}, status=400)
 
 
@@ -281,7 +297,14 @@ def complete_assignment(request, delivery_id):
         delivery.complete = True
         delivery.save()
         shipping.save()
+
+        logger.info(f'User {request.user} | complete delivery {delivery} | shipping {delivery.shipping}'
+                    f' | status - {delivery.shipping.status}')
+
         return JsonResponse({'success': True}, status=200)
-    except:
+    except Exception as e:
+        logger.info(f'User {request.user} | error completing delivery {delivery}')
+        logger.info(f'error is {e}')
+
         return JsonResponse({'success': False}, status=400)
 
