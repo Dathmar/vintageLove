@@ -22,14 +22,14 @@
     <meta name="msapplication-TileColor" content="#00aba9">
     <meta name="theme-color" content="#ffffff">
     <!-- End Favicon stuff -->
-
+    {% block start_styles %}{% endblock %}
     <link rel="stylesheet" href="{% get_static_prefix %}bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% get_static_prefix %}css/PowellAntique.css">
     <link rel="stylesheet" href="{% get_static_prefix %}fonts/ionicons.min.css">
     <link rel="stylesheet" href="{% static 'css/nav-bar.css' %}">
     <link rel="stylesheet" href="{% get_static_prefix %}css/Navigation-with-Button.css">
     <link rel="stylesheet" href="{% get_static_prefix %}css/Social-Icons.css">
-    {% include 'gtm.html' %}
+{#    {% include 'gtm.html' %}#}
     {% block extra_header %}{% endblock %}
 </head>
 
@@ -43,7 +43,7 @@
         <div class="container">
             {% if hide_subscribe != True %}
             <div class="row">
-                <div class="offset-3 col-md-3 pt-5 pb-5">
+                <div class="offset-0 offset-md-3 col-md-3 pt-5 pb-5">
                     <span class="white-font" style="font-variant: titling-caps;">Our Company</span><br/><br/>
                     <span class="orange-font"><a href="{% url 'store:our-purpose' %}">Our Purpose</a></span><br/>
                     <span class="orange-font"><a href="{% url 'store:return-policy' %}">Return Policy</a></span><br/>
@@ -66,10 +66,10 @@
 
     <section class="text-center vintage-font orange-background">
         <div class="social-icons">
-            <a href="https://www.facebook.com/Global-Vintage-Love-109096961408500" target="_blank"><i class="icon ion-social-facebook"></i></a>
-            <a href="https://www.instagram.com/globalvintagelove/" target="_blank"><i class="icon ion-social-instagram"></i></a>
-            <a href="https://www.youtube.com/channel/UC1ewCtR5qDollKTIeUQg8TA" target="_blank"><i class="icon ion-social-youtube"></i></a>
-            <a href="https://www.pinterest.com/globalvintagelove/" target="_blank"><i class="icon ion-social-pinterest"></i></a>
+            <a href="https://www.facebook.com/Global-Vintage-Love-109096961408500" title="Facebook Link" target="_blank"><i class="icon ion-social-facebook"></i></a>
+            <a href="https://www.instagram.com/globalvintagelove/" title="Instagram Link" target="_blank"><i class="icon ion-social-instagram"></i></a>
+            <a href="https://www.youtube.com/channel/UC1ewCtR5qDollKTIeUQg8TA" title="Youtube Link" target="_blank"><i class="icon ion-social-youtube"></i></a>
+            <a href="https://www.pinterest.com/globalvintagelove/" title="Pinterest Link" target="_blank"><i class="icon ion-social-pinterest"></i></a>
         </div>
     </section>
     <section>
