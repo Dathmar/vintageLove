@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Global Vintage Love | Quote Created{% endblock %}
+{% block start_styles %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div>
+            Your quote was created successfully! {{ quote.due_now }}
+        </div>
+    </div>
+{% endblock %}

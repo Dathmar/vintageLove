@@ -1,0 +1,26 @@
+            <div class="col-12 col-md-4">
+                <div class="row">
+                    <h4>Designer</h4>
+                </div>
+                <div class="row">
+                    <div class="fieldWrapper">
+                        <label for="{{ designers.allow_designer.id_for_label }}">Allow Designer</label>
+                        {{ designers.allow_designer }}
+                        {{ designers.allow_designer.errors }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="fieldWrapper">
+                        <label for="{{ designers.designer_pays.id_for_label }}">Designer Pays</label>
+                        {{ designers.designer_pays }}
+                        {{ designers.designer_pays.errors }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="fieldWrapper">
+                        <label for="{{ designers.designer_name.id_for_label }}">Designer Name</label><br>
+                        {{ designers.designer_name }}
+                        {{ designers.designer_name.errors }}
+                    </div>
+                </div>
+            </div>

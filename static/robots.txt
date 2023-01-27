@@ -1,4 +1,3 @@
 User-agent: *
-Disallow: /products/*
 Disallow: /return-policy/
 Disallow: /privacy-policy/

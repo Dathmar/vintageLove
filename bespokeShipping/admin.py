@@ -34,20 +34,45 @@ class ShippingFileInline(admin.TabularInline):
 
 @admin.register(Quote)
 class QuoteAdmin(admin.ModelAdmin):
-    list_display = ('from_name', 'to_name', 'approved', 'paid')
+    list_display = ('encoding', 'from_name', 'to_name', 'approved', 'paid')
+    search_fields = ['to_name', 'from_name', 'encoding']
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term,
+        )
+        try:
+            search_term_as_int = int(search_term)
+        except ValueError:
+            queryset |= self.model.objects.filter(to_name__icontains=search_term)
+        else:
+            queryset |= self.model.objects.filter(id__exact=search_term_as_int)
+        return queryset, may_have_duplicates
 
 
 @admin.register(Shipping)
 class ShippingAdmin(admin.ModelAdmin):
     list_display = ['id', 'to_name', 'to_email', 'to_phone', 'from_name', 'from_email', 'status', 'create_datetime']
     list_filter = ['status']
-    search_fields = ['to_name', 'to_email', 'to_phone', 'from_name', 'from_email']
+    search_fields = ['to_name', 'from_name', 'id']
     list_editable = ['status']
 
     inlines = [
         ShippingFileInline,
     ]
     actions = [export_to_csv]
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term,
+        )
+        try:
+            search_term_as_int = int(search_term)
+        except ValueError:
+            queryset |= self.model.objects.filter(to_name__icontains=search_term)
+        else:
+            queryset |= self.model.objects.filter(id__exact=search_term_as_int)
+        return queryset, may_have_duplicates
 
 
 @admin.register(ShippingStatus)

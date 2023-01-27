@@ -20,6 +20,10 @@ from django.conf.urls.static import static
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
 
+admin.site.index_template = 'admin/custom_index.html'
+admin.autodiscover()
+
+
 urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('img/favicon.ico'))),
     path('apple-touch-icon.png', RedirectView.as_view(url=staticfiles_storage.url('img/apple-touch-icon.png'))),
@@ -38,4 +42,5 @@ urlpatterns = [
     path('deliveries/', include('deliveries.urls', namespace='deliveries')),
     path('api/', include('api.urls', namespace='api')),
     path('meta/', include('base.urls', namespace='base')),
+    path('quotes/', include('quotes.urls', namespace='quotes')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

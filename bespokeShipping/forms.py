@@ -142,3 +142,4 @@ class ShippingNotes(forms.Form):
 class QuoteCostOverride(forms.Form):
     override_cost = forms.FloatField(widget=forms.NumberInput(attrs={'placeholder': 'Override Cost', 'min': '0'}),
                                      required=False)
+    send_payment_notification = forms.BooleanField(required=False)

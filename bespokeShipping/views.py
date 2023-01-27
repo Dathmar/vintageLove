@@ -530,33 +530,34 @@ def create(request, seller_slug=None):
             if payment_result == 'pass':
                 # now create the shipping
                 init_status = ShippingStatus.objects.get(name='Order Received')
-                shipping = Shipping.objects.create(seller=seller,
-                                                   from_name=from_name,
-                                                   from_address=from_address,
-                                                   from_email=from_email,
-                                                   from_phone=from_phone,
+                shipping = Shipping.objects.create(
+                    seller=seller,
+                    from_name=from_name,
+                    from_address=from_address,
+                    from_email=from_email,
+                    from_phone=from_phone,
 
-                                                   to_name=ship_to_first_name + ' ' + ship_to_last_name,
-                                                   to_address=ship_to_address,
-                                                   to_email=ship_to_email,
-                                                   to_phone=ship_to_phone,
+                    to_name=ship_to_first_name + ' ' + ship_to_last_name,
+                    to_address=ship_to_address,
+                    to_email=ship_to_email,
+                    to_phone=ship_to_phone,
 
-                                                   small_quantity=small_quantity,
-                                                   medium_quantity=medium_quantity,
-                                                   large_quantity=large_quantity,
-                                                   set_quantity=set_quantity,
+                    small_quantity=small_quantity,
+                    medium_quantity=medium_quantity,
+                    large_quantity=large_quantity,
+                    set_quantity=set_quantity,
 
-                                                   small_description=small_description,
-                                                   medium_description=medium_description,
-                                                   large_description=large_description,
-                                                   set_description=set_description,
-                                                   ship_location=shipping_level,
+                    small_description=small_description,
+                    medium_description=medium_description,
+                    large_description=large_description,
+                    set_description=set_description,
+                    ship_location=shipping_level,
 
-                                                   status=init_status,
+                    status=init_status,
 
-                                                   insurance=insurance_level,
-                                                   cost=cost,
-                                                   distance=distance)
+                    insurance=insurance_level,
+                    cost=cost,
+                    distance=distance)
                 shipping.save()
 
                 return render(request, 'bespoke_shipping_complete.html', {'shipping': shipping})

@@ -367,6 +367,8 @@ def send_internal_shipping_notification(shipping):
 def send_internal_blocked_delivery(delivery):
     if delivery.pickup:
         subject = f'Blocked Pickup For Shipping ID {delivery.shipping.id}'
+    else:
+        subject = f'Blocked Delivery For Shipping ID {delivery.shipping.id}'
 
     if settings.ENVIRONMENT == 'localhost':
         subject = f'!!TESTING!! - {subject}'

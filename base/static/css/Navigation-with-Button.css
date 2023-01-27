@@ -277,3 +277,10 @@ a.custom-card:hover {
     -webkit-transition-duration: 0.3s; /* Safari */
     transition-duration: 0.3s;
 }
+
+.quote-item-row {
+    border-style: solid;
+    border-color: #0A486A;
+    border-width: 5px;
+    padding: .5em 0;
+}

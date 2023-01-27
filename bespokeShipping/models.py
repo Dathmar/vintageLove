@@ -119,7 +119,6 @@ class Shipping(models.Model):
         delivery = apps.get_model('deliveries', 'Delivery')
         return delivery.objects.filter(shipping=self, pickup=False, blocked=False, complete=False).first()
 
-
     def __str__(self):
         return f'{self.id}'
 
@@ -175,6 +174,7 @@ class Quote(models.Model):
     update_datetime = models.DateTimeField('date updated', auto_now=True)
 
     encoding = models.CharField(max_length=10, blank=True, null=True)
+    send_payment_notification = models.BooleanField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.id} {self.to_name}'
@@ -182,8 +182,9 @@ class Quote(models.Model):
     def save(self, *args, **kwargs):
         if not Quote.objects.filter(id=self.id).exists():
             self.encoding = self.generate_unique_encoding()
-            quote_notification_email(self)
-            quote_notification_text(self)
+            if self.send_payment_notification:
+                quote_notification_email(self)
+                quote_notification_text(self)
 
         if self.approved and not self.shipping:
             init_status = ShippingStatus.objects.get(name='Order Received')

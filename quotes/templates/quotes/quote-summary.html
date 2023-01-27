@@ -1,0 +1,39 @@
+<div id="id_summary_table" >
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Item</td>
+                <td>Services</td>
+                <td>Due Today</td>
+                <td>Hourly</td>
+                <td>Daily</td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in items_quote %}
+        {% for service in item.services %}
+            <tr>
+                {% if forloop.first %}
+                <td>Item {{ item.index|add:1 }}</td>
+                {% else %}
+                <td></td>
+                {% endif %}
+                <td>{{ service.name }}</td>
+                <td>{{ service.due_now }}</td>
+                <td>{{ service.hourly }}</td>
+                <td>{{ service.daily }}</td>
+            </tr>
+        {% endfor %}
+        {% endfor %}
+        <tr class="blue-background white-font">>
+            <td>Totals</td>
+            <td></td>
+            <td>{{ override_form.override_due_now }}</td>
+            <td>{{ order_total.hourly }}</td>
+            <td>{{ order_total.daily }}</td>
+        </tr>>
+        </tbody>
+    </table>
+<input class="btn vintage-button" type="submit" value="Submit Quote" id="id_submit_quite"/>
+</div>
+

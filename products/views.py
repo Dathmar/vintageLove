@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Product, ProductImage, UserSeller, ProductStatus, Category
+from .models import Product, ProductImage, UserSeller, ProductStatus, Category, Seller
 from datetime import datetime
 from .merged_attributes import get_attribute_list
 from django.db.models import Max, Min
@@ -187,12 +187,20 @@ def filter_by_price(product_lst, price_min, price_max):
     return product_lst
 
 
-def product_list(request, category_slug=None):
+def seller_products(request, seller_slug):
+    return product_list(request, seller_slug=seller_slug)
+
+
+def product_list(request, category_slug=None, seller_slug=None):
     product_lst = Product.objects.filter(status__available_to_sell=True).order_by('-create_datetime')
 
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         product_lst = product_lst.filter(productcategory__category=category)
+
+    if seller_slug:
+        seller = get_object_or_404(Seller, slug=seller_slug)
+        product_lst = product_lst.filter(seller=seller)
 
     price_min = request.GET.get('priceMin')
     price_max = request.GET.get('priceMax')
@@ -276,4 +284,15 @@ def make_pages(request, obj_to_page, page_size):
     except EmptyPage:
         paged_obj = paginator.page(paginator.num_pages)
 
-    return paged_obj
+    num_pages = paginator.num_pages
+    page_no = page
+
+    if num_pages <= 11 or page_no <= 6:  # case 1 and 2
+        pages = [x for x in range(1, min(num_pages + 1, 12))]
+    elif page_no > num_pages - 6:  # case 4
+        pages = [x for x in range(num_pages - 10, num_pages + 1)]
+    else:  # case 3
+        pages = [x for x in range(page_no - 5, page_no + 6)]
+
+    return pages
+

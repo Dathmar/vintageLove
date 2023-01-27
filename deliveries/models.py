@@ -10,14 +10,16 @@ logger = logging.getLogger('app_api')
 
 # Create your models here.
 class Delivery(models.Model):
-    window_choices = (('0', '8am-10am'),
-                      ('1', '10am-12pm'),
-                      ('2', '12pm-2pm'),
-                      ('3', '2pm-4pm'),
-                      ('4', '4pm-6pm'),
-                      ('5', '6pm-8pm'),
-                      ('98', 'Anytime'),
-                      ('99', 'TBD'))
+    window_choices = (
+        ('0', '8am-10am'),
+        ('1', '10am-12pm'),
+        ('2', '12pm-2pm'),
+        ('3', '2pm-4pm'),
+        ('4', '4pm-6pm'),
+        ('5', '6pm-8pm'),
+        ('98', 'Anytime'),
+        ('99', 'TBD')
+    )
 
     shipping = models.ForeignKey(Shipping, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -64,11 +66,13 @@ def equipment_video_path(instance, filename):
 class EquipmentStatus(models.Model):
     time_options = (('morning', 'Morning'),
                     ('evening', 'Evening'),)
-    fuel_level_options = (('low', 'Low'),
-                          ('quarter', '1/4'),
-                          ('half', '1/2'),
-                          ('three_quarter', '3/4'),
-                          ('full', 'Full'),)
+    fuel_level_options = (
+        ('low', 'Low'),
+        ('quarter', '1/4'),
+        ('half', '1/2'),
+        ('three_quarter', '3/4'),
+        ('full', 'Full'),
+    )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     timeperiod = models.CharField(max_length=10, choices=time_options)
@@ -89,4 +93,12 @@ class EquipmentStatus(models.Model):
     class Meta:
         verbose_name = 'Daily Equipment Status'
         verbose_name_plural = 'Daily Equipment Statuses'
+
+
+class PdService(models.Model):
+    item = models.ForeignKey('items.Item', on_delete=models.CASCADE)
+    pickup = models.BooleanField(default=False)
+    desired_date = models.DateField(null=True, blank=True)
+    address = models.CharField(max_length=4000)
+    delivery_notes = models.CharField(max_length=4000, blank=True, null=True)
 

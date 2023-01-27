@@ -30,17 +30,17 @@ def my_assignments(request):
                                          scheduled_date=date_today).order_by('sequence')
     remaining_deliveries = deliveries.filter(Q(complete=True) | Q(blocked=True)).count() - deliveries.count()
 
-    logger.info(f'User {request.user} | Delivery count - {len(deliveries)} | remaining deliveries - {remaining_deliveries}')
+    logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | Delivery count - {len(deliveries)} | remaining deliveries - {remaining_deliveries}')
 
     if remaining_deliveries != 0:
         morning_status = EquipmentStatus.objects.filter(user=request.user, timeperiod='morning',
                                                         schedule_date=date_today)
 
         if not morning_status:
-            logger.info(f'User {request.user} | rendering morning status')
+            logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | rendering morning status')
             return redirect('deliveries:equipment-status', tod='morning')
         else:
-            logger.info(f'User {request.user} | rendering deliveries')
+            logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | rendering deliveries')
             return render(request, 'deliveries.html',
                           {'deliveries': deliveries, 'date': date_today.strftime('%m/%d/%Y'),
                            'show_buttons': False})
@@ -49,10 +49,10 @@ def my_assignments(request):
     evening_status = EquipmentStatus.objects.filter(timeperiod='evening', user=request.user,
                                                     schedule_date=date_today)
     if not evening_status:
-        logger.info(f'User {request.user} | rendering evening status')
+        logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | rendering evening status')
         return redirect('deliveries:equipment-status', tod='evening')
 
-    logger.info(f'User {request.user} | rendering tomorrow')
+    logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | rendering tomorrow')
     return my_deliveries_tomorrow(request)
 
 
@@ -200,7 +200,7 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
             # assignments is a list of tuples (shipping, delivery, pickup, sequence)
             assignments[i][0] = Shipping.objects.get(id=assignments[i][0])
             formset_context.append([form, assignments[i]])
-        logger.info(assignments)
+        logger.info({tz("UTC").localize(datetime.now().today())} | assignments)
         return render(request, self.assignment_template, {'forms': formset_context, 'assignment_date': assignment_date,
                                                           'assignment_driver': assignment_driver,
                                                           'form_count': len(assignments)})
@@ -213,7 +213,7 @@ class AssociateAssignmentsView(LoginRequiredMixin, View):
         ShippingAssociateFormset = formset_factory(ShippingAssociateForm, extra=len(assignments))
 
         formset = ShippingAssociateFormset(request.POST)
-        logger.info(formset.is_valid())
+        logger.info({tz("UTC").localize(datetime.now().today())} | formset.is_valid())
         if formset.is_valid():
             associated_shippings = []
             for i, form in enumerate(formset):
@@ -257,15 +257,15 @@ def block_assignment(request, delivery_id):
         delivery.blocked = True
         delivery.save()
 
-        logger.info(f'User {request.user} | blocking delivery {delivery} | shipping {delivery.shipping}')
+        logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | blocking delivery {delivery} | shipping {delivery.shipping}')
 
         send_internal_blocked_delivery(delivery)
 
         return JsonResponse({'new_url': reverse('deliveries:unblock-assignment', kwargs={'delivery_id': delivery_id}),
                              'new_label': 'Unblock'}, status=200)
     except Exception as e:
-        logger.info(f'User {request.user} | error blocking delivery {delivery}')
-        logger.info(f'error is {e}')
+        logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | error blocking delivery {delivery}')
+        logger.info(f'{tz("UTC").localize(datetime.now().today())} | error is {e}')
         return JsonResponse({'success': False}, status=400)
 
 
@@ -275,14 +275,14 @@ def unblock_assignment(request, delivery_id):
         delivery.blocked = False
         delivery.save()
 
-        logger.info(f'User {request.user} | unblocking delivery {delivery} | shipping {delivery.shipping}'
+        logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | unblocking delivery {delivery} | shipping {delivery.shipping}'
                     f' | status - {delivery.shipping.status}')
 
         return JsonResponse({'new_url': reverse('deliveries:block-assignment', kwargs={'delivery_id': delivery_id}),
                              'new_label': 'Block'}, status=200)
     except Exception as e:
-        logger.info(f'User {request.user} | error unblocking delivery {delivery}')
-        logger.info(f'error is {e}')
+        logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | error unblocking delivery {delivery}')
+        logger.info(f'{tz("UTC").localize(datetime.now().today())} | error is {e}')
         return JsonResponse({'success': False}, status=400)
 
 
@@ -298,13 +298,13 @@ def complete_assignment(request, delivery_id):
         delivery.save()
         shipping.save()
 
-        logger.info(f'User {request.user} | complete delivery {delivery} | shipping {delivery.shipping}'
+        logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | complete delivery {delivery} | shipping {delivery.shipping}'
                     f' | status - {delivery.shipping.status}')
 
         return JsonResponse({'success': True}, status=200)
     except Exception as e:
-        logger.info(f'User {request.user} | error completing delivery {delivery}')
-        logger.info(f'error is {e}')
+        logger.info(f'{tz("UTC").localize(datetime.now().today())} | User {request.user} | error completing delivery {delivery}')
+        logger.info(f'{tz("UTC").localize(datetime.now().today())} | error is {e}')
 
         return JsonResponse({'success': False}, status=400)
 

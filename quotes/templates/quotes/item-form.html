@@ -1,0 +1,168 @@
+        <div class="row quote-item-row rounded-2 my-2">
+            <div class="row">
+                <div class="row">
+                    <div class="col-10" id="id-item-{{ forloop.counter0 }}">
+                        <h4>Asset {{ forloop.counter }}</h4>
+                    </div>
+                    <div class="col-1">
+                        {{ item_form.copy_form }}
+                    </div>
+                    <div class="col-1">
+                        <button class="btn btn-sm remove-form-row" title="Remove Item" type="button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-trash float-end orange-font" viewBox="0 0 16 16" alt="delete">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                {{ item_form.non_field_errors }}
+            </div>
+            <div class="services row">
+                <div class="row">
+                    <h5>Services</h5>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 pt-2">
+                    <div class="fieldWrapper">
+                        <label for="{{ item_form.pickup.id_for_label }}">Pickup</label>
+                        {{ item_form.pickup }}
+                        {{ item_form.pickup.errors }}
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 pt-2">
+                    <div class="fieldWrapper">
+                        <label for="{{ item_form.delivery.id_for_label }}">Delivery</label>
+                        {{ item_form.delivery }}
+                        {{ item_form.delivery.errors }}
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 pt-2">
+                    <div class="fieldWrapper">
+                        <label for="{{ item_form.receiving.id_for_label }}">Receive</label>
+                        {{ item_form.receiving }}
+                        {{ item_form.receiving.errors }}
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 pt-2">
+                    <div class="fieldWrapper">
+                        <label for="{{ item_form.storage.id_for_label }}">Storage</label>
+                        {{ item_form.storage }}
+                        {{ item_form.storage.errors }}
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 pt-2">
+                    <div class="fieldWrapper">
+                        <label for="{{ item_form.repair.id_for_label }}">Repair</label>
+                        {{ item_form.repair }}
+                        {{ item_form.repair.errors }}
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 pt-2">
+                    <div class="fieldWrapper">
+                        <label for="{{ item_form.assembly.id_for_label }}">Assembly</label>
+                        {{ item_form.assembly }}
+                        {{ item_form.assembly.errors }}
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 pt-2">
+                    <div class="fieldWrapper">
+                        <label for="{{ item_form.insured.id_for_label }}">Insured</label>
+                        {{ item_form.insured }}
+                        {{ item_form.insured.errors }}
+                    </div>
+                </div>
+            </div>
+            <div class="item-details row">
+                <div class="row pt-2">
+                    <h5>Item Details</h5>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="col-12">
+                        <div class="fieldWrapper">
+                            {{ item_form.size }}
+                            {{ item_form.size.errors }}
+                        </div>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <div class="fieldWrapper">
+                            {{ item_form.quantity }}
+                            {{ item_form.quantity.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-9 pt-2 pt-md-0">
+                    <div class="fieldWrapper">
+                        {{ item_form.notes }}
+                        {{ item_form.notes.errors }}
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="fieldWrapper">
+                        {{ item_form.description }}
+                        {{ item_form.description.errors }}
+                    </div>
+                </div>
+            </div>
+            <div class="pickup-delivery row pt-2">
+                <div class="row">
+                    <h5>Pickup/Delivery</h5>
+                </div>
+                <div class="col-12 pt-2">
+                    <div class="fieldWrapper">
+                        <label for="{{ item_form.custom_from_address.id_for_label }}">Fill Address</label>
+                        {{ item_form.custom_from_address }}
+                        {{ item_form.custom_from_address.errors }}
+                    </div>
+                </div>
+                <div class="col-12 pt-2">
+                    <div class="fieldWrapper w-100">
+                        <label for="{{ item_form.from_seller.id_for_label }}">Seller</label>
+                        {{ item_form.from_seller }}
+                        {{ item_form.from_seller.errors }}
+                    </div>
+                </div>
+                <div class="col-12 pt-2">
+                    <div class="fieldWrapper">
+                        {{ item_form.from_address }}
+                        {{ item_form.from_address.errors }}
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 pt-2">
+                    <div class="fieldWrapper">
+                        <label for="{{ item_form.pickup_date.id_for_label }}">Pickup Date</label>
+                        {{ item_form.pickup_date }}
+                        {{ item_form.pickup_date.errors }}
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 pt-2">
+                    <div class="fieldWrapper">
+                        <label for="{{ item_form.delivery_date.id_for_label }}">Delivery Date</label>
+                        {{ item_form.delivery_date }}
+                        {{ item_form.delivery_date.errors }}
+                    </div>
+                </div>
+            </div>
+            <div class="warehouse row pt-2">
+                <div class="row">
+                    <h5>Warehouse Size</h5>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="fieldWrapper">
+                        {{ item_form.length }}
+                        {{ item_form.length.errors }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 pt-2 pt-md-0">
+                    <div class="fieldWrapper">
+                        {{ item_form.width }}
+                        {{ item_form.width.errors }}
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 pt-2 pt-md-0">
+                    <div class="fieldWrapper">
+                        {{ item_form.height }}
+                        {{ item_form.height.errors }}
+                    </div>
+                </div>
+            </div>
+        </div>

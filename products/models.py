@@ -108,6 +108,8 @@ class Product(models.Model):
     description = models.CharField(max_length=8000)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT)
 
+    #quantity = models.IntegerField()
+
     dimension_width = models.DecimalField(max_digits=7, decimal_places=2)
     dimension_height = models.DecimalField(max_digits=7, decimal_places=2)
     dimension_length = models.DecimalField(max_digits=7, decimal_places=2)

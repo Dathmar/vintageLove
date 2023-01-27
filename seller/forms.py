@@ -9,6 +9,9 @@ class ProductForm(forms.Form):
     title = forms.CharField(label='Title', max_length=4000)
     description = forms.CharField(label='Description', max_length=8000, widget=forms.Textarea)
 
+    unique_item = forms.BooleanField(label='Unique Item', widget=forms.CheckboxInput())
+    quantity = forms.IntegerField(label='Quantity')
+
     dimension_width = forms.DecimalField(label='Width', max_digits=7, decimal_places=2)
     dimension_height = forms.DecimalField(label='Height', max_digits=7, decimal_places=2)
     dimension_length = forms.DecimalField(label='Length', max_digits=7, decimal_places=2)

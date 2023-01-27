@@ -49,6 +49,8 @@ def add_product(request):
                 title=product_form.cleaned_data['title'],
                 description=product_form.cleaned_data['description'],
                 seller=seller_list[int(product_form.cleaned_data['seller'])],
+                unique_item=product_form.cleaned_data['unique_item'],
+                quantity=product_form.cleaned_data['quantity'],
                 dimension_width=product_form.cleaned_data['dimension_width'],
                 dimension_height=product_form.cleaned_data['dimension_height'],
                 dimension_length=product_form.cleaned_data['dimension_length'],

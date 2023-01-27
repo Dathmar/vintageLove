@@ -14,4 +14,6 @@ urlpatterns = [
     path('<uuid:product_id>/', views.product, name='product'),
     path('<uuid:product_id>/product_sold/', views.product_sold, name='product-sold'),
     path('<slug:product_slug>/', views.product_w_slug, name='product-slug'),
+    path('seller/<slug:seller_slug>/', views.seller_products, name='seller-products'),
+    path('estate/<slug:seller_slug>/', views.seller_products, name='seller-products'),
 ]
