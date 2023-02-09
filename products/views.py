@@ -11,6 +11,9 @@ from django.http import Http404
 
 from base.Emailing import EmailThread
 
+import logging
+logger = logging.getLogger('app_api')
+
 
 # Create your views here.
 def product(request, product_id):
@@ -212,7 +215,7 @@ def product_list(request, category_slug=None, seller_slug=None):
     attributes = product_lst.values('attributes')
     prices = product_lst.aggregate(Min('retail_price')).update(product_lst.aggregate(Max('retail_price')))
 
-    product_pages = make_pages(request, product_lst.values('id'), 12)
+    product_pages, show_pages, max_pages = make_pages(request, product_lst.values('id'), 12)
 
     products = product_pages.object_list.values('id', 'title', 'retail_price',
                                                 'wholesale_price', 'status__display_wholesale', 'slug')
@@ -231,6 +234,8 @@ def product_list(request, category_slug=None, seller_slug=None):
         'product_pages': product_pages,
         'products': products,
         'attributes': get_attribute_list(attributes),
+        'show_pages': show_pages,
+        'max_pages': max_pages,
     }
 
     return render(request, 'product-list.html', context)
@@ -250,7 +255,7 @@ def product_list_stage(request, stage):
     attributes = product_lst.values('attributes')
     prices = product_lst.aggregate(Min('retail_price')).update(product_lst.aggregate(Max('retail_price')))
 
-    product_pages = make_pages(request, product_lst.values('id'), 12)
+    product_pages, show_pages, max_pages = make_pages(request, product_lst.values('id'), 12)
 
     products = product_pages.object_list.values('id', 'title', 'retail_price',
                                                 'wholesale_price', 'status__display_wholesale', 'slug')
@@ -269,6 +274,8 @@ def product_list_stage(request, stage):
         'product_pages': product_pages,
         'products': products,
         'attributes': get_attribute_list(attributes),
+        'show_pages': show_pages,
+        'max_pages': max_pages,
     }
 
     return render(request, 'product-list.html', context)
@@ -284,15 +291,22 @@ def make_pages(request, obj_to_page, page_size):
     except EmptyPage:
         paged_obj = paginator.page(paginator.num_pages)
 
-    num_pages = paginator.num_pages
-    page_no = page
+    num_pages = int(paginator.num_pages)
+    page_no = int(page)
 
-    if num_pages <= 11 or page_no <= 6:  # case 1 and 2
-        pages = [x for x in range(1, min(num_pages + 1, 12))]
-    elif page_no > num_pages - 6:  # case 4
-        pages = [x for x in range(num_pages - 10, num_pages + 1)]
-    else:  # case 3
-        pages = [x for x in range(page_no - 5, page_no + 6)]
+    page_min = page_no - 5
+    page_max = page_no + 5
 
-    return pages
+    if page_min < 1:
+        page_min = 1
+
+    if page_max < 10:
+        page_max = 10
+
+    if page_max > num_pages:
+        page_max = num_pages
+
+    pages = list(range(page_min, page_max+1))
+
+    return paged_obj, pages, num_pages
 
