@@ -51,25 +51,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 });
 
-async function createPayment(token) {
-    const body = JSON.stringify({
-        locationId,
-        sourceId: token,
-    });
-    const paymentResponse = await fetch('/payment', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body,
-    });
-    if (paymentResponse.ok) {
-        return paymentResponse.json();
-    }
-    const errorBody = await paymentResponse.text();
-    throw new Error(errorBody);
-}
-
 async function tokenize(paymentMethod) {
     const tokenResult = await paymentMethod.tokenize();
     if (tokenResult.status === 'OK') {
@@ -83,14 +64,6 @@ async function tokenize(paymentMethod) {
         }
         throw new Error(errorMessage);
     }
-}
-
-async function nce(nonce) {
-    await fetch('/orders/order-nonce/', {
-        method: 'POST',
-        headers: {"X-Requested-With": "XMLHttpRequest", "X-CSRFToken": getCookie("csrftoken")},
-        body: JSON.stringify({'nonce': nonce})
-    }).catch(err => console.log(err))
 }
 
 function fetchSquareAppId() {
